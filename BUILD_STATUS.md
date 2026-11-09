@@ -1,107 +1,115 @@
 # ProofMe — Build status
 
-Last updated: 9 November 2026
+Last updated: 10 November 2026
 
 ## Where things stand
 
 - **Milestone 0** is complete.
-- **Milestone 1** (design system and public website) has not started. Impeccable is now present
-  in `.agents/skills/impeccable`, so it is no longer blocked. See the note on skill files below.
-- **Server-side groundwork** was built ahead of order, at the user's request, while Impeccable
-  was unavailable. It covers rules and schema only. There are no services, routes, screens,
-  authentication or NEAR integration yet.
+- **Milestone 1** (design system and public website) is built, with three parts open: the
+  signed-in app shell, account calls to action, and Impeccable's finish review. See below.
+- **Server-side groundwork** for Milestones 2–5 exists as rules and schema only. There are no
+  services, authentication, signed-in screens or NEAR integration yet.
+
+## Milestone 1 — Product identity, design system and public website
+
+| Task                                                                       | State                                                                                                                                                                                                    |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Impeccable greenfield direction workflow                                   | Done: context command, three questions answered by the user, concept roll, decision page, direction chosen by the user ("The Credits", code-led), direction contract recorded in `.impeccable/surfaces/` |
+| Design tokens, type, colour, spacing, component rules, responsive patterns | Done in `app/globals.css`; documented in `DESIGN.md` and `.impeccable/design.json`                                                                                                                       |
+| Landing page                                                               | Done, with a working in-browser digest check on a labelled sample record                                                                                                                                 |
+| Public explanatory pages                                                   | Done: `/how-it-works`, `/for-contributors`, `/for-organisations`, `/privacy`, `/terms`                                                                                                                   |
+| Navigation, footer, responsive layout                                      | Done, including a small-screen menu and a skip link                                                                                                                                                      |
+| Truthful copy                                                              | Done. No partners, statistics, testimonials or real attestations are shown. Sample content is labelled. Privacy and terms say they are unreviewed drafts                                                 |
+| Early signed-in app shell                                                  | **Not done.** Deferred to Milestone 2, where it can be built behind real authentication instead of as an unprotected mock route                                                                          |
+
+### Acceptance
+
+| Criterion                                           | Result                                                                                                                                              |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Landing and public pages work on desktop and mobile | Yes. Inspected at 1440×900 and 375×812; no horizontal overflow, no console errors                                                                   |
+| Main CTA routes work                                | Yes for everything shown. There are no sign-up or sign-in calls to action yet, because those routes do not exist; the pages say sign-up is not open |
+| All links have real destinations                    | Yes. Every header, footer and in-page link points to a built route                                                                                  |
+| Brand and design decisions documented               | Yes, `DESIGN.md`                                                                                                                                    |
+| Impeccable craft floor met                          | Detector run over `app` and `components`: no findings. The shipped finish review has **not** run (see below)                                        |
+
+### What was verified by use
+
+- The digest check: the untouched sample gives "Match" with the recorded digest; changing the
+  role gives "No match" and a different digest; "Restore the original" appears after an edit.
+- The small-screen menu opens and reports its state to assistive technology.
+- A unit test proves the digest shown on the page is the real digest of the sample record.
+
+### Open items from Impeccable's process
+
+- **The concept roll ran degraded.** Its service was unreachable from the shell, so no outside
+  "challenger" directions were dealt; the user chose between two grounded directions and the
+  category standard.
+- **Decision cards were text-only**, because no image generation is available here.
+- **The finish review has not run.** It needs screenshot files, and nothing here can save
+  screenshots to disk until Playwright is installed in Milestone 2. Inspection so far was done
+  live in the browser pane. Until that review runs, Milestone 1 is not finished by
+  Impeccable's own definition.
+- **`DESIGN.md` was merged, not replaced:** the brief's status vocabulary was kept and the built
+  system written around it. The user was not asked to choose between refresh, overwrite and merge.
+- Tablet (768) and laptop (1280) widths have not been inspected yet.
+- Keyboard-only and screen-reader passes have not been done yet.
+
+## Check results (run 10 Nov 2026, `npm run check`)
+
+| Command                    | Result                                                                                                |
+| -------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `npm run format:check`     | Passed                                                                                                |
+| `npm run lint`             | Passed, no warnings                                                                                   |
+| `npm run typecheck`        | Passed                                                                                                |
+| `npm run test:unit`        | 183 passed, 0 failed                                                                                  |
+| `npm run test:integration` | 39 passed, 0 failed (in-memory PostgreSQL via PGlite)                                                 |
+| `npm run build`            | Passed. Routes: `/`, `/how-it-works`, `/for-contributors`, `/for-organisations`, `/privacy`, `/terms` |
+| Impeccable detector        | No findings                                                                                           |
+| `npm audit`                | Not re-triaged since Milestone 0 (then: 8 moderate, development tooling only)                         |
+| E2E / contract tests       | Do not exist yet                                                                                      |
+| CI on GitHub               | Never run; there is no remote                                                                         |
 
 ## Built ahead of order (belongs to Milestones 2–5)
 
-| Piece                                                                                  | Where                                           | Tested by                                                              |
-| -------------------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------- |
-| Evidence URL validation                                                                | `lib/urls/evidence.ts`                          | `tests/unit/evidence-url.test.ts`                                      |
-| Canonical JSON (RFC 8785) and SHA-256                                                  | `lib/attestations/canonical.ts`                 | `tests/unit/attestation-payload.test.ts`                               |
-| Attestation payload v1, sealing, re-checking                                           | `lib/attestations/payload.ts`                   | same, with a hand-written fixture and an independently computed digest |
-| Lifecycle rules (contribution, request, attestation, anchor)                           | `lib/domain/status.ts`                          | `tests/unit/status.test.ts`                                            |
-| Organisation permission matrix, no-self-review, last-owner rule                        | `lib/permissions/organisation.ts`               | `tests/unit/organisation-permissions.test.ts`                          |
-| Database schema, 16 tables                                                             | `lib/db/schema.ts`, `lib/db/migrations/0000_*`  | `tests/integration/schema.test.ts`                                     |
-| Triggers: frozen attestation content, final revocation and anchor, append-only history | `lib/db/migrations/0001_integrity_triggers.sql` | same                                                                   |
-
-Not yet done from those milestones: authentication and its tables, the runtime database
-connection, every service, every route and screen, notifications, audit writing, E2E tests.
-
-## Check results (run 9 Nov 2026, `npm run check`)
-
-| Command                    | Result                                                                                                     |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `npm run format:check`     | Passed                                                                                                     |
-| `npm run lint`             | Passed, no warnings                                                                                        |
-| `npm run typecheck`        | Passed                                                                                                     |
-| `npm run test:unit`        | 182 passed, 0 failed                                                                                       |
-| `npm run test:integration` | 39 passed, 0 failed (in-memory PostgreSQL via PGlite)                                                      |
-| `npm run build`            | Passed (routes: `/`, `/_not-found`)                                                                        |
-| `npm audit`                | Not re-triaged after adding Drizzle and Vitest; at Milestone 0 it was 8 moderate, development tooling only |
-| E2E / contract tests       | Do not exist yet                                                                                           |
-| CI on GitHub               | Never run; there is no remote                                                                              |
-
-## Skill files: one thing to fix
-
-Impeccable and `design-taste-frontend` were installed into `.agents/skills` while a formatting
-command was running. That command (`prettier --write .`) rewrote 573 of their files
-(Markdown, JSON, JS, CSS, HTML). The changes are formatting only, but the files no longer match
-what was published. **Reinstall both skills to restore them** before Milestone 1. The folder is
-now excluded from Prettier, ESLint, TypeScript and Git, so it cannot happen again;
-`skills-lock.json` is committed.
-
-The skills live in `.agents/skills`, which this Claude Code session does not load as skills.
-They can be read and followed as files, or installed for Claude Code so they load properly.
-
-## Milestone 0 — complete
-
-Repository, tooling, CI workflow, `.env.example`, and the product, architecture, data model,
-security, test plan and decisions documents. App boots (`next start`, HTTP 200).
-`DESIGN.md` still holds only the brief's constraints.
+| Piece                                                      | Where                             |
+| ---------------------------------------------------------- | --------------------------------- |
+| Evidence URL validation                                    | `lib/urls/evidence.ts`            |
+| Canonical JSON (RFC 8785), SHA-256, attestation payload v1 | `lib/attestations/`               |
+| Lifecycle rules                                            | `lib/domain/status.ts`            |
+| Organisation permissions                                   | `lib/permissions/organisation.ts` |
+| Database schema (16 tables) and integrity triggers         | `lib/db/`                         |
 
 ## Environment
 
-| Tool            | State                                                    |
-| --------------- | -------------------------------------------------------- |
-| Node / npm      | 22.17.1 / 10.9.2                                         |
-| Git, GitHub CLI | Installed; `gh` signed in                                |
-| Rust            | 1.87.0; `wasm32-unknown-unknown` target not installed    |
-| WSL             | Ubuntu (WSL 2) available — needed for NEAR sandbox tests |
-| Docker          | Installed, daemon not running                            |
-| NEAR CLI        | Not installed                                            |
-| FFmpeg          | Not installed (needed for the videos)                    |
-| Vercel CLI      | Installed; login state not checked                       |
+| Tool             | State                                                                       |
+| ---------------- | --------------------------------------------------------------------------- |
+| Node / npm       | 22.17.1 / 10.9.2                                                            |
+| Git, GitHub CLI  | Installed; `gh` signed in                                                   |
+| Impeccable       | 4.8.2 in `.agents/skills/impeccable` (not committed; `skills-lock.json` is) |
+| Rust             | 1.87.0; `wasm32-unknown-unknown` target not installed                       |
+| WSL              | Ubuntu (WSL 2) available — needed for NEAR sandbox tests                    |
+| Docker           | Installed, daemon not running                                               |
+| NEAR CLI, FFmpeg | Not installed                                                               |
+| Vercel CLI       | Installed; login state not checked                                          |
 
 ## Needed from the user
 
-1. Reinstall the two design skills (see above).
-2. A hosted PostgreSQL for preview deployment (Milestone 2 onward; local work uses PGlite).
-3. NEAR testnet accounts and wallet signatures (Milestone 6).
-4. Go-ahead for a GitHub repository and Vercel project (Milestone 9).
-5. FFmpeg and a narration choice (Milestone 9).
-
-## Decisions made in this round
-
-- PGlite for tests and local development: real PostgreSQL semantics with nothing to install.
-  It is single-connection, so racing-reviewer behaviour is not tested on it yet.
-- Integrity rules live in the database as well as the code (triggers and check constraints).
-- Read-only viewers cannot see verification requests, because a request holds a contributor's
-  unpublished claim and reviewers' private notes.
-- Revocation is limited to owners and admins. A rejected claim can be revised and resubmitted
-  as a new request; the rejected one stays in history.
-- Agent skills (`.agents/`, about 1,700 third-party files) are not committed.
-
-Installed versions added: vitest 5.1.0, drizzle-orm 0.45.4, drizzle-kit 0.31.11,
-@electric-sql/pglite 0.5.16.
+1. A hosted PostgreSQL for preview deployment (local work uses PGlite).
+2. NEAR testnet accounts and wallet signatures (Milestone 6).
+3. Go-ahead for a GitHub repository and Vercel project (Milestone 9).
+4. FFmpeg and a narration choice (Milestone 9).
 
 ## Known risks
 
 - Next.js 16 has breaking changes from earlier versions; bundled docs are consulted before use.
-- The `users` table is shaped for Better Auth from memory of its core schema; it must be
-  reconciled with the installed version when authentication is added.
+- The `users` table is shaped for Better Auth from memory; it must be reconciled when
+  authentication is added.
+- Racing reviewers are not tested, because PGlite is single-connection.
 - NEAR sandbox does not run natively on Windows; contract tests depend on WSL and CI.
 - The automated E2E run cannot drive a real wallet approval; that step is manual on testnet.
 
 ## Next step
 
-Restore the skill files, then start Milestone 1 with Impeccable's context and
-direction-selection workflow.
+Milestone 2: authentication, the runtime database connection, onboarding, profiles and the
+signed-in app shell. Install Playwright there, capture the public pages, and run Impeccable's
+finish review to close Milestone 1.

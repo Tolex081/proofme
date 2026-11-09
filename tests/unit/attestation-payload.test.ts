@@ -270,3 +270,14 @@ describe("checkSealedAttestation", () => {
     });
   });
 });
+
+describe("website sample record", () => {
+  it("is the fixture record, so the digest shown on the landing page is genuine", async () => {
+    const { SAMPLE_ATTESTATION, SAMPLE_ATTESTATION_DIGEST } =
+      await import("@/lib/demo/sample-attestation");
+    const sealed = await sealAttestation(SAMPLE_ATTESTATION);
+    expect(sealed.canonicalPayload).toBe(FIXTURE_CANONICAL);
+    expect(sealed.digest).toBe(SAMPLE_ATTESTATION_DIGEST);
+    expect(SAMPLE_ATTESTATION_DIGEST).toBe(FIXTURE_DIGEST);
+  });
+});

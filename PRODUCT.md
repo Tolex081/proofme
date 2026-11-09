@@ -1,8 +1,13 @@
 # ProofMe — Product context
 
-> Status: written from the master build brief in Milestone 0. The Impeccable context
-> command has **not** been run yet (the skill is not installed in this environment; see
-> `BUILD_STATUS.md`). When it is, this file is reconciled with whatever that workflow requires.
+> Status: written from the master build brief in Milestone 0 and loaded by Impeccable's context
+> command from Milestone 1 onward. The visual system that carries it is in `DESIGN.md`.
+
+## Register
+
+The public website is built for hackathon judges and ecosystem reviewers first, then contributors
+and organisations. The one thing it must never feel like is cold or institutional: this is about
+people and what they made, not a registry.
 
 ## Promise
 

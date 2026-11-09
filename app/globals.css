@@ -1,7 +1,357 @@
 @import "tailwindcss";
 
 /*
- * Milestone 0 baseline only. Design tokens, typography and colour are
- * deliberately absent: they are established in Milestone 1 through the
- * Impeccable direction workflow and recorded in DESIGN.md.
+ * ProofMe design tokens. The system is documented in DESIGN.md.
+ * Two grounds: deep ink (title cards) and warm paper (liner notes).
+ * Status colours are reserved: ok = confirmed or verified, wait = pending,
+ * bad = rejected, revoked or failed. Each has a value for either ground.
  */
+@theme {
+  --color-ink: #0f1830;
+  --color-ink-raised: #17223d;
+  --color-ink-line: #2f3b5c;
+  --color-on-ink: #f5f0e6;
+  --color-on-ink-muted: #b3bbd0;
+
+  --color-paper: #f5f0e6;
+  --color-paper-deep: #ece5d6;
+  --color-paper-line: #d3c9b5;
+  --color-on-paper: #141b2e;
+  --color-on-paper-muted: #4a5166;
+
+  --color-teal: #0b6e70;
+  --color-teal-bright: #62d2c9;
+
+  --color-ok: #1a6e3f;
+  --color-ok-bright: #74d6a0;
+  --color-wait: #855600;
+  --color-wait-bright: #f0c267;
+  --color-bad: #a8322b;
+  --color-bad-bright: #ff9d91;
+
+  --font-display: var(--font-jost), "Century Gothic", "Avenir Next", sans-serif;
+  --font-sans: var(--font-atkinson), "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-atkinson-mono), ui-monospace, "Cascadia Mono", monospace;
+
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  :root {
+    /* Where the credit axis sits, as a share of the content column. */
+    --axis: 30%;
+    --gutter: clamp(1.25rem, 4vw, 3rem);
+    color-scheme: light;
+  }
+
+  html {
+    background: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 106.25%; /* 17px reading size */
+    line-height: 1.55;
+    -webkit-text-size-adjust: 100%;
+    scrollbar-color: var(--color-ink-line) var(--color-ink);
+  }
+
+  body {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-paper);
+    color: var(--color-on-paper);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  a {
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 0.06em;
+  }
+
+  ::selection {
+    background: var(--color-teal);
+    color: var(--color-paper);
+  }
+
+  .on-ink ::selection,
+  .on-ink::selection {
+    background: var(--color-teal-bright);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-teal);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .on-ink :focus-visible {
+    outline-color: var(--color-teal-bright);
+  }
+
+  input,
+  textarea {
+    caret-color: var(--color-teal);
+  }
+
+  .on-ink input,
+  .on-ink textarea {
+    caret-color: var(--color-teal-bright);
+  }
+}
+
+@layer components {
+  /* Grounds */
+  .on-ink {
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+  }
+
+  .on-paper {
+    background: var(--color-paper);
+    color: var(--color-on-paper);
+  }
+
+  .on-paper-deep {
+    background: var(--color-paper-deep);
+    color: var(--color-on-paper);
+  }
+
+  /* The shared content column. */
+  .column {
+    width: 100%;
+    max-width: 74rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /*
+   * A credit block: roles right-aligned against one vertical axis, names and
+   * facts left-aligned from it. Used with <dl>, or with any two-column pairs.
+   */
+  .credits {
+    display: grid;
+    grid-template-columns: minmax(5.75rem, var(--axis)) minmax(0, 1fr);
+    column-gap: clamp(1rem, 2.4vw, 2rem);
+    align-items: baseline;
+  }
+
+  .credits > .role {
+    font-family: var(--font-display);
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    line-height: 1.3;
+    text-transform: uppercase;
+    text-align: right;
+    color: var(--color-on-paper-muted);
+    hyphens: auto;
+  }
+
+  .on-ink .credits > .role {
+    color: var(--color-on-ink-muted);
+  }
+
+  /* Anything that should start on the axis without a role beside it. */
+  .credits > .from-axis {
+    grid-column: 2;
+  }
+
+  .credits > .across {
+    grid-column: 1 / -1;
+  }
+
+  /*
+   * Small screens: headings and prose take the full width, and prose pairs
+   * stack. Short credit pairs (the sample record) keep the axis.
+   */
+  @media (max-width: 39.99rem) {
+    .credits > .from-axis {
+      grid-column: 1 / -1;
+    }
+
+    .credits.stack-sm {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .credits.stack-sm > .role {
+      text-align: left;
+      margin-bottom: 0.4rem;
+    }
+  }
+
+  .name {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -0.012em;
+  }
+
+  .digest {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Actions */
+  .action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 2.75rem;
+    padding: 0.6rem 1.15rem;
+    border-radius: 0.375rem;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 160ms var(--ease-settle),
+      color 160ms var(--ease-settle),
+      translate 160ms var(--ease-settle);
+  }
+
+  .action:active {
+    translate: 0 1px;
+  }
+
+  .action[disabled],
+  .action[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .action-primary {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  .action-primary:hover:not([disabled]) {
+    background: var(--color-teal);
+  }
+
+  .on-ink .action-primary {
+    background: var(--color-teal-bright);
+    color: var(--color-ink);
+  }
+
+  .on-ink .action-primary:hover:not([disabled]) {
+    background: var(--color-paper);
+  }
+
+  .text-link {
+    color: var(--color-teal);
+    font-weight: 600;
+    text-decoration: underline;
+    transition: color 160ms var(--ease-settle);
+  }
+
+  .text-link:hover {
+    color: var(--color-on-paper);
+  }
+
+  .on-ink .text-link {
+    color: var(--color-teal-bright);
+  }
+
+  .on-ink .text-link:hover {
+    color: var(--color-on-ink);
+  }
+
+  /* Hairline between credit groups. Nothing in this system is boxed. */
+  .rule {
+    border: 0;
+    border-top: 1px solid var(--color-paper-line);
+  }
+
+  .on-ink .rule {
+    border-top-color: var(--color-ink-line);
+  }
+
+  /* Long-form reading pages */
+  .prose-notes > * + * {
+    margin-top: 1.1em;
+  }
+
+  .prose-notes h3 {
+    margin-top: 2.2em;
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .prose-notes ul {
+    padding-left: 1.2em;
+    list-style: disc;
+  }
+
+  .prose-notes li + li {
+    margin-top: 0.4em;
+  }
+}
+
+/*
+ * Motion. Content is visible by default; these only run when the visitor has
+ * not asked for reduced motion.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .settle > * {
+    animation: settle 560ms var(--ease-settle) backwards;
+  }
+
+  .settle > :nth-child(n + 3) {
+    animation-delay: 50ms;
+  }
+
+  .settle > :nth-child(n + 5) {
+    animation-delay: 100ms;
+  }
+
+  .settle > :nth-child(n + 7) {
+    animation-delay: 150ms;
+  }
+
+  .settle > :nth-child(n + 9) {
+    animation-delay: 200ms;
+  }
+
+  .resolve {
+    animation: resolve 640ms steps(32, end) backwards;
+  }
+}
+
+/* Movement only: a line is never hidden, so nothing depends on the animation finishing. */
+@keyframes settle {
+  from {
+    translate: 0 1.1rem;
+  }
+}
+
+@keyframes resolve {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}

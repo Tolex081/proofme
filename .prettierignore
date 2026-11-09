@@ -8,3 +8,4 @@ submission/*.webm
 .agents
 skills-lock.json
 tsconfig.tsbuildinfo
+.impeccable
