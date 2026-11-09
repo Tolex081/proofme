@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { EVIDENCE_TYPES, validateEvidenceUrl } from "@/lib/urls/evidence";
+import { EVIDENCE_TYPES, validateEvidenceUrl } from "../urls/evidence";
 import { canonicalize, DIGEST_PATTERN, sha256Hex, type JsonValue } from "./canonical";
 
 /**

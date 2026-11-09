@@ -32,7 +32,9 @@ npm run format:check
 npm run lint
 npm run typecheck
 npm run build
-npm run check        # all four
+npm run test:unit
+npm run test:integration   # runs migrations on an in-memory PostgreSQL
+npm run check              # everything above
 ```
 
 Test, seed and deployment commands are added here as those parts are built.

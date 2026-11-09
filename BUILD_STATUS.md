@@ -4,77 +4,104 @@ Last updated: 9 November 2026
 
 ## Where things stand
 
-**Milestone 0 is complete except for one item: loading the Impeccable skill.** No product
-features exist yet. Milestone 1 (design system and public website) cannot start until Impeccable
-is installed, because it requires a direction-selection step before any UI code.
+- **Milestone 0** is complete.
+- **Milestone 1** (design system and public website) has not started. Impeccable is now present
+  in `.agents/skills/impeccable`, so it is no longer blocked. See the note on skill files below.
+- **Server-side groundwork** was built ahead of order, at the user's request, while Impeccable
+  was unavailable. It covers rules and schema only. There are no services, routes, screens,
+  authentication or NEAR integration yet.
 
-## Milestone 0 — Project setup and product/architecture context
+## Built ahead of order (belongs to Milestones 2–5)
 
-| Task                                                                                    | State                                                                                                                                                                       |
-| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| New `proofme` directory and Git repository                                              | Done (local repository, `main`; no GitHub remote yet)                                                                                                                       |
-| Inspect runtimes, package managers, tooling                                             | Done (see below)                                                                                                                                                            |
-| Verify current stable versions                                                          | Done from the npm registry; recorded in `DECISIONS.md`                                                                                                                      |
-| Load Impeccable                                                                         | **Blocked** — not installed; install was denied by the permission system                                                                                                    |
-| Load other relevant skills                                                              | None are installed (no React, testing, Playwright, accessibility, auth or NEAR skill). The built-in `security-review` and `code-review` skills exist and will be used in M8 |
-| PRODUCT, DESIGN, ARCHITECTURE, DATA_MODEL, SECURITY, TEST_PLAN, BUILD_STATUS, DECISIONS | Done. `DESIGN.md` holds only the brief's constraints until Impeccable runs                                                                                                  |
-| Architecture and dependency map                                                         | Done (`ARCHITECTURE.md`)                                                                                                                                                    |
-| Format, lint, typecheck, CI                                                             | Done (`.github/workflows/ci.yml`; not yet run on GitHub)                                                                                                                    |
-| `.env.example`                                                                          | Done                                                                                                                                                                        |
+| Piece                                                                                  | Where                                           | Tested by                                                              |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------- |
+| Evidence URL validation                                                                | `lib/urls/evidence.ts`                          | `tests/unit/evidence-url.test.ts`                                      |
+| Canonical JSON (RFC 8785) and SHA-256                                                  | `lib/attestations/canonical.ts`                 | `tests/unit/attestation-payload.test.ts`                               |
+| Attestation payload v1, sealing, re-checking                                           | `lib/attestations/payload.ts`                   | same, with a hand-written fixture and an independently computed digest |
+| Lifecycle rules (contribution, request, attestation, anchor)                           | `lib/domain/status.ts`                          | `tests/unit/status.test.ts`                                            |
+| Organisation permission matrix, no-self-review, last-owner rule                        | `lib/permissions/organisation.ts`               | `tests/unit/organisation-permissions.test.ts`                          |
+| Database schema, 16 tables                                                             | `lib/db/schema.ts`, `lib/db/migrations/0000_*`  | `tests/integration/schema.test.ts`                                     |
+| Triggers: frozen attestation content, final revocation and anchor, append-only history | `lib/db/migrations/0001_integrity_triggers.sql` | same                                                                   |
 
-### Acceptance
+Not yet done from those milestones: authentication and its tables, the runtime database
+connection, every service, every route and screen, notifications, audit writing, E2E tests.
 
-| Criterion                              | Result                                                          |
-| -------------------------------------- | --------------------------------------------------------------- |
-| Independent from CrewPass              | Yes. Fresh directory; nothing read from or shared with CrewPass |
-| Architecture and data model documented | Yes                                                             |
-| No secrets committed                   | Yes. `.env*` ignored except `.env.example`                      |
-| Local application boots                | Yes. `next start` returned HTTP 200 with the boot page          |
-| Typecheck / lint / build baseline      | Yes (results below)                                             |
+## Check results (run 9 Nov 2026, `npm run check`)
 
-### Check results (run 9 Nov 2026)
+| Command                    | Result                                                                                                     |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `npm run format:check`     | Passed                                                                                                     |
+| `npm run lint`             | Passed, no warnings                                                                                        |
+| `npm run typecheck`        | Passed                                                                                                     |
+| `npm run test:unit`        | 182 passed, 0 failed                                                                                       |
+| `npm run test:integration` | 39 passed, 0 failed (in-memory PostgreSQL via PGlite)                                                      |
+| `npm run build`            | Passed (routes: `/`, `/_not-found`)                                                                        |
+| `npm audit`                | Not re-triaged after adding Drizzle and Vitest; at Milestone 0 it was 8 moderate, development tooling only |
+| E2E / contract tests       | Do not exist yet                                                                                           |
+| CI on GitHub               | Never run; there is no remote                                                                              |
 
-| Command                                   | Result                                                                                                                                                                                                                     |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run format:check`                    | Passed                                                                                                                                                                                                                     |
-| `npm run lint`                            | Passed, no warnings                                                                                                                                                                                                        |
-| `npm run typecheck`                       | Passed                                                                                                                                                                                                                     |
-| `npm run build`                           | Passed (routes: `/`, `/_not-found`)                                                                                                                                                                                        |
-| `npm audit`                               | 8 moderate, 0 high/critical. All trace to `minimatch` (GHSA-g3hv-75wg-m249) inside the ESLint toolchain — development-only, not shipped. The offered fix is a breaking downgrade; left as is and re-checked each milestone |
-| Unit / integration / E2E / contract tests | Not applicable yet — no test suites exist                                                                                                                                                                                  |
+## Skill files: one thing to fix
 
-## Environment found
+Impeccable and `design-taste-frontend` were installed into `.agents/skills` while a formatting
+command was running. That command (`prettier --write .`) rewrote 573 of their files
+(Markdown, JSON, JS, CSS, HTML). The changes are formatting only, but the files no longer match
+what was published. **Reinstall both skills to restore them** before Milestone 1. The folder is
+now excluded from Prettier, ESLint, TypeScript and Git, so it cannot happen again;
+`skills-lock.json` is committed.
 
-| Tool              | State                                                    |
-| ----------------- | -------------------------------------------------------- |
-| Node / npm        | 22.17.1 / 10.9.2                                         |
-| Git, GitHub CLI   | Installed; `gh` is signed in                             |
-| Rust              | 1.87.0; `wasm32-unknown-unknown` target not installed    |
-| WSL               | Ubuntu (WSL 2) available — needed for NEAR sandbox tests |
-| Docker            | Installed, daemon not running                            |
-| PostgreSQL client | Not installed                                            |
-| NEAR CLI          | Not installed                                            |
-| FFmpeg            | Not installed (needed for the videos)                    |
-| Vercel CLI        | Installed; login state not checked                       |
+The skills live in `.agents/skills`, which this Claude Code session does not load as skills.
+They can be read and followed as files, or installed for Claude Code so they load properly.
 
-## Blockers and things needed from the user
+## Milestone 0 — complete
 
-1. **Impeccable skill (blocks Milestone 1).** Install it, for example with
-   `npx skills add pbakaus/impeccable`, then start a new session so it loads.
-2. **PostgreSQL (Milestone 2).** Either start Docker Desktop, or approve PGlite for local use.
-   A hosted database for preview needs an account (for example Neon).
-3. **NEAR testnet accounts (Milestone 6).** A testnet account to own the contract and one to act
-   as the demo organisation's issuer. Their transactions must be signed in the user's wallet.
-4. **GitHub remote and Vercel project (Milestone 9).** Creating a repository and deploying are
-   outward-facing and wait for the user's go-ahead.
-5. **FFmpeg and narration (Milestone 9).** Needed to encode the two videos.
+Repository, tooling, CI workflow, `.env.example`, and the product, architecture, data model,
+security, test plan and decisions documents. App boots (`next start`, HTTP 200).
+`DESIGN.md` still holds only the brief's constraints.
+
+## Environment
+
+| Tool            | State                                                    |
+| --------------- | -------------------------------------------------------- |
+| Node / npm      | 22.17.1 / 10.9.2                                         |
+| Git, GitHub CLI | Installed; `gh` signed in                                |
+| Rust            | 1.87.0; `wasm32-unknown-unknown` target not installed    |
+| WSL             | Ubuntu (WSL 2) available — needed for NEAR sandbox tests |
+| Docker          | Installed, daemon not running                            |
+| NEAR CLI        | Not installed                                            |
+| FFmpeg          | Not installed (needed for the videos)                    |
+| Vercel CLI      | Installed; login state not checked                       |
+
+## Needed from the user
+
+1. Reinstall the two design skills (see above).
+2. A hosted PostgreSQL for preview deployment (Milestone 2 onward; local work uses PGlite).
+3. NEAR testnet accounts and wallet signatures (Milestone 6).
+4. Go-ahead for a GitHub repository and Vercel project (Milestone 9).
+5. FFmpeg and a narration choice (Milestone 9).
+
+## Decisions made in this round
+
+- PGlite for tests and local development: real PostgreSQL semantics with nothing to install.
+  It is single-connection, so racing-reviewer behaviour is not tested on it yet.
+- Integrity rules live in the database as well as the code (triggers and check constraints).
+- Read-only viewers cannot see verification requests, because a request holds a contributor's
+  unpublished claim and reviewers' private notes.
+- Revocation is limited to owners and admins. A rejected claim can be revised and resubmitted
+  as a new request; the rejected one stays in history.
+- Agent skills (`.agents/`, about 1,700 third-party files) are not committed.
+
+Installed versions added: vitest 5.1.0, drizzle-orm 0.45.4, drizzle-kit 0.31.11,
+@electric-sql/pglite 0.5.16.
 
 ## Known risks
 
 - Next.js 16 has breaking changes from earlier versions; bundled docs are consulted before use.
+- The `users` table is shaped for Better Auth from memory of its core schema; it must be
+  reconciled with the installed version when authentication is added.
 - NEAR sandbox does not run natively on Windows; contract tests depend on WSL and CI.
 - The automated E2E run cannot drive a real wallet approval; that step is manual on testnet.
 
 ## Next step
 
-Install Impeccable, then begin Milestone 1 with its context and direction-selection workflow.
+Restore the skill files, then start Milestone 1 with Impeccable's context and
+direction-selection workflow.

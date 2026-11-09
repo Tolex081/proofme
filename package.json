@@ -10,9 +10,11 @@
     "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test:unit && npm run build",
-    "test:unit": "vitest run",
-    "test": "vitest run"
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build",
+    "test:unit": "vitest run tests/unit",
+    "test": "vitest run",
+    "test:integration": "vitest run tests/integration",
+    "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
     "@electric-sql/pglite": "0.5.16",
