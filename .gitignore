@@ -48,3 +48,6 @@ next-env.d.ts
 /submission/*.mp4
 /submission/*.webm
 /.claude/settings.local.json
+
+# Third-party agent skills, installed locally (restored from skills-lock.json)
+/.agents/

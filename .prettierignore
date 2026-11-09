@@ -5,3 +5,6 @@ next-env.d.ts
 contracts/**/target
 submission/*.mp4
 submission/*.webm
+.agents
+skills-lock.json
+tsconfig.tsbuildinfo
