@@ -1,0 +1,77 @@
+# ProofMe — Decisions
+
+Newest last. "Planned" means chosen but not yet exercised by code; it is confirmed or revised
+when implemented.
+
+## D1 — Next.js 16.4.6 (App Router), React 19.3, TypeScript, npm
+
+**Why:** the brief's baseline; current stable release; first-class on Vercel, which the user
+already uses. npm because it is installed and pnpm is not; no reason to add a tool.
+**Alternatives:** Remix/React Router, SvelteKit — no advantage that justifies leaving the baseline.
+**Note:** Next 16 differs from older versions (the scaffold's `AGENTS.md` says so). Its bundled
+docs in `node_modules/next/dist/docs/` are read before using any framework API.
+
+## D2 — Tailwind CSS 4.3, no component kit by default
+
+**Why:** tokens-first styling that the design system can own. Accessible primitives are added
+selectively where building them by hand would be worse (dialogs, menus), decided in Milestone 1.
+
+## D3 — PostgreSQL + Drizzle ORM (planned, M2)
+
+**Why:** relational data with real constraints; Drizzle keeps SQL visible and migrations versioned.
+**Alternatives:** Prisma — heavier runtime, no benefit here. One ORM only.
+**Open point:** local Postgres. Docker Desktop is installed but its daemon was not running on
+9 Nov 2026, and `psql` is not installed. Options are starting Docker, or PGlite (Postgres in
+WASM) for local development and tests. Hosted preview/production needs a managed Postgres
+(for example Neon), which requires the user's account. Decided in M2.
+
+## D4 — Better Auth (planned, M2)
+
+**Why:** maintained, self-hosted in our own database, email/password out of the box, Google when
+credentials exist, no per-user cost, no third-party user store.
+**Alternatives:** Clerk — faster to start but adds an external service and account.
+
+## D5 — NEAR contract in Rust with `near-sdk` (planned, M6)
+
+**Why:** the officially supported SDK with the most current tooling. `near-sdk-js` was last
+published in June 2024, so it is not a safe base.
+**Constraint:** the NEAR sandbox has no native Windows build. Contract integration tests run
+under WSL (Ubuntu is installed) and on Linux in CI. The `wasm32-unknown-unknown` Rust target is
+not installed yet.
+
+## D6 — The server holds no NEAR keys
+
+**Why:** the brief forbids silent signing and stored keys. Every NEAR write is signed in the
+organisation's wallet; the server only verifies results over RPC. This also means a compromised
+server cannot issue or revoke attestations on-chain.
+
+## D7 — Digest = SHA-256 over RFC 8785 canonical JSON, with a random nonce (planned, M5)
+
+**Why:** a published, unambiguous canonicalisation instead of ad-hoc concatenation; the nonce
+prevents confirming a guess about a person from public fields.
+
+## D8 — Called a "ProofMe attestation with a NEAR anchor", not a W3C Verifiable Credential
+
+**Why:** VC 2.0 conformance needs a real securing mechanism and verification process. Field names
+alone do not make one. The payload is shaped to migrate later.
+
+## D9 — Mainnet rejected by environment validation
+
+**Why:** brief §13.5. `NEAR_NETWORK` accepts only `sandbox` and `testnet`.
+
+## D10 — Milestone 0 boot page is deliberately undesigned
+
+**Why:** Impeccable requires direction selection before any UI code. The boot page is plain text
+that proves the app runs; it is replaced, not evolved, in Milestone 1.
+
+## Pinned versions (installed)
+
+next 16.4.6 · react 19.3.0 · tailwindcss 4.3.3 · zod 4.6.7 · prettier 3.9.10 ·
+eslint 9.x with eslint-config-next 16.4.6 · typescript 5.x (as installed by create-next-app; see
+`package-lock.json` for exact resolutions).
+
+## Versions checked for later milestones (npm registry, 9 Nov 2026)
+
+drizzle-orm 0.45.4 · better-auth 1.7.18 · vitest 5.1.0 · @playwright/test 1.65.0 ·
+near-api-js 7.4.0 · @near-wallet-selector/core 10.1.4 · @hot-labs/near-connect 0.12.0 ·
+near-workspaces (npm) 5.0.0 · @electric-sql/pglite 0.5.16.
