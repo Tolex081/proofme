@@ -1,8 +1,10 @@
 import Link from "next/link";
 
+import { Logo } from "@/components/brand/logo";
+
 const GROUPS = [
   {
-    role: "Product",
+    title: "Product",
     links: [
       { href: "/how-it-works", label: "How it works" },
       { href: "/for-contributors", label: "For contributors" },
@@ -10,7 +12,14 @@ const GROUPS = [
     ],
   },
   {
-    role: "Small print",
+    title: "Account",
+    links: [
+      { href: "/register", label: "Start your record" },
+      { href: "/login", label: "Sign in" },
+    ],
+  },
+  {
+    title: "Small print",
     links: [
       { href: "/privacy", label: "Privacy" },
       { href: "/terms", label: "Terms" },
@@ -18,61 +27,38 @@ const GROUPS = [
   },
 ] as const;
 
-/** The end card: the site's own credits, set on the same axis as everything else. */
 export function SiteFooter() {
   return (
-    <footer className="on-ink mt-auto">
-      <div className="column py-[clamp(3rem,7vw,5rem)]">
-        <div className="credits gap-y-5">
-          {GROUPS.map((group) => (
-            <FooterGroup key={group.role} role={group.role}>
-              <ul className="flex flex-wrap gap-x-7 gap-y-1">
-                {group.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="name inline-flex min-h-11 items-center text-[1.15rem] text-on-ink no-underline transition-colors hover:text-teal-bright"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </FooterGroup>
-          ))}
-
-          <FooterGroup role="Network">
-            <p className="max-w-[46ch] pt-2.5 text-on-ink-muted">
-              NEAR testnet only. Nothing in this build runs on mainnet, and testnet records carry no
-              real-world value.
-            </p>
-          </FooterGroup>
-
-          <FooterGroup role="Status">
-            <p className="max-w-[46ch] pt-2.5 text-on-ink-muted">
-              An early build. ProofMe is independent and has no partnership with NEAR or with any
-              organisation named in its sample records, all of which are fictional.
-            </p>
-          </FooterGroup>
-        </div>
-
-        <hr className="rule mt-10 mb-6" />
-
-        <div className="credits">
-          <p className="name from-axis text-[1.35rem]">
-            Proof<span className="text-teal-bright">Me</span>
+    <footer className="mt-auto border-t border-line">
+      <div className="column grid gap-10 py-14 md:grid-cols-[1.4fr_repeat(3,1fr)]">
+        <div className="max-w-[34ch]">
+          <Logo />
+          <p className="mt-4 text-[0.92rem] text-muted">
+            An early build running on NEAR testnet only. ProofMe is independent and has no
+            partnership with NEAR or with any organisation in its sample records, all of which are
+            fictional.
           </p>
         </div>
+        {GROUPS.map((group) => (
+          <div key={group.title}>
+            <h2 className="font-sans text-[0.85rem] font-semibold tracking-normal text-faint">
+              {group.title}
+            </h2>
+            <ul className="mt-3 grid gap-1">
+              {group.links.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="inline-flex min-h-10 items-center font-medium text-ink no-underline hover:text-link"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     </footer>
-  );
-}
-
-function FooterGroup({ role, children }: { role: string; children: React.ReactNode }) {
-  return (
-    <>
-      <p className="role pt-[0.95rem]">{role}</p>
-      <div>{children}</div>
-    </>
   );
 }

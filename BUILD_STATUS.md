@@ -10,6 +10,44 @@ Last updated: 10 November 2026
 - **Server-side groundwork** for Milestones 2–5 exists as rules and schema only. There are no
   services, authentication, signed-in screens or NEAR integration yet.
 
+## Redesign (10 Nov 2026)
+
+The first design ("The Credits") was rejected by the user. After research on Dribbble (Pinterest
+needed a login and was not used), three full-colour directions were built and the user chose
+**People first**, asking for a dark mode and the blue-and-white checkmark logo. The public site
+was rebuilt in it:
+
+- Light and dark themes. Dark follows the system setting; a switch in the header overrides it and
+  is remembered on the device, with no flash on load.
+- New logo (white check on a blue rounded square) and favicon.
+- Landing page with a sample profile timeline, the working digest check, the four steps, what a
+  record proves and does not prove, and paths for contributors and organisations.
+- How it works, For contributors, For organisations, Privacy and Terms restyled through shared parts.
+- Sign-in and registration pages.
+- Inspected at 1440 and 375 wide in both themes; no horizontal overflow. DESIGN.md and
+  .impeccable/design.json rewritten for the new system.
+- Impeccable detector: 29 advisories, no errors (font sizes, two radii and one colour that are not
+  named steps in DESIGN.md). Not yet resolved.
+
+## Milestone 2 progress (in progress)
+
+| Piece                                                                                      | State                                              |
+| ------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| Authentication tables and migration                                                        | Done                                               |
+| Runtime database (hosted PostgreSQL, or embedded PGlite locally)                           | Done                                               |
+| Better Auth: email and password sign-up, sign-in, sign-out                                 | Done and tested against the running server         |
+| Rate limits on sign-in and sign-up                                                         | Configured; off in local development, on elsewhere |
+| Signed-out visitors sent from private pages to sign in                                     | Done (proxy plus server checks)                    |
+| Profile rules and service (onboarding, profile, links, NEAR account, privacy, public view) | Done, 43 integration tests                         |
+| Onboarding page, workspace shell, dashboard, settings, public profile                      | **Not built yet**                                  |
+| Playwright end-to-end tests                                                                | **Not started**                                    |
+| Email verification and password reset                                                      | **Blocked**: needs an email provider               |
+
+Smoke test against the running server: sign-up 200; duplicate email and short password refused
+with clear codes; a request trying to set isPlatformAdmin or status is ignored; the session cookie
+is HttpOnly; wrong password 401; correct password 200; /dashboard while signed out redirects to
+/login.
+
 ## Milestone 1 — Product identity, design system and public website
 
 | Task                                                                       | State                                                                                                                                                                                                    |

@@ -9,3 +9,4 @@ submission/*.webm
 skills-lock.json
 tsconfig.tsbuildinfo
 .impeccable
+.pglite

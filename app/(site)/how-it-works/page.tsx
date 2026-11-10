@@ -18,49 +18,49 @@ export const metadata: Metadata = {
 const STATES = [
   {
     icon: CircleDashed,
-    tone: "text-on-paper-muted",
+    tone: "chip-neutral",
     name: "Self-reported",
     meaning:
       "The contributor wrote this. No organisation has reviewed it. It is never shown as verified.",
   },
   {
     icon: Clock,
-    tone: "text-wait",
+    tone: "chip-wait",
     name: "Awaiting review",
     meaning:
       "Sent to the organisation. Private to the contributor and that organisation’s reviewers.",
   },
   {
     icon: Clock,
-    tone: "text-wait",
+    tone: "chip-wait",
     name: "Approved, awaiting NEAR anchor",
     meaning:
       "A reviewer approved it and the record is frozen. No confirmed NEAR transaction exists yet, so it is not shown as anchored.",
   },
   {
     icon: CircleCheck,
-    tone: "text-ok",
+    tone: "chip-ok",
     name: "Verified and anchored",
     meaning:
       "A confirmed NEAR testnet transaction from the organisation’s account stores a digest that matches the record.",
   },
   {
     icon: TriangleAlert,
-    tone: "text-bad",
+    tone: "chip-bad",
     name: "Anchor failed",
     meaning:
       "The transaction failed or was declined in the wallet. The approval still stands and the organisation can try again.",
   },
   {
     icon: Ban,
-    tone: "text-bad",
+    tone: "chip-bad",
     name: "Revoked",
     meaning:
       "The organisation withdrew it and gave a reason. The record stays visible, marked as revoked.",
   },
   {
     icon: RefreshCw,
-    tone: "text-on-paper-muted",
+    tone: "chip-neutral",
     name: "Superseded",
     meaning: "Replaced by a corrected attestation. Both stay visible and link to each other.",
   },
@@ -208,19 +208,19 @@ export default function HowItWorks() {
         heading="What each status means."
         intro="Every status is written in words and carries its own symbol, so none depends on colour."
       >
-        <ul>
-          {STATES.map((state, index) => (
+        <ul className="card divide-y divide-line overflow-hidden">
+          {STATES.map((state) => (
             <li
               key={state.name}
-              className={`credits stack-sm py-[clamp(0.9rem,1.8vw,1.35rem)] ${index > 0 ? "border-t border-paper-line" : ""}`}
+              className="grid gap-2 p-5 sm:grid-cols-[15rem_1fr] sm:gap-6 sm:p-6"
             >
-              <p
-                className={`name flex items-center gap-2 text-[1.1rem] sm:justify-end sm:text-right ${state.tone}`}
-              >
-                <state.icon aria-hidden="true" size={19} strokeWidth={2} className="shrink-0" />
-                {state.name}
+              <p>
+                <span className={`chip ${state.tone}`}>
+                  <state.icon aria-hidden="true" size={14} strokeWidth={2.5} className="shrink-0" />
+                  {state.name}
+                </span>
               </p>
-              <p className="mt-1.5 max-w-[62ch] sm:mt-0">{state.meaning}</p>
+              <p className="text-muted">{state.meaning}</p>
             </li>
           ))}
         </ul>

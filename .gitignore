@@ -57,3 +57,6 @@ next-env.d.ts
 /.impeccable/mocks/
 /.impeccable/review/
 /.impeccable/build/
+
+# Local embedded database files
+/.pglite/

@@ -101,6 +101,7 @@ describe("migrations", () => {
       sql`SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name`,
     );
     expect(result.rows.map((row) => row.table_name)).toEqual([
+      "accounts",
       "attestation_status_events",
       "attestations",
       "audit_events",
@@ -112,11 +113,14 @@ describe("migrations", () => {
       "organisation_members",
       "organisations",
       "projects",
+      "rate_limits",
       "reports",
+      "sessions",
       "user_profiles",
       "users",
       "verification_requests",
       "verification_reviews",
+      "verifications",
     ]);
   });
 });

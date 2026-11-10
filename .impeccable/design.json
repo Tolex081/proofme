@@ -1,141 +1,207 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-10T00:00:00.000Z",
+  "generatedAt": "2026-11-10T14:37:46.418Z",
   "title": "Design System: ProofMe",
   "extensions": {
     "colorMeta": {
       "ink": {
         "role": "primary",
         "displayName": "Ink",
-        "tonalRamp": ["#070c1a", "#0f1830", "#17223d", "#2f3b5c", "#56618a", "#8a94b5", "#b3bbd0", "#e3e6ef"]
+        "tonalRamp": [
+          "#0b0b14",
+          "#1b1a2e",
+          "#2e2c46",
+          "#4a4866",
+          "#6e6b88",
+          "#9a97ae",
+          "#c9c7d6",
+          "#f3f0ea"
+        ]
       },
-      "paper": {
-        "role": "neutral",
-        "displayName": "Paper",
-        "tonalRamp": ["#3d3828", "#6b6451", "#9a917b", "#bdb39c", "#d3c9b5", "#ece5d6", "#f5f0e6", "#fbf9f4"]
-      },
-      "teal": {
+      "brand": {
         "role": "secondary",
-        "displayName": "Teal",
-        "tonalRamp": ["#04302f", "#074a4b", "#0b6e70", "#128d8c", "#2bb0aa", "#62d2c9", "#a3e6e0", "#dcf6f3"]
+        "displayName": "Brand blue",
+        "tonalRamp": [
+          "#0e1d63",
+          "#1a32a3",
+          "#2f54eb",
+          "#5776f0",
+          "#8098f5",
+          "#a9b9f8",
+          "#d2dbfc",
+          "#eef1fe"
+        ]
       },
-      "ok": {
+      "highlight": {
         "role": "tertiary",
-        "displayName": "Ok",
-        "tonalRamp": ["#0a2f1a", "#124d2c", "#1a6e3f", "#268f55", "#45b475", "#74d6a0", "#aee8c6", "#e0f7ea"]
+        "displayName": "Mint highlight",
+        "tonalRamp": [
+          "#06352b",
+          "#0b6b57",
+          "#13977b",
+          "#3cbf9f",
+          "#7fdcc2",
+          "#a8ead6",
+          "#c9f4e6",
+          "#ecfbf6"
+        ]
       },
-      "wait": {
-        "role": "tertiary",
-        "displayName": "Wait",
-        "tonalRamp": ["#3a2600", "#5e3d00", "#855600", "#a97410", "#cf9a35", "#f0c267", "#f7dca3", "#fcf1d9"]
-      },
-      "bad": {
-        "role": "tertiary",
-        "displayName": "Bad",
-        "tonalRamp": ["#4a1310", "#7a221d", "#a8322b", "#cc4c43", "#e97468", "#ff9d91", "#ffc8c1", "#ffeae7"]
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Warm canvas",
+        "tonalRamp": [
+          "#3d3a32",
+          "#6d685d",
+          "#9b9587",
+          "#c2bbad",
+          "#d9d1c3",
+          "#e9e3d8",
+          "#f4f0e8",
+          "#fbf8f3"
+        ]
       }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "The one heading on a title card." },
-      "heading": { "displayName": "Heading", "purpose": "Section headings on paper." },
-      "name": { "displayName": "Name", "purpose": "The right-hand side of a credit: a name or fact." },
-      "role": { "displayName": "Role", "purpose": "The left-hand side of a credit, right-aligned to the axis." },
-      "body": { "displayName": "Body", "purpose": "Reading text, 58 to 66 characters a line." },
-      "digest": { "displayName": "Digest", "purpose": "Hashes, transaction references and account IDs only." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page heroes."
+      },
+      "heading": {
+        "displayName": "Heading",
+        "purpose": "Section headings."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card and step titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Reading text."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field and data labels; never above a heading."
+      },
+      "digest": {
+        "displayName": "Digest",
+        "purpose": "Hashes, transaction references and account IDs only."
+      }
     },
-    "shadows": [],
+    "shadows": [
+      {
+        "name": "card",
+        "value": "0 1px 2px rgb(27 26 46 / 0.04), 0 24px 48px -28px rgb(27 26 46 / 0.28)",
+        "purpose": "The one elevation for cards."
+      }
+    ],
     "motion": [
-      { "name": "ease-settle", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Credit lines settling and state changes." },
-      { "name": "settle", "value": "560ms, translate 1.1rem to 0, staggered 50ms", "purpose": "Title-card lines on load. Movement only." },
-      { "name": "resolve", "value": "640ms steps(32) clip-path wipe", "purpose": "A recomputed digest resolving left to right." },
-      { "name": "state", "value": "160ms", "purpose": "Hover and press changes." }
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "All state changes."
+      },
+      {
+        "name": "rise",
+        "value": "640ms translate 1rem",
+        "purpose": "Hero content on load, movement only."
+      },
+      {
+        "name": "resolve",
+        "value": "640ms steps(32) clip-path wipe",
+        "purpose": "A recomputed digest."
+      },
+      {
+        "name": "state",
+        "value": "180ms",
+        "purpose": "Hover and press."
+      }
     ],
     "breakpoints": [
-      { "name": "stack", "value": "640px" },
-      { "name": "nav", "value": "768px" }
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
     ]
   },
   "components": [
     {
-      "name": "Primary action on ink",
+      "name": "Primary button",
       "kind": "button",
-      "refersTo": "action-primary-on-ink",
-      "description": "The main action on a title card.",
-      "html": "<div class=\"ds-ink\"><button class=\"ds-action-ink\">Recompute the digest</button></div>",
-      "css": ".ds-ink { background: #0f1830; padding: 24px; } .ds-action-ink { background: #62d2c9; color: #0f1830; min-height: 2.75rem; padding: 0.6rem 1.15rem; border: 0; border-radius: 6px; font: 500 1rem/1.2 Jost, 'Century Gothic', sans-serif; letter-spacing: 0.01em; cursor: pointer; transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-action-ink:hover { background: #f5f0e6; } .ds-action-ink:active { translate: 0 1px; } .ds-action-ink:focus-visible { outline: 2px solid #62d2c9; outline-offset: 3px; }"
+      "refersTo": "button-primary",
+      "description": "The main action.",
+      "html": "<button class=\"ds-btn\">Start your record</button>",
+      "css": ".ds-btn{background:#1b1a2e;color:#fff;border:0;border-radius:999px;min-height:2.875rem;padding:.7rem 1.4rem;font:600 .98rem/1.2 Figtree,system-ui,sans-serif;cursor:pointer;transition:background-color 180ms}.ds-btn:hover{background:#2f54eb}.ds-btn:focus-visible{outline:2.5px solid #2f54eb;outline-offset:3px}"
     },
     {
-      "name": "Primary action on paper",
+      "name": "Secondary button",
       "kind": "button",
-      "refersTo": "action-primary",
-      "description": "The main action on a reading surface.",
-      "html": "<div class=\"ds-paper\"><button class=\"ds-action-paper\">Submit for review</button></div>",
-      "css": ".ds-paper { background: #f5f0e6; padding: 24px; } .ds-action-paper { background: #0f1830; color: #f5f0e6; min-height: 2.75rem; padding: 0.6rem 1.15rem; border: 0; border-radius: 6px; font: 500 1rem/1.2 Jost, 'Century Gothic', sans-serif; letter-spacing: 0.01em; cursor: pointer; transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-action-paper:hover { background: #0b6e70; } .ds-action-paper:active { translate: 0 1px; } .ds-action-paper:focus-visible { outline: 2px solid #0b6e70; outline-offset: 3px; }"
+      "refersTo": "button-secondary",
+      "description": "A second, quieter action.",
+      "html": "<button class=\"ds-btn2\">Check a sample record</button>",
+      "css": ".ds-btn2{background:#fff;color:#1b1a2e;border:1.5px solid #d9d1c3;border-radius:999px;min-height:2.875rem;padding:.7rem 1.4rem;font:600 .98rem/1.2 Figtree,system-ui,sans-serif;cursor:pointer}.ds-btn2:hover{border-color:#1b1a2e}"
     },
     {
-      "name": "Credit block",
-      "kind": "custom",
-      "refersTo": "role-label-on-ink",
-      "description": "Roles right-aligned against one axis, names left-aligned from it.",
-      "html": "<dl class=\"ds-credits\"><dt>Contribution</dt><dd class=\"ds-lead\">Proposal review interface</dd><dt>Credited to</dt><dd>Daniel Okafor</dd><dt>Confirmed by</dt><dd>Northstar Protocol (demo)</dd></dl>",
-      "css": ".ds-credits { display: grid; grid-template-columns: minmax(5.75rem, 30%) 1fr; column-gap: 1.5rem; row-gap: 0.9rem; align-items: baseline; background: #0f1830; color: #f5f0e6; padding: 28px; margin: 0; } .ds-credits dt { font: 500 0.74rem/1.3 Jost, 'Century Gothic', sans-serif; letter-spacing: 0.14em; text-transform: uppercase; text-align: right; color: #b3bbd0; } .ds-credits dd { margin: 0; font: 500 1.4rem/1.12 Jost, 'Century Gothic', sans-serif; letter-spacing: -0.012em; } .ds-credits dd.ds-lead { font-size: 2rem; }"
-    },
-    {
-      "name": "Inline credit field",
-      "kind": "input",
-      "description": "The value side of a credit, made editable.",
-      "html": "<div class=\"ds-ink\"><label class=\"ds-field-label\" for=\"ds-role\">Role</label><input id=\"ds-role\" class=\"ds-field\" value=\"Frontend engineer\"><p class=\"ds-hint\">You can edit this. Change a word, then recompute.</p></div>",
-      "css": ".ds-ink { background: #0f1830; padding: 24px; } .ds-field-label { display: block; font: 500 0.74rem/1.3 Jost, sans-serif; letter-spacing: 0.14em; text-transform: uppercase; color: #b3bbd0; margin-bottom: 6px; } .ds-field { background: transparent; color: #f5f0e6; border: 0; border-bottom: 1px dashed #b3bbd0; padding: 0 0 2px; font: 500 1.4rem/1.12 Jost, 'Century Gothic', sans-serif; caret-color: #62d2c9; outline: none; width: 20rem; max-width: 100%; } .ds-field:hover { border-bottom-color: #62d2c9; } .ds-field:focus-visible { border-bottom: 1px solid #62d2c9; } .ds-hint { margin: 6px 0 0; font: 400 0.88rem/1.5 'Atkinson Hyperlegible Next', system-ui, sans-serif; color: #b3bbd0; }"
-    },
-    {
-      "name": "Status line",
+      "name": "Status chip",
       "kind": "chip",
-      "description": "A symbol, the status in words, and what it means.",
-      "html": "<p class=\"ds-status\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/></svg><span>Verified and anchored</span></p>",
-      "css": ".ds-status { display: inline-flex; align-items: center; gap: 8px; margin: 0; padding: 16px; background: #f5f0e6; color: #1a6e3f; font: 500 1.1rem/1.2 Jost, 'Century Gothic', sans-serif; }"
+      "refersTo": "chip-ok",
+      "description": "A status in words with a symbol.",
+      "html": "<span class=\"ds-chip\">&#10003; Verified</span> <span class=\"ds-chip w\">&#9719; In review</span>",
+      "css": ".ds-chip{display:inline-flex;gap:.35rem;align-items:center;border-radius:999px;padding:.3rem .7rem;font:700 .8rem/1.2 Figtree,sans-serif;background:#d9f7ec;color:#0b6b57}.ds-chip.w{background:#ffefcc;color:#7a5300}"
     },
     {
-      "name": "Text link",
-      "kind": "nav",
-      "refersTo": "text-link",
-      "description": "An onward link on paper.",
-      "html": "<div class=\"ds-paper\"><a class=\"ds-link\" href=\"#\">Read how it works, step by step</a></div>",
-      "css": ".ds-paper { background: #f5f0e6; padding: 24px; } .ds-link { color: #0b6e70; font: 600 1rem/1.5 'Atkinson Hyperlegible Next', system-ui, sans-serif; text-underline-offset: 0.2em; transition: color 160ms; } .ds-link:hover { color: #141b2e; } .ds-link:focus-visible { outline: 2px solid #0b6e70; outline-offset: 3px; border-radius: 2px; }"
+      "name": "Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "A labelled text field.",
+      "html": "<label class=\"ds-l\">Email<input class=\"ds-in\" placeholder=\"name@example.com\"></label>",
+      "css": ".ds-l{display:grid;gap:.4rem;font:600 .95rem Figtree,sans-serif;color:#1b1a2e}.ds-in{min-height:2.875rem;padding:.65rem .95rem;border:1.5px solid #d9d1c3;border-radius:14px;font:400 1rem Figtree,sans-serif;background:#fff}.ds-in:focus-visible{outline:2.5px solid #2f54eb;outline-offset:1px;border-color:transparent}"
+    },
+    {
+      "name": "Timeline record",
+      "kind": "custom",
+      "description": "One entry of a profile timeline.",
+      "html": "<div class=\"ds-rec\"><span class=\"ds-m\">N</span><div><b>Proposal review interface</b><small>Northstar Protocol &middot; Development</small></div><span class=\"ds-chip\">&#10003; Verified</span></div>",
+      "css": ".ds-rec{display:flex;gap:14px;align-items:center;background:#f4f0e8;border-radius:16px;padding:14px;font-family:Figtree,sans-serif;color:#1b1a2e}.ds-rec small{display:block;color:#5a5770;font-size:.85rem}.ds-m{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#4c6ef5;color:#fff;font-weight:800}.ds-chip{margin-left:auto;border-radius:999px;padding:.3rem .7rem;font:700 .8rem Figtree,sans-serif;background:#d9f7ec;color:#0b6b57}"
     }
   ],
   "narrative": {
-    "northStar": "The Credits",
-    "overview": "ProofMe credits work the way films and records credit people: the role beside the name, and beneath them who signs off. Every page is built on one vertical axis. The site alternates two grounds: deep ink is the title card, warm paper is the liner note.",
+    "northStar": "People first",
+    "overview": "ProofMe leads with people and the work they did, shown as real product cards. Warm, friendly and modern, in light and dark themes.",
     "keyCharacteristics": [
-      "One axis on every page; role left of it, name right of it.",
-      "Two grounds, ink and paper, owning whole regions rather than appearing as accents.",
-      "One geometric sans for both voices, from the film title-card tradition.",
-      "Hairlines between credit groups. Nothing is boxed.",
-      "Teal means \"you can press this\". Green, amber and red mean a status and nothing else.",
-      "Digests and transaction references in a mono face, because they are data."
+      "Show the product: every major section contains a working or realistic piece of the product.",
+      "Soft white cards with large radii and a gentle shadow on a warm canvas.",
+      "A bold, friendly grotesque for headlines, with one highlighted word in mint.",
+      "Colourful organisation marks give records personality.",
+      "Pill-shaped buttons and status chips.",
+      "Status is always a symbol plus words in a reserved colour."
     ],
     "rules": [
-      { "name": "The Reserved Colours Rule", "body": "Green, amber and red are never decoration. Each appears only when it is reporting a status, and always with a symbol and the status written in words.", "section": "colors" },
-      { "name": "The Two Values Rule", "body": "Any colour that can appear on both grounds has a value for each. Use the bright value on ink and the deep value on paper; never one value on both.", "section": "colors" },
-      { "name": "The Name Is Largest Rule", "body": "In any credit, the name or fact is larger than its role, and the contribution is the largest line in its block.", "section": "typography" },
-      { "name": "The Data Face Rule", "body": "The mono face is for digests, transaction hashes and account IDs. It is never used to make something look technical.", "section": "typography" },
-      { "name": "The Nothing Is Boxed Rule", "body": "Groups are separated by a 1px hairline or by space. Content is not put in bordered or shadowed containers.", "section": "elevation" }
+      {
+        "name": "The Reserved Colours Rule",
+        "body": "Ok, wait and bad fills appear only on statuses, always with a symbol and words. Mint highlight is not a status colour and never sits on a status.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Highlight Rule",
+        "body": "At most one highlighted word per headline, and not on every page.",
+        "section": "colors"
+      }
     ],
     "dos": [
-      "Do start headings, paragraphs and actions on the axis.",
-      "Do put the actor, role or kind of fact in the left column, and the name or fact on the right.",
-      "Do open every page on an ink title card with one heading and one paragraph.",
-      "Do say what a status means in words next to it.",
-      "Do label sample content as a sample wherever it appears.",
-      "Do keep approval and NEAR anchoring visibly separate. A record is shown as anchored only with a confirmed transaction."
+      "Do show a real or realistic piece of the product in every major section.",
+      "Do label sample people, organisations and records as samples wherever they appear.",
+      "Do keep approval and NEAR anchoring visibly separate.",
+      "Do check every screen in both themes."
     ],
     "donts": [
-      "Don't put a small label above a heading. A role sits beside its name, never over a headline.",
-      "Don't box content in cards, or add shadows, gradients, glass or glow.",
-      "Don't use green, amber or red for anything that is not a status.",
-      "Don't show a count, score or badge that is not derived from real, currently valid records.",
-      "Don't let the page feel like a registry: no seals, stamps, shields or certificate borders.",
-      "Don't hide content behind an animation. Motion moves things; it never makes them appear."
+      "Don't put a small label above a heading.",
+      "Don't show avatars, logos, counts or quotes that imply users or partners who do not exist.",
+      "Don't use neon, purple glow, glassmorphism or gradient text.",
+      "Don't use status colours for decoration."
     ]
   }
 }

@@ -1,18 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Atkinson_Hyperlegible_Mono, Atkinson_Hyperlegible_Next, Jost } from "next/font/google";
+import { Bricolage_Grotesque, Figtree, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const jost = Jost({ subsets: ["latin"], variable: "--font-jost", display: "swap" });
-const atkinson = Atkinson_Hyperlegible_Next({
-  adjustFontFallback: false,
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  variable: "--font-atkinson",
+  variable: "--font-bricolage",
   display: "swap",
 });
-const atkinsonMono = Atkinson_Hyperlegible_Mono({
-  adjustFontFallback: false,
+const figtree = Figtree({ subsets: ["latin"], variable: "--font-figtree", display: "swap" });
+const geistMono = Geist_Mono({
   subsets: ["latin"],
-  variable: "--font-atkinson-mono",
+  variable: "--font-geist-mono",
   display: "swap",
 });
 
@@ -23,12 +21,27 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f1830",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbf8f3" },
+    { media: "(prefers-color-scheme: dark)", color: "#12121f" },
+  ],
 };
+
+// Applies a theme the visitor chose earlier before the first paint, so the
+// page never flashes the wrong theme. Without a saved choice, CSS follows the
+// system setting.
+const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("proofme-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-GB" className={`${jost.variable} ${atkinson.variable} ${atkinsonMono.variable}`}>
+    <html
+      lang="en-GB"
+      className={`${bricolage.variable} ${figtree.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body>{children}</body>
     </html>
   );

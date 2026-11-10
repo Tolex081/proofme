@@ -15,6 +15,13 @@
       "when": 1794263592781,
       "tag": "0001_integrity_triggers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794267680695,
+      "tag": "0002_auth_tables",
+      "breakpoints": true
     }
   ]
 }
