@@ -6,8 +6,19 @@ Last updated: 11 November 2026
 
 - **Milestones 0, 2, 3, 4 and 5** are complete.
 - **Milestone 1** is complete except Impeccable's finish review, which has not run.
-- **Next:** Milestone 6 (NEAR testnet contract and anchoring). Nothing is on NEAR yet; approved
-  records show "awaiting NEAR anchor".
+- **Milestone 6** is started: the NFT contract is written and unit-tested. It is not deployed and
+  the app does not call it yet; approved records still show "awaiting NEAR anchor".
+- **Deadline:** NEAR Hackathon submissions close 14 November 2026, 23:59 UTC (track 10, NFTs).
+
+## Milestone 6 — NFT contract (in progress)
+
+| Task                                      | State                                                                                                     |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Contract `contracts/proofme-attestations` | Written: NEP-171/177/181 NFT, non-transferable, issuer registry, issue, revoke, supersede, verify         |
+| Unit tests                                | 48 passing against the SDK mock runtime; clippy clean                                                     |
+| WebAssembly build                         | Builds with plain `cargo build`. Not yet built with `cargo near`, and not yet run on a sandbox or testnet |
+| Deployment to testnet                     | Not done: needs testnet accounts                                                                          |
+| App integration                           | Not started                                                                                               |
 
 ## Redesign (10 Nov 2026)
 
@@ -237,16 +248,16 @@ both sizes, are now captured by `npm run capture:screens` into `.impeccable/revi
 
 ## Check results (run 11 Nov 2026, after Milestone 5)
 
-| Command                                            | Result                         |
-| -------------------------------------------------- | ------------------------------ |
-| `npm run format:check`                             | Passed                         |
-| `npm run lint`                                     | Passed, no warnings            |
-| `npm run typecheck`                                | Passed                         |
-| `npm run test` (unit and integration)              | 322 passed, 0 failed           |
-| `npm run build`                                    | Passed, no warnings            |
-| `npm run test:e2e` (Playwright, desktop and phone) | 27 passed, 0 failed            |
-| Contract tests                                     | Do not exist yet (Milestone 6) |
-| CI on GitHub                                       | Never run; there is no remote  |
+| Command                                              | Result                        |
+| ---------------------------------------------------- | ----------------------------- |
+| `npm run format:check`                               | Passed                        |
+| `npm run lint`                                       | Passed, no warnings           |
+| `npm run typecheck`                                  | Passed                        |
+| `npm run test` (unit and integration)                | 322 passed, 0 failed          |
+| `npm run build`                                      | Passed, no warnings           |
+| `npm run test:e2e` (Playwright, desktop and phone)   | 27 passed, 0 failed           |
+| Contract tests (`cargo test` in the contract folder) | 48 passed, 0 failed (unit)    |
+| CI on GitHub                                         | Never run; there is no remote |
 
 ## Built ahead of order (belongs to Milestones 2–5)
 
@@ -265,7 +276,7 @@ both sizes, are now captured by `npm run capture:screens` into `.impeccable/revi
 | Node / npm       | 22.17.1 / 10.9.2                                                            |
 | Git, GitHub CLI  | Installed; `gh` signed in                                                   |
 | Impeccable       | 4.8.2 in `.agents/skills/impeccable` (not committed; `skills-lock.json` is) |
-| Rust             | 1.87.0; `wasm32-unknown-unknown` target not installed                       |
+| Rust             | 1.87.0 default; 1.95.0 with `wasm32-unknown-unknown` for the contract       |
 | WSL              | Ubuntu (WSL 2) available — needed for NEAR sandbox tests                    |
 | Docker           | Installed, daemon not running                                               |
 | NEAR CLI, FFmpeg | Not installed                                                               |
@@ -289,5 +300,7 @@ both sizes, are now captured by `npm run capture:screens` into `.impeccable/revi
 
 ## Next step
 
-Milestone 6: the NEAR testnet registry contract, issuer registration, anchoring, revocation and
-reconciliation. This needs NEAR testnet accounts and wallet signatures from the user.
+Milestone 6, remaining: deploy `contracts/proofme-attestations` to testnet, register an issuer,
+then wire the app to it (wallet connection, minting on approval, revocation, the public
+verification page reading the contract, reconciliation). This needs NEAR testnet accounts and
+wallet signatures from the user.

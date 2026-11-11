@@ -133,3 +133,24 @@ exposing account internals.
 **Why:** two reviewers deciding at once must not both succeed or issue two attestations. The
 request row is locked `FOR UPDATE` and the update requires the version the reviewer saw; a stale
 view is told to reload.
+
+## D26 — Each attestation is a non-transferable NFT, not only an anchored digest
+
+**Why:** ProofMe is entered in the NEAR Hackathon's track 10, "NFTs That Do Something", which asks
+for NFTs that carry credentials and have behaviour. A plain digest registry would not be an NFT
+project. The contract (`contracts/proofme-attestations`) implements NEP-171, NEP-177 and NEP-181
+by hand rather than through `near-contract-standards`, because the standard implementation is
+built around transfer and approval, which this contract refuses. The trade-off: a contributor
+needs a NEAR account to receive the token (principle 6 in `PRODUCT.md` was changed to say so).
+
+## D27 — The track's "NFT as an account" idea is left out
+
+**Why:** making each token control its own NEAR sub-account has no SDK yet and adds nothing a
+work record needs. With submissions closing on 14 November 2026 it was not worth the risk.
+
+## D28 — Contract toolchain pinned to Rust 1.95.0, near-sdk 5.30.1
+
+**Why:** near-sdk 5.30.1 (crates.io, checked 11 Nov 2026) requires Rust 1.95; the machine's
+default was 1.87. The contract folder pins its own toolchain so nothing else on the machine
+changes. Its test-only dependencies need the NASM assembler on Windows, so
+`.cargo/config.toml` selects the prebuilt objects instead.

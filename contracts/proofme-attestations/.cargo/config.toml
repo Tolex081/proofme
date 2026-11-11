@@ -1,0 +1,5 @@
+# The test-only dependencies include aws-lc-sys, which needs the NASM assembler
+# on Windows. This uses the objects it ships prebuilt, so no extra install is
+# needed. It has no effect on other platforms or on the contract itself.
+[env]
+AWS_LC_SYS_PREBUILT_NASM = "1"

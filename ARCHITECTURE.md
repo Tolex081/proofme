@@ -15,7 +15,7 @@ Browser ──────────────► Next.js (App Router)
   │                       └─ lib/db          Drizzle schema + queries ──► PostgreSQL
   │
   └─ wallet (user signs) ─► NEAR testnet ◄── server reads (RPC view calls, tx status)
-                              └─ proofme-registry contract
+                              └─ proofme-attestations contract (NEP-171 NFT)
 ```
 
 Two rules shape everything else:
@@ -73,17 +73,19 @@ approve (reviewer, server-checked)
   → freeze claim snapshot → build canonical payload (versioned schema)
   → SHA-256 over canonical bytes = digest
   → attestation row: status approved, anchor status awaiting
-issuer opens wallet → signs issue(attestation_id, digest) on the registry
+issuer opens wallet → signs issue(token_id = attestation_id, receiver_id, digest) on the contract
+  → the contract mints a non-transferable NFT to the contributor's NEAR account
   → client reports tx hash → server fetches tx result from RPC
   → server checks: success, correct contract, correct signer, digest matches
   → only then: anchor status confirmed, contribution verified
 public verify page
-  → load canonical payload → recompute digest → view call to registry → compare → show result
+  → load canonical payload → recompute digest → view call verify(token_id, digest) → show result
 ```
 
-Review state and anchor state are separate columns. If a transaction succeeds but the server
-update fails, a reconcile action re-reads the registry by attestation ID and repairs the row; it
-never issues a second anchor (the contract rejects duplicate IDs).
+The contract is in `contracts/proofme-attestations`; its README lists every method and the
+threats it answers. Review state and anchor state are separate columns. If a transaction succeeds
+but the server update fails, a reconcile action re-reads the contract by attestation ID and
+repairs the row; it never mints a second token (the contract rejects duplicate IDs).
 
 ## Environments
 
@@ -102,7 +104,7 @@ Mainnet is rejected by environment validation in this build.
 routes ─► services ─► db
              │  └────► lib (validation, permissions, canonicalisation)  [pure, unit-tested]
              └───────► near client ─► NEAR RPC
-contracts/proofme-registry  (no dependency on the web app)
+contracts/proofme-attestations  (no dependency on the web app)
 ```
 
 `lib/` never imports from `server/` or `app/`. `contracts/` is a separate Rust crate.

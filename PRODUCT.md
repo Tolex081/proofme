@@ -20,8 +20,12 @@ contributed to. Share proof that others can check.
 
 A portable professional contribution and reputation platform. Contributors document specific
 pieces of work with evidence. The organisation they worked with reviews each claim and, if it can
-stand behind it, issues an attestation. The attestation digest is anchored on NEAR (testnet in
-this build) so anyone can check it without an account.
+stand behind it, issues an attestation. The attestation is minted on NEAR (testnet in this build)
+as an NFT that cannot be transferred and that the issuer can revoke, carrying the record's digest,
+so anyone can check it without an account.
+
+Built for the NEAR Hackathon, track 10, "NFTs That Do Something": an NFT that carries a
+credential and whose status changes on-chain.
 
 ProofMe is an independent product. It is not CrewPass and shares nothing with it.
 
@@ -57,8 +61,9 @@ says this plainly wherever an attestation is shown.
 3. Specific claims, not vague praise.
 4. Portable: checkable without a ProofMe login.
 5. No universal reputation score. Only counts derived from real, currently valid records.
-6. Wallet optional for people. Required only for organisation issuer actions.
-7. NEAR does real work: issuer registry, digest anchoring, revocation.
+6. Wallet optional for people until they want the NFT: a contributor needs a NEAR account to
+   receive one. Organisations need a wallet for issuer actions.
+7. NEAR does real work: issuer registry, a non-transferable NFT per attestation, revocation.
 8. Private by default. Personal data, notes and private evidence stay off-chain.
 9. Immutable history. Corrections revoke or supersede; nothing is silently edited.
 10. Reputation cannot be bought. No tokens, boosts or follower counts.
@@ -67,7 +72,7 @@ says this plainly wherever an attestation is shown.
 
 ## What it is not
 
-A social network, a CV builder, an NFT marketplace, a token launch, an automatic
+A social network, a CV builder, an NFT marketplace (its NFTs cannot be traded), a token launch, an automatic
 GitHub-to-reputation converter, a single trust score, or a mandatory-wallet product.
 
 ## Voice
