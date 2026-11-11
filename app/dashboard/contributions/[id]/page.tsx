@@ -15,8 +15,28 @@ import {
   readinessProblems,
 } from "@/lib/validation/contribution";
 import { getOwnContribution } from "@/server/services/contributions";
+import { contributorReviewHistory, listSubmissionTargets } from "@/server/services/verification";
+import {
+  RespondForm,
+  ReviseButton,
+  SubmitForReviewForm,
+  WithdrawButton,
+} from "@/components/verification/forms";
 
 export const metadata: Metadata = { title: "Contribution" };
+
+const UPDATES: Record<string, string> = {
+  sent: "Sent for review. The organisation's reviewers have been told.",
+  answered: "Answer sent. The claim is back with the reviewers.",
+  withdrawn: "Withdrawn from review. It is now self-reported.",
+};
+
+const REVIEW_LABELS: Record<string, string> = {
+  approve: "approved",
+  reject: "did not approve",
+  request_information: "asked for more",
+  contributor_response: "answered",
+};
 
 const DAY = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
@@ -45,17 +65,32 @@ async function DetailContent({
   searchParams,
 }: Pick<PageProps<"/dashboard/contributions/[id]">, "params" | "searchParams">) {
   const { id } = await params;
-  const { saved } = await searchParams;
+  const { saved, update } = await searchParams;
   const { user, db } = await requireWorkspace(`/dashboard/contributions/${id}`);
   const contribution = await getOwnContribution(db, user.id, id);
   // Someone else's contribution and a missing one look the same.
   if (!contribution) notFound();
 
   const editable = isContributionEditable(contribution.status);
+  const history = await contributorReviewHistory(db, user.id, contribution.id);
+  const requests = history?.requests ?? [];
+  const current = requests.at(-1) ?? null;
+  const lastMessage = (kind: string) =>
+    current?.reviews.filter((review) => review.kind === kind).at(-1)?.message ?? null;
+  const canSend = contribution.status === "draft" || contribution.status === "self_reported";
+  const targets = canSend
+    ? (await listSubmissionTargets(db)).map((target) => ({
+        id: target.id,
+        name: target.name,
+        reviewed: target.platformVerificationStatus === "verified",
+        projects: target.projects.map((project) => ({ id: project.id, name: project.name })),
+      }))
+    : [];
   const started = formatDate(contribution.startDate);
   const finished = formatDate(contribution.endDate);
   const problems = readinessProblems({
     summary: contribution.summary,
+    description: contribution.description,
     role: contribution.role,
     evidenceCount: contribution.evidence.length,
   });
@@ -69,6 +104,11 @@ async function DetailContent({
         <ArrowLeft aria-hidden="true" size={16} /> All contributions
       </Link>
 
+      {typeof update === "string" && UPDATES[update] ? (
+        <p role="status" className="form-message form-message-success mb-6">
+          {UPDATES[update]}
+        </p>
+      ) : null}
       {saved === "1" ? (
         <p role="status" className="form-message form-message-success mb-6">
           Saved.
@@ -180,30 +220,119 @@ async function DetailContent({
         <div className="grid content-start gap-4">
           <Panel title="Where it stands">
             <p>{STATUS_INFO[contribution.status].meaning}</p>
-            {contribution.status === "draft" ? (
+
+            {canSend ? (
               <div className="mt-5 grid gap-4 border-t border-line pt-5">
-                <p className="text-[0.92rem] text-muted">
-                  Mark it as self-reported to show it on your profile as your own account of the
-                  work. Sending it to an organisation for confirmation arrives with the review stage
-                  of this build.
-                </p>
                 {problems.length > 0 ? (
-                  <ul className="grid gap-1 text-[0.92rem]">
-                    {problems.map((problem) => (
-                      <li key={problem} className="text-wait-ink">
-                        {problem}
-                      </li>
-                    ))}
-                  </ul>
+                  <>
+                    <p className="text-[0.92rem] text-muted">
+                      Before it can be confirmed or shown:
+                    </p>
+                    <ul className="grid gap-1 text-[0.92rem]">
+                      {problems.map((problem) => (
+                        <li key={problem} className="text-wait-ink">
+                          {problem}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
                 ) : (
-                  <PublishButton contributionId={contribution.id} />
+                  <SubmitForReviewForm contributionId={contribution.id} targets={targets} />
                 )}
-                <div>
-                  <DeleteDraftButton contributionId={contribution.id} />
+                {contribution.status === "draft" && problems.length === 0 ? (
+                  <div className="border-t border-line pt-4">
+                    <p className="mb-3 text-[0.9rem] text-muted">
+                      Or show it on your profile as your own account, without confirmation.
+                    </p>
+                    <PublishButton contributionId={contribution.id} />
+                  </div>
+                ) : null}
+                {contribution.status === "draft" ? (
+                  <div>
+                    <DeleteDraftButton contributionId={contribution.id} />
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
+            {contribution.status === "pending" && current ? (
+              <div className="mt-5 grid gap-4 border-t border-line pt-5">
+                <p className="text-[0.92rem]">
+                  With <span className="font-semibold">{current.organisation.name}</span>&rsquo;s
+                  reviewers since {DAY.format(current.submittedAt)}.
+                </p>
+                <WithdrawButton contributionId={contribution.id} />
+              </div>
+            ) : null}
+
+            {contribution.status === "needs_information" && current ? (
+              <div className="mt-5 grid gap-4 border-t border-line pt-5">
+                <div className="rounded-2xl bg-wait p-4 text-wait-ink">
+                  <p className="text-[0.85rem] font-semibold">{current.organisation.name} asks</p>
+                  <p className="mt-1 whitespace-pre-line">{lastMessage("request_information")}</p>
                 </div>
+                <RespondForm contributionId={contribution.id} />
+                <WithdrawButton contributionId={contribution.id} />
+              </div>
+            ) : null}
+
+            {contribution.status === "rejected" && current ? (
+              <div className="mt-5 grid gap-4 border-t border-line pt-5">
+                <div className="rounded-2xl bg-bad p-4 text-bad-ink">
+                  <p className="text-[0.85rem] font-semibold">{current.organisation.name} said</p>
+                  <p className="mt-1 whitespace-pre-line">{lastMessage("reject")}</p>
+                </div>
+                <ReviseButton contributionId={contribution.id} />
+              </div>
+            ) : null}
+
+            {history?.attestation ? (
+              <div className="mt-5 grid gap-3 border-t border-line pt-5">
+                <p className="text-[0.92rem]">
+                  Approved by <span className="font-semibold">{current?.organisation.name}</span> on{" "}
+                  {DAY.format(history.attestation.issuedAt)}.
+                </p>
+                <dl className="grid gap-2 text-[0.9rem]">
+                  <div>
+                    <dt className="text-muted">Attestation</dt>
+                    <dd className="digest">{history.attestation.id}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted">Digest</dt>
+                    <dd className="digest">{history.attestation.payloadDigest}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted">NEAR testnet</dt>
+                    <dd>
+                      {history.attestation.nearAnchorStatus === "confirmed"
+                        ? "Anchored"
+                        : "Not anchored yet. The organisation anchors it from its NEAR account."}
+                    </dd>
+                  </div>
+                </dl>
               </div>
             ) : null}
           </Panel>
+
+          {requests.some((request) => request.reviews.length > 0) ? (
+            <Panel title="Review history">
+              <ol className="grid gap-4">
+                {requests.flatMap((request) =>
+                  request.reviews.map((review) => (
+                    <li key={review.id} className="border-l-2 border-line pl-4">
+                      <p className="text-[0.85rem] font-semibold text-muted">
+                        {review.byContributor ? "You" : request.organisation.name} ·{" "}
+                        {REVIEW_LABELS[review.kind]} · {DAY.format(review.createdAt)}
+                      </p>
+                      {review.message ? (
+                        <p className="mt-1 whitespace-pre-line">{review.message}</p>
+                      ) : null}
+                    </li>
+                  )),
+                )}
+              </ol>
+            </Panel>
+          ) : null}
         </div>
       </div>
     </>

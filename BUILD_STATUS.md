@@ -4,10 +4,10 @@ Last updated: 11 November 2026
 
 ## Where things stand
 
-- **Milestones 0, 2, 3 and 4** are complete.
+- **Milestones 0, 2, 3, 4 and 5** are complete.
 - **Milestone 1** is complete except Impeccable's finish review, which has not run.
-- **Next:** Milestone 5 (verification workflow, audit, notifications). There is no review
-  workflow or NEAR integration yet.
+- **Next:** Milestone 6 (NEAR testnet contract and anchoring). Nothing is on NEAR yet; approved
+  records show "awaiting NEAR anchor".
 
 ## Redesign (10 Nov 2026)
 
@@ -27,6 +27,52 @@ was rebuilt in it:
   .impeccable/design.json rewritten for the new system.
 - Impeccable detector: 29 advisories, no errors (font sizes, two radii and one colour that are not
   named steps in DESIGN.md). Not yet resolved.
+
+## Milestone 5 — Verification workflow, audit and notifications (complete)
+
+| Task                                   | State                                                                                                                                                                                                                                                                                      |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Verification request lifecycle         | Done. A complete contribution (summary, description, role, at least one link) is sent to an organisation, optionally to one of its active projects. Pending → information requested → answered → pending; approved; not approved; withdrawn. One open request per contribution             |
+| Reviewer queue and decision page       | Done: `/org/[slug]/verifications` with filters, and `/[requestId]` showing the claim, evidence, contributor, project and full history                                                                                                                                                      |
+| Approve, reject, request information   | Done. Rejection needs a reason and a question needs a message; both are shown to the contributor. Reviewers can add internal notes that the contributor never sees                                                                                                                         |
+| No self-approval; reviewer permissions | Done. Owner, admin and reviewer may decide; viewers cannot see the queue; nobody can decide on their own claim, whatever their role; other organisations' requests are not found                                                                                                           |
+| Immutable approved snapshot            | Done. Approval builds the v1 payload (claim, evidence, issuer, subject, project, reviewer profile ID, random nonce), canonicalises it, hashes it with SHA-256 and stores both in the same transaction. The contribution and the record are then frozen (service rule and database trigger) |
+| Attestation and status event records   | Done. Status "active", NEAR anchor "awaiting"; first status event recorded                                                                                                                                                                                                                 |
+| Notifications                          | Done: reviewers on a new claim and on an answer; the contributor on every decision; inviters on accepted or declined invitations                                                                                                                                                           |
+| Audit events                           | Done for submit, withdraw, answer, each decision, attestation issued, and every organisation and team change                                                                                                                                                                               |
+| Issued attestations page               | Done: `/org/[slug]/attestations`, approval and anchor status shown separately                                                                                                                                                                                                              |
+| Contributors page                      | Done: people who have sent the organisation claims, with counts                                                                                                                                                                                                                            |
+
+Revocation and supersession arrive with the NEAR work (Milestone 6), because a revocation must
+also be recorded on-chain.
+
+### Acceptance
+
+| Criterion                                               | Result                                                                                                                                      |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Complete off-chain review lifecycle works               | Yes: browser test across three accounts (owner, reviewer, contributor): send, ask, answer, approve; and a rejection reworked and sent again |
+| Attestation snapshot is immutable                       | Yes: the stored digest re-checks against the stored payload; edits are refused by the service and by the database                           |
+| Rejection and information requests require explanations | Yes, service and browser tests                                                                                                              |
+| Notifications and audit events persist                  | Yes, integration tests                                                                                                                      |
+| All role and lifecycle tests pass                       | Yes: 12 workflow integration tests, including an owner refused on their own claim and two simultaneous decisions where exactly one wins     |
+
+### Problems found and fixed by the tests
+
+- **A reviewer's "ask for more" could become an approval.** React 19 resets a form after its
+  action; after a validation error the choice silently snapped back to "Approve". Every form
+  with fields now submits without the reset, and a unit test fails the build if any form with
+  fields uses the resetting pattern again. The same flaw could have sent a claim to the wrong
+  organisation or given an invitee the wrong role.
+- The frozen record identified the reviewer by account ID, which is neither a UUID nor fit for
+  public view. It now uses the reviewer's profile ID.
+- Confirmation messages vanished when a decision changed the page. Decisions and contributor
+  actions now redirect to a confirmation banner.
+
+### Known limitation
+
+The simultaneous-decision test runs on PGlite, which has one connection, so it proves the
+version check rather than true database-level concurrency. The request row is also locked with
+`FOR UPDATE`, which protects a hosted PostgreSQL; that is untested until one is available.
 
 ## Milestone 4 — Organisations, projects and team roles (complete)
 
@@ -243,4 +289,5 @@ both sizes, are now captured by `npm run capture:screens` into `.impeccable/revi
 
 ## Next step
 
-Milestone 5: verification workflow, audit and notifications.
+Milestone 6: the NEAR testnet registry contract, issuer registration, anchoring, revocation and
+reconciliation. This needs NEAR testnet accounts and wallet signatures from the user.

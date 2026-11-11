@@ -40,6 +40,7 @@ async function Navigation({ params }: Pick<LayoutProps<"/org/[slug]">, "params">
     slug: organisation.slug,
     name: organisation.name,
     canManage: can("organisation.update_profile"),
+    canReview: can("verification.view"),
   };
   return (
     <Suspense fallback={<OrgNavFallback {...props} />}>

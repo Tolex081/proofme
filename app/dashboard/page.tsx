@@ -109,7 +109,7 @@ async function OverviewContent({ searchParams }: Pick<PageProps<"/dashboard">, "
           <p className="mt-1.5 text-muted">
             {own.length === 0
               ? "Record one specific piece of work you did, with the links that show it."
-              : `${own.length} recorded${drafts > 0 ? `, ${drafts} still ${drafts === 1 ? "a draft" : "drafts"}` : ""}. Sending them to an organisation for review arrives with the next stage of this build.`}
+              : `${own.length} recorded${drafts > 0 ? `, ${drafts} still ${drafts === 1 ? "a draft" : "drafts"}` : ""}. Open one to send it to an organisation for review.`}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Link href="/dashboard/contributions/new" className="action action-primary">
@@ -131,14 +131,14 @@ async function OverviewContent({ searchParams }: Pick<PageProps<"/dashboard">, "
           </h2>
           <p className="mt-1.5 text-muted">
             {wantsOrganisation
-              ? "You said you want to set up an organisation. Organisation tools arrive in a later part of this build."
-              : "Organisations confirm the work you record. Organisation tools arrive in a later part of this build."}
+              ? "You said you want to set up an organisation. Create it, add projects and invite your reviewers."
+              : "Organisations confirm the work you record. If you run a project, you can set one up with this same account."}
           </p>
           <Link
-            href="/for-organisations"
+            href="/dashboard/organisations"
             className="text-link mt-3 inline-flex items-center gap-1.5"
           >
-            What organisations will do <ArrowRight aria-hidden="true" size={16} />
+            Your organisations <ArrowRight aria-hidden="true" size={16} />
           </Link>
         </section>
       </div>

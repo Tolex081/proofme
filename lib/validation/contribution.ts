@@ -145,11 +145,13 @@ export type ContributionInput = z.infer<typeof contributionSchema>;
 /** What must be true before a contribution can stand on its own as a record. */
 export function readinessProblems(input: {
   summary: string;
+  description: string;
   role: string;
   evidenceCount: number;
 }): string[] {
   const problems: string[] = [];
   if (input.summary.trim().length === 0) problems.push("Add a one-line summary.");
+  if (input.description.trim().length === 0) problems.push("Describe what you did.");
   if (input.role.trim().length === 0) problems.push("Say what your role was.");
   if (input.evidenceCount === 0) problems.push("Add at least one evidence link.");
   return problems;

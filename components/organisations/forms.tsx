@@ -346,9 +346,12 @@ export function InviteForm({
   organisationId: string;
   canInviteAdmins: boolean;
 }) {
-  const [state, action, pending] = useActionState(inviteAction.bind(null, organisationId), {
-    status: "idle",
-  } as InviteState);
+  const { state, pending, onSubmit } = useFormAction<InviteState>(
+    inviteAction.bind(null, organisationId),
+    {
+      status: "idle",
+    },
+  );
   const hydrated = useHydrated();
   const [copied, setCopied] = useState(false);
   const errors = state.errors ?? {};
@@ -358,7 +361,7 @@ export function InviteForm({
 
   return (
     <div className="grid gap-5">
-      <form action={action} className="form-stack" noValidate>
+      <form onSubmit={onSubmit} method="post" className="form-stack" noValidate>
         {state.status === "error" && state.message ? (
           <FormMessage tone="error">{state.message}</FormMessage>
         ) : null}
@@ -452,11 +455,8 @@ export function MemberControls({
   isSelf: boolean;
   name: string;
 }) {
-  const [state, action, pending] = useActionState(
+  const { state, pending, onSubmit } = useFormAction(
     changeMemberAction.bind(null, organisationId, userId),
-    {
-      status: "idle",
-    } as FormState,
   );
   const [ownerState, ownerAction, ownerPending] = useActionState(
     transferOwnershipAction.bind(null, organisationId, userId),
@@ -468,7 +468,7 @@ export function MemberControls({
 
   return (
     <div className="grid gap-2">
-      <form action={action} className="flex flex-wrap items-end gap-2">
+      <form onSubmit={onSubmit} method="post" className="flex flex-wrap items-end gap-2">
         <div className="field">
           <label htmlFor={id} className="sr-only">
             Role for {name}

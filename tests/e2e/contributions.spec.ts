@@ -13,6 +13,9 @@ async function startContribution(page: Page, title: string) {
   await page.getByRole("textbox", { name: "Title", exact: true }).fill(title);
   await page.getByLabel("One-line summary").fill("Built the reviewer-facing proposal screen.");
   await page.getByLabel("Your role").fill("Frontend engineer");
+  await page
+    .getByRole("textbox", { name: /What you did/ })
+    .fill("Designed and built the screen reviewers use.");
 }
 
 async function makeProfilePublic(page: Page) {
@@ -147,6 +150,6 @@ test.describe("contributions and evidence", () => {
     await page.getByRole("button", { name: "Yes, delete it" }).click();
     await expect(page).toHaveURL(/\/dashboard\/contributions\?deleted=1$/);
     await expect(page.getByText("Draft deleted.")).toBeVisible();
-    await expect(page.getByText("Short-lived draft")).toBeHidden();
+    await expect(page.getByRole("link", { name: /Short-lived draft/ })).toHaveCount(0);
   });
 });

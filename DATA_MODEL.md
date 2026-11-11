@@ -149,7 +149,7 @@ Planned shape; fixed with test fixtures in Milestone 5.
     "endDate": "..."
   },
   "evidence": [{ "type": "...", "url": "...", "label": "..." }],
-  "reviewer": { "id": "<uuid>" },
+  "reviewer": { "id": "<reviewer profile uuid, never an account id>" },
   "nonce": "<128-bit random, hex>"
 }
 ```

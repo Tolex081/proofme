@@ -114,3 +114,22 @@ Members whose role is too low see an explicit "your role cannot" page instead.
 **Why:** with Cache Components, a page that reads only route parameters and then the database is
 treated as prerenderable, and the database driver's clock reads are flagged. Marking every
 request-time database read in one place prevents this for every current and future page.
+
+## D23 — Every form with fields submits without React's automatic reset
+
+**Why:** React 19 resets a `<form action>` after the action finishes. After a validation error,
+radios and selects returned to their defaults while still looking chosen; in testing a reviewer's
+"ask for more" became an approval. `useFormAction` submits through `onSubmit` instead, and
+`tests/unit/form-reset-guard.test.ts` fails if a form with fields uses the resetting pattern.
+
+## D24 — The attestation names the reviewer by profile ID
+
+**Why:** the payload is public and permanent. Account IDs are internal and belong to the
+authentication library; the profile ID is a stable UUID that identifies the reviewer without
+exposing account internals.
+
+## D25 — Decisions are serialised by a row lock and a version check
+
+**Why:** two reviewers deciding at once must not both succeed or issue two attestations. The
+request row is locked `FOR UPDATE` and the update requires the version the reviewer saw; a stale
+view is told to reload.

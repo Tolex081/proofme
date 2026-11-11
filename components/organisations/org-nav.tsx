@@ -3,6 +3,8 @@
 import {
   ArrowLeft,
   FolderKanban,
+  Inbox,
+  ScrollText,
   LayoutDashboard,
   Settings,
   UserRoundCheck,
@@ -13,6 +15,8 @@ import { usePathname } from "next/navigation";
 
 const SECTIONS = [
   { path: "dashboard", label: "Overview", icon: LayoutDashboard },
+  { path: "verifications", label: "Review queue", icon: Inbox, reviewersOnly: true },
+  { path: "attestations", label: "Attestations", icon: ScrollText },
   { path: "projects", label: "Projects", icon: FolderKanban },
   { path: "team", label: "Team", icon: Users },
   { path: "contributors", label: "Contributors", icon: UserRoundCheck },
@@ -23,11 +27,13 @@ function OrgNavView({
   slug,
   name,
   canManage,
+  canReview,
   pathname,
 }: {
   slug: string;
   name: string;
   canManage: boolean;
+  canReview: boolean;
   pathname: string | null;
 }) {
   return (
@@ -36,7 +42,11 @@ function OrgNavView({
         {name}
       </p>
       <ul className="flex flex-wrap gap-1.5 lg:flex-col lg:flex-nowrap lg:gap-1">
-        {SECTIONS.filter((section) => canManage || !("managersOnly" in section)).map((section) => {
+        {SECTIONS.filter(
+          (section) =>
+            (canManage || !("managersOnly" in section)) &&
+            (canReview || !("reviewersOnly" in section)),
+        ).map((section) => {
           const href = `/org/${slug}/${section.path}`;
           const current = pathname !== null && pathname.startsWith(href);
           return (
@@ -66,10 +76,20 @@ function OrgNavView({
   );
 }
 
-export function OrgNav(props: { slug: string; name: string; canManage: boolean }) {
+export function OrgNav(props: {
+  slug: string;
+  name: string;
+  canManage: boolean;
+  canReview: boolean;
+}) {
   return <OrgNavView {...props} pathname={usePathname()} />;
 }
 
-export function OrgNavFallback(props: { slug: string; name: string; canManage: boolean }) {
+export function OrgNavFallback(props: {
+  slug: string;
+  name: string;
+  canManage: boolean;
+  canReview: boolean;
+}) {
   return <OrgNavView {...props} pathname={null} />;
 }

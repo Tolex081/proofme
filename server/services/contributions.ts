@@ -128,6 +128,7 @@ export async function updateContribution(
   if (existing.status === "self_reported") {
     const problems = readinessProblems({
       summary: parsed.data.summary,
+      description: parsed.data.description,
       role: parsed.data.role,
       evidenceCount: parsed.data.evidence.length,
     });
@@ -169,6 +170,7 @@ export async function publishSelfReported(
   const evidenceCount = (await evidenceFor(db, [existing.id])).length;
   const problems = readinessProblems({
     summary: existing.summary,
+    description: existing.description,
     role: existing.role,
     evidenceCount,
   });
