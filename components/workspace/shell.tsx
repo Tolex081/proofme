@@ -3,6 +3,7 @@
 import {
   Bell,
   ChevronDown,
+  FileText,
   IdCard,
   LayoutDashboard,
   LogOut,
@@ -17,6 +18,7 @@ import { authClient } from "@/lib/auth/client";
 
 export const WORKSPACE_LINKS = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard/contributions", label: "Contributions", icon: FileText },
   { href: "/dashboard/portfolio", label: "Portfolio", icon: UserRound },
   { href: "/dashboard/identity", label: "Identity", icon: IdCard },
   { href: "/dashboard/notifications", label: "Notifications", icon: Bell },

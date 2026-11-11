@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { PublicProfileView } from "@/components/profile/public-profile";
 import { PageHeading, PageSkeleton } from "@/components/workspace/parts";
 import { requireWorkspace } from "@/lib/auth/guards";
+import { listPublicContributions } from "@/server/services/contributions";
 import { publicViewOf } from "@/server/services/profile";
 
 export const metadata: Metadata = { title: "Portfolio" };
@@ -19,7 +20,8 @@ export default function Portfolio() {
 }
 
 async function PortfolioContent() {
-  const { profile } = await requireWorkspace("/dashboard/portfolio");
+  const { user, profile, db } = await requireWorkspace("/dashboard/portfolio");
+  const contributions = await listPublicContributions(db, user.id);
   const isPublic = profile.visibility === "public";
   const path = `/u/${profile.username}`;
 
@@ -65,7 +67,7 @@ async function PortfolioContent() {
       </div>
 
       <p className="mb-3 text-[0.85rem] font-semibold text-muted">Preview</p>
-      <PublicProfileView profile={publicViewOf(profile)} embedded />
+      <PublicProfileView profile={publicViewOf(profile)} contributions={contributions} embedded />
     </>
   );
 }

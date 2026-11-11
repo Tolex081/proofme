@@ -26,7 +26,7 @@ interface TextFieldProps {
   defaultValue?: string | null;
   hint?: React.ReactNode;
   error?: string;
-  type?: "text" | "email" | "password" | "url";
+  type?: "text" | "email" | "password" | "url" | "date";
   required?: boolean;
   autoComplete?: string;
   maxLength?: number;

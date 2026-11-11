@@ -235,6 +235,17 @@ export async function getPublicProfile(
   db: Database,
   username: string,
 ): Promise<PublicProfile | null> {
+  return (await findPublicProfile(db, username))?.view ?? null;
+}
+
+/**
+ * The same check, also returning the owner's user ID for server-side use
+ * (loading their public contributions). The ID is never sent to the browser.
+ */
+export async function findPublicProfile(
+  db: Database,
+  username: string,
+): Promise<{ view: PublicProfile; userId: string } | null> {
   const parsed = usernameSchema.safeParse(username);
   if (!parsed.success) return null;
 
@@ -247,7 +258,7 @@ export async function getPublicProfile(
   if (!row || row.status !== "active") return null;
   const { profile } = row;
   if (profile.visibility !== "public" || profile.onboardedAt === null) return null;
-  return publicViewOf(profile);
+  return { view: publicViewOf(profile), userId: profile.userId };
 }
 
 /**

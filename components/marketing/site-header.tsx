@@ -3,7 +3,7 @@
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useState } from "react";
+import { Suspense, useEffect, useId, useState } from "react";
 
 import { Logo } from "@/components/brand/logo";
 import { ThemeSwitch } from "@/components/brand/theme-switch";
@@ -14,13 +14,50 @@ const LINKS = [
   { href: "/for-organisations", label: "For organisations" },
 ] as const;
 
-/** The header with the current page marked. Reads the URL, so it streams in. */
-export function SiteHeader() {
-  return <SiteHeaderView pathname={usePathname()} />;
+function DesktopLinks({ pathname }: { pathname: string | null }) {
+  return (
+    <ul className="flex gap-7">
+      {LINKS.map((link) => (
+        <li key={link.href}>
+          <Link
+            href={link.href}
+            aria-current={pathname === link.href ? "page" : undefined}
+            className="inline-flex min-h-11 items-center text-[0.95rem] font-medium text-muted no-underline transition-colors hover:text-ink aria-[current=page]:text-ink aria-[current=page]:underline aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8"
+          >
+            {link.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
-/** Rendered while the URL is not yet known (and as the static shell). */
-export function SiteHeaderView({ pathname }: { pathname: string | null }) {
+function MenuLinks({ pathname, onNavigate }: { pathname: string | null; onNavigate: () => void }) {
+  return LINKS.map((link) => (
+    <li key={link.href}>
+      <Link
+        href={link.href}
+        aria-current={pathname === link.href ? "page" : undefined}
+        onClick={onNavigate}
+        className="flex min-h-12 items-center rounded-2xl px-4 font-display text-[1.15rem] font-bold text-ink no-underline hover:bg-surface-2 aria-[current=page]:bg-surface-2"
+      >
+        {link.label}
+      </Link>
+    </li>
+  ));
+}
+
+// Only these read the URL, so only they stream in. The header itself, and an
+// open menu, are never replaced while the page loads.
+function CurrentDesktopLinks() {
+  return <DesktopLinks pathname={usePathname()} />;
+}
+
+function CurrentMenuLinks({ onNavigate }: { onNavigate: () => void }) {
+  return <MenuLinks pathname={usePathname()} onNavigate={onNavigate} />;
+}
+
+export function SiteHeader() {
   const menuId = useId();
   const [open, setOpen] = useState(false);
 
@@ -49,19 +86,9 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
         </Link>
 
         <nav aria-label="Main" className="hidden lg:block">
-          <ul className="flex gap-7">
-            {LINKS.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  aria-current={pathname === link.href ? "page" : undefined}
-                  className="inline-flex min-h-11 items-center text-[0.95rem] font-medium text-muted no-underline transition-colors hover:text-ink aria-[current=page]:text-ink aria-[current=page]:underline aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <Suspense fallback={<DesktopLinks pathname={null} />}>
+            <CurrentDesktopLinks />
+          </Suspense>
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
@@ -92,18 +119,9 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
       <nav id={menuId} aria-label="Main" hidden={!open} className="lg:hidden">
         <div className="column pb-6">
           <ul className="card grid gap-1 p-3">
-            {LINKS.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  aria-current={pathname === link.href ? "page" : undefined}
-                  onClick={() => setOpen(false)}
-                  className="flex min-h-12 items-center rounded-2xl px-4 font-display text-[1.15rem] font-bold text-ink no-underline hover:bg-surface-2 aria-[current=page]:bg-surface-2"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
+            <Suspense fallback={<MenuLinks pathname={null} onNavigate={() => setOpen(false)} />}>
+              <CurrentMenuLinks onNavigate={() => setOpen(false)} />
+            </Suspense>
             <li className="mt-2 grid grid-cols-2 gap-2 sm:hidden">
               <Link
                 href="/login"

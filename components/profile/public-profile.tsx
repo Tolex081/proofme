@@ -1,6 +1,9 @@
 import { ExternalLink, MapPin } from "lucide-react";
 
 import { PROFESSIONAL_ROLE_LABELS, type ProfessionalRole } from "@/lib/validation/profile";
+import { StatusChip } from "@/components/contributions/status";
+import { CATEGORY_LABELS } from "@/lib/validation/contribution";
+import type { PublicContribution } from "@/server/services/contributions";
 import type { PublicProfile } from "@/server/services/profile";
 
 const LINK_LABELS: Record<string, string> = {
@@ -29,13 +32,18 @@ function initialsOf(name: string) {
  */
 export function PublicProfileView({
   profile,
+  contributions = [],
   embedded = false,
 }: {
   profile: PublicProfile;
+  contributions?: PublicContribution[];
   /** True when shown inside another page, which then owns the main heading. */
   embedded?: boolean;
 }) {
   const Name = embedded ? "h2" : "h1";
+  const Section = embedded ? "h3" : "h2";
+  const verified = contributions.filter((item) => item.status === "verified");
+  const selfReported = contributions.filter((item) => item.status === "self_reported");
   const links = Object.entries(profile.socialLinks);
   const roleLabel = (role: string) => PROFESSIONAL_ROLE_LABELS[role as ProfessionalRole] ?? role;
 
@@ -124,15 +132,74 @@ export function PublicProfileView({
       </section>
 
       <section className="card p-6 sm:p-8">
-        <h2 className="text-[1.3rem]">Verified contributions</h2>
-        <p className="mt-2 max-w-[60ch] text-muted">
-          None yet. Contributions appear here once the organisation they were done for has confirmed
-          them.
-          {links.length > 0 || profile.websiteUrl || profile.nearAccountId
-            ? ` The links and account above were added by ${profile.displayName} and have not been verified by ProofMe.`
-            : null}
-        </p>
+        <Section className="text-[1.3rem]">Verified contributions</Section>
+        {verified.length === 0 ? (
+          <p className="mt-2 max-w-[60ch] text-muted">
+            None yet. Contributions appear here once the organisation they were done for has
+            confirmed them.
+          </p>
+        ) : (
+          <ContributionList items={verified} />
+        )}
       </section>
+
+      {selfReported.length > 0 ? (
+        <section className="card p-6 sm:p-8">
+          <Section className="text-[1.3rem]">Self-reported</Section>
+          <p className="mt-2 max-w-[60ch] text-muted">
+            {profile.displayName}&rsquo;s own account of their work. No organisation has confirmed
+            these.
+          </p>
+          <ContributionList items={selfReported} />
+        </section>
+      ) : null}
+
+      {links.length > 0 || profile.websiteUrl || profile.nearAccountId ? (
+        <p className="px-2 text-[0.88rem] text-muted">
+          Links and accounts on this profile were added by {profile.displayName} and have not been
+          verified by ProofMe.
+        </p>
+      ) : null}
     </div>
+  );
+}
+
+function ContributionList({ items }: { items: PublicContribution[] }) {
+  return (
+    <ul className="mt-5 grid gap-3">
+      {items.map((item) => (
+        <li key={item.id} className="well p-4 sm:p-5">
+          <div className="flex flex-wrap items-start gap-3">
+            <div className="min-w-[12rem] flex-1">
+              <p className="font-display text-[1.1rem] font-bold tracking-[-0.015em]">
+                {item.title}
+              </p>
+              <p className="text-[0.88rem] text-muted">
+                {CATEGORY_LABELS[item.category]}
+                {item.role ? ` · ${item.role}` : ""}
+              </p>
+            </div>
+            <StatusChip status={item.status} />
+          </div>
+          {item.summary ? <p className="mt-2">{item.summary}</p> : null}
+          {item.evidence.length > 0 ? (
+            <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+              {item.evidence.map((link) => (
+                <li key={link.url}>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                    className="text-link inline-flex items-center gap-1.5 text-[0.92rem]"
+                  >
+                    {link.label} <ExternalLink aria-hidden="true" size={13} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </li>
+      ))}
+    </ul>
   );
 }

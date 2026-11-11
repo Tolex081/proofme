@@ -350,10 +350,12 @@ export const evidence = pgTable(
     label: text("label").notNull(),
     description: text("description"),
     visibility: visibility("visibility").notNull().default("public"),
+    // The order the contributor listed the links in.
+    position: integer("position").notNull().default(0),
     createdAt: createdAt(),
   },
   (table) => [
-    index("evidence_contribution").on(table.contributionId),
+    index("evidence_contribution").on(table.contributionId, table.position),
     // Defence in depth behind the application's URL validation.
     check(
       "evidence_url_scheme",

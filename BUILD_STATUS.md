@@ -4,11 +4,10 @@ Last updated: 11 November 2026
 
 ## Where things stand
 
-- **Milestone 0** is complete.
-- **Milestone 1** (design system and public website) is built, with three parts open: the
-  signed-in app shell, account calls to action, and Impeccable's finish review. See below.
-- **Server-side groundwork** for Milestones 2–5 exists as rules and schema only. There are no
-  services, authentication, signed-in screens or NEAR integration yet.
+- **Milestones 0, 2 and 3** are complete.
+- **Milestone 1** is complete except Impeccable's finish review, which has not run.
+- **Next:** Milestone 4 (organisations, projects, team roles). There is no organisation, review
+  workflow or NEAR integration yet.
 
 ## Redesign (10 Nov 2026)
 
@@ -28,6 +27,40 @@ was rebuilt in it:
   .impeccable/design.json rewritten for the new system.
 - Impeccable detector: 29 advisories, no errors (font sizes, two radii and one colour that are not
   named steps in DESIGN.md). Not yet resolved.
+
+## Milestone 3 — Contributions and evidence (complete)
+
+| Task                                   | State                                                                                                                                                                                                                                            |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Create, save, edit, view contributions | Done: `/dashboard/contributions`, `/new`, `/[id]`, `/[id]/edit`                                                                                                                                                                                  |
+| Categories and skills                  | Done (eleven categories from the brief)                                                                                                                                                                                                          |
+| Evidence links with validation         | Done: up to ten links per contribution, kept in the order given, https only, public hosts only, no credentials, no duplicates; each with a kind and a description. The server never fetches them                                                 |
+| List with status filters, and detail   | Done                                                                                                                                                                                                                                             |
+| Portfolio preview                      | Done: shows exactly what a visitor would see, including contributions                                                                                                                                                                            |
+| Status and visibility rules            | Done. Drafts are private to their owner. A complete draft can be marked self-reported; it then appears on a public profile only if both the profile and the contribution are public, under a separate "Self-reported" heading, never as verified |
+| Deleting drafts                        | Done, after confirmation; anything past draft keeps its history                                                                                                                                                                                  |
+
+Sending a contribution to an organisation needs organisations (Milestone 4) and the review
+workflow (Milestone 5); the detail page says so instead of offering a button that does nothing.
+
+### Acceptance
+
+| Criterion                                                 | Result                                                                                                                                                    |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Create, save, edit and view contributions                 | Yes, browser test                                                                                                                                         |
+| Multiple evidence URLs persist and validate               | Yes: 19 integration tests and a browser test that fixes a rejected `javascript:` link without losing what was typed                                       |
+| Draft and self-reported records do not appear as verified | Yes, integration and browser tests                                                                                                                        |
+| Private content not publicly exposed                      | Yes: private contributions, drafts and private evidence are filtered on the server; another user opening a contribution's address gets the not-found page |
+| Tests pass                                                | Yes (see check results)                                                                                                                                   |
+
+### Problems found and fixed by the tests
+
+- Evidence order was not stored (links saved together share a timestamp). Added a `position`
+  column and migration 0003.
+- An impossible date such as 31 February passed validation and reached the database as a raw
+  error. Dates are now checked by round trip.
+- The public header was replaced once the page address was known, which could close a phone menu
+  that had just been opened. Only the link lists stream in now.
 
 ## Milestone 2 — Database, authentication and contributor identity (complete)
 
@@ -178,4 +211,4 @@ both sizes, are now captured by `npm run capture:screens` into `.impeccable/revi
 
 ## Next step
 
-Milestone 3: contributions and evidence.
+Milestone 4: organisations, projects and team roles.

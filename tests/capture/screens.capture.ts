@@ -48,6 +48,29 @@ test("capture public and workspace screens in both themes", async ({ browser }) 
         await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
         await shot(name);
       }
+      await page.goto("/dashboard/contributions/new");
+      await page
+        .getByRole("textbox", { name: "Title", exact: true })
+        .fill("Proposal review interface");
+      await page
+        .getByRole("textbox", { name: /One-line summary/ })
+        .fill("Built the reviewer-facing proposal screen for the grants round.");
+      await page.getByRole("textbox", { name: /Your role/ }).fill("Frontend engineer");
+      await page.getByRole("button", { name: "Add a link" }).click();
+      await page
+        .getByLabel("Link 1: address")
+        .fill("https://github.com/northstar-demo/portal/pull/42");
+      await page.getByLabel("Link 1: description").fill("Pull request #42");
+      await shot("contribution-form");
+      await page.getByRole("button", { name: "Save draft" }).click();
+      await expect(page).toHaveURL(/saved=1$/);
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Proposal review interface" }),
+      ).toBeVisible();
+      await shot("contribution-detail");
+      await page.goto("/dashboard/contributions");
+      await expect(page.getByRole("heading", { level: 1, name: "Contributions" })).toBeVisible();
+      await shot("contributions");
       await context.close();
     }
   }

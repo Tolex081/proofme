@@ -5,6 +5,7 @@ import { Suspense } from "react";
 
 import { PageHeading, PageSkeleton } from "@/components/workspace/parts";
 import { requireWorkspace } from "@/lib/auth/guards";
+import { listOwnContributions } from "@/server/services/contributions";
 
 export const metadata: Metadata = { title: "Overview" };
 
@@ -17,7 +18,9 @@ export default function Overview({ searchParams }: PageProps<"/dashboard">) {
 }
 
 async function OverviewContent({ searchParams }: Pick<PageProps<"/dashboard">, "searchParams">) {
-  const { profile } = await requireWorkspace("/dashboard");
+  const { user, profile, db } = await requireWorkspace("/dashboard");
+  const own = await listOwnContributions(db, user.id);
+  const drafts = own.filter((item) => item.status === "draft").length;
   const { welcome } = await searchParams;
   const firstName = profile.displayName.split(/\s+/)[0];
 
@@ -104,9 +107,20 @@ async function OverviewContent({ searchParams }: Pick<PageProps<"/dashboard">, "
           </span>
           <h2 className="mt-4 text-[1.2rem]">Your contributions</h2>
           <p className="mt-1.5 text-muted">
-            Recording contributions and sending them for review is the next part of ProofMe being
-            built. It is not available in this build yet.
+            {own.length === 0
+              ? "Record one specific piece of work you did, with the links that show it."
+              : `${own.length} recorded${drafts > 0 ? `, ${drafts} still ${drafts === 1 ? "a draft" : "drafts"}` : ""}. Sending them to an organisation for review arrives with the next stage of this build.`}
           </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link href="/dashboard/contributions/new" className="action action-primary">
+              New contribution
+            </Link>
+            {own.length > 0 ? (
+              <Link href="/dashboard/contributions" className="action action-secondary">
+                See all
+              </Link>
+            ) : null}
+          </div>
         </section>
         <section className="card p-6 sm:p-7">
           <span className="grid size-11 place-items-center rounded-2xl bg-surface-2 text-muted">
