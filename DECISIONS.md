@@ -97,3 +97,20 @@ profiles render identically, so nothing leaks.
 
 **Why:** opening the embedded database and applying migrations on the first request made that
 request slow enough to time out. `instrumentation.ts` does it at start.
+
+## D20 — Invitations are single-use links tied to an email address
+
+**Why:** no email provider is configured. The inviter copies a link shown once; only its SHA-256
+hash is stored. The link only works for an account with the invited address, so a forwarded link
+is useless to anyone else.
+
+## D21 — Non-members see "not found" for organisation workspaces
+
+**Why:** saying "forbidden" would confirm that a private organisation page or project exists.
+Members whose role is too low see an explicit "your role cannot" page instead.
+
+## D22 — `getDb()` calls `connection()`
+
+**Why:** with Cache Components, a page that reads only route parameters and then the database is
+treated as prerenderable, and the database driver's clock reads are flagged. Marking every
+request-time database read in one place prevents this for every current and future page.

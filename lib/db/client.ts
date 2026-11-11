@@ -5,6 +5,7 @@ import { drizzle as drizzleNodePg } from "drizzle-orm/node-postgres";
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import { drizzle as drizzlePglite } from "drizzle-orm/pglite";
 import { migrate as migratePglite } from "drizzle-orm/pglite/migrator";
+import { connection as requestTime } from "next/server";
 import { Pool } from "pg";
 
 import { getEnv } from "../env";
@@ -58,8 +59,13 @@ function connection(): Connection {
   return globalStore.__proofmeDb;
 }
 
-/** The database, once it is ready to be queried. */
+/**
+ * The database, once it is ready to be queried. Only for request-time code
+ * (pages, server actions, route handlers): it marks the work as belonging to a
+ * real request, so Next.js never tries to prerender a database read.
+ */
 export async function getDb(): Promise<Database> {
+  await requestTime();
   const current = connection();
   await current.ready;
   return current.db;

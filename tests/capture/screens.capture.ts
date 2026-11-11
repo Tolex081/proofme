@@ -71,6 +71,30 @@ test("capture public and workspace screens in both themes", async ({ browser }) 
       await page.goto("/dashboard/contributions");
       await expect(page.getByRole("heading", { level: 1, name: "Contributions" })).toBeVisible();
       await shot("contributions");
+      const orgSlug = `northstar-${size.name}-${theme}`;
+      await page.goto("/organisations/new");
+      await page
+        .getByRole("textbox", { name: "Organisation name" })
+        .fill("Northstar Protocol (demo)");
+      await page.getByRole("textbox", { name: "Address" }).fill(orgSlug);
+      await page
+        .getByRole("textbox", { name: /About the organisation/ })
+        .fill("A fictional protocol used to demonstrate ProofMe.");
+      await page.getByRole("textbox", { name: /Website/ }).fill("https://northstar.example.org");
+      await page.getByRole("button", { name: "Create organisation" }).click();
+      await expect(page).toHaveURL(/created=1$/);
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Northstar Protocol (demo)" }),
+      ).toBeVisible();
+      await shot("org-dashboard");
+      await page.goto(`/org/${orgSlug}/team`);
+      await page.getByRole("textbox", { name: "Their email" }).fill("reviewer@example.test");
+      await page.getByRole("button", { name: "Create invitation" }).click();
+      await expect(page.getByRole("textbox", { name: "Invitation link" })).toBeVisible();
+      await shot("org-team");
+      await page.goto(`/org/${orgSlug}`);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await shot("org-public");
       await context.close();
     }
   }

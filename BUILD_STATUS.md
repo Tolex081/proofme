@@ -4,9 +4,9 @@ Last updated: 11 November 2026
 
 ## Where things stand
 
-- **Milestones 0, 2 and 3** are complete.
+- **Milestones 0, 2, 3 and 4** are complete.
 - **Milestone 1** is complete except Impeccable's finish review, which has not run.
-- **Next:** Milestone 4 (organisations, projects, team roles). There is no organisation, review
+- **Next:** Milestone 5 (verification workflow, audit, notifications). There is no review
   workflow or NEAR integration yet.
 
 ## Redesign (10 Nov 2026)
@@ -27,6 +27,38 @@ was rebuilt in it:
   .impeccable/design.json rewritten for the new system.
 - Impeccable detector: 29 advisories, no errors (font sizes, two radii and one colour that are not
   named steps in DESIGN.md). Not yet resolved.
+
+## Milestone 4 — Organisations, projects and team roles (complete)
+
+| Task                                                 | State                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Create an organisation, public profile `/org/[slug]` | Done. Created from the existing account; the creator becomes owner                                                                                                                                                                                                                                                      |
+| Platform verification request state                  | Done. Starts "Not reviewed by ProofMe"; owners and admins can ask for review once it has a description and website, which moves it to pending. Only an administrator can approve (Milestone 7). Request fields that try to set verified or issuer status are ignored                                                    |
+| Membership and invitations                           | Done. Invitations by secure single-use link (only a SHA-256 hash is stored), valid 7 days, usable only by the invited email address. Accept, decline, cancel, and a new invitation replaces an open one. The invitee gets an in-app notification if they already have an account; the inviter is notified of the answer |
+| Roles owner, admin, reviewer, viewer                 | Done, from the permission matrix: owners and admins manage; reviewers and viewers see a "your role cannot" page instead of forms                                                                                                                                                                                        |
+| Projects                                             | Done: create, edit, status (draft, active, completed, archived); public `/project/[slug]` for active and completed only                                                                                                                                                                                                 |
+| Organisation dashboard and contributors page         | Done. Contributors are listed once claims can be sent (Milestone 5)                                                                                                                                                                                                                                                     |
+| Server-side organisation isolation                   | Done. Every lookup goes through the actor's membership; non-members see "not found"                                                                                                                                                                                                                                     |
+| Your organisations                                   | `/dashboard/organisations` lists every organisation the account belongs to                                                                                                                                                                                                                                              |
+
+Email is not configured, so the inviter is shown the link once to send themselves. The page says so.
+
+### Acceptance
+
+| Criterion                                         | Result                                                                                                                                                                         |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Create an organisation without a second account   | Yes: integration test checks a single user row; browser test reaches both workspaces with one account                                                                          |
+| Owner can create projects and invite team members | Yes, browser tests                                                                                                                                                             |
+| Permissions enforced by the server                | Yes: 18 integration tests across roles; browser test shows a reviewer refused settings, projects and invitations                                                               |
+| Cross-organisation access tests pass              | Yes: integration test of every read and write against another organisation; browser test of six URLs including another organisation's project ID through your own organisation |
+
+### Problems found and fixed
+
+- Public pages read the database straight after the URL, and Next.js flagged the database driver's
+  clock reads as unstable during prerendering. `getDb()` now marks every database read as
+  request-time.
+- Someone signed in with the wrong account had no way to switch on the invitation page. It now
+  says who is signed in and offers sign out.
 
 ## Milestone 3 — Contributions and evidence (complete)
 
@@ -211,4 +243,4 @@ both sizes, are now captured by `npm run capture:screens` into `.impeccable/revi
 
 ## Next step
 
-Milestone 4: organisations, projects and team roles.
+Milestone 5: verification workflow, audit and notifications.
