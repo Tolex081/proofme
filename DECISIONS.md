@@ -177,3 +177,29 @@ The chain reader is an interface so these rules are tested against a stand-in.
 console in this release, the owner is the contract's own account, whose key stays in the NEAR
 command-line tool on the operator's machine, so issuers are registered from the command line.
 The organisation and contributor accounts stay in their own wallets.
+
+## D32 — Administrators cannot touch attestations
+
+**Why:** an attestation is the organisation's word, not ProofMe's. The admin service
+(`server/services/admin.ts`) has no function that writes to an attestation, a claim or a
+verification decision. Administrators can review and suspend organisations and accounts; that
+changes standing and visibility, never what an organisation confirmed. Suspending an organisation
+leaves its attestations as issued.
+
+## D33 — Admin rights are granted outside the web app
+
+**Why:** no page or action can make someone an administrator, so a bug in the app cannot create
+one. `npm run admin:grant` sets the flag directly in the database. For local work and the
+browser tests, `PROOFME_LOCAL_ADMIN_EMAIL` makes the account with that email an administrator at
+sign-up; it is ignored unless `APP_ENV=local`.
+
+## D34 — The admin area answers "not found" to everyone else
+
+**Why:** the same rule as organisation workspaces: a signed-in person who is not an active
+administrator sees the not-found page, so the area does not reveal that it exists. Every admin
+service function re-checks the flag and the account status in the database.
+
+## D35 — Reports stay anonymous to the reported, and are rate-limited
+
+**Why:** reporting someone should not expose the reporter. Only administrators see who sent a
+report. Ten reports per person per day limits abuse of the feature itself.

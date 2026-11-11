@@ -21,8 +21,11 @@ export interface CurrentUser {
  * Returns null when nobody is signed in or the account is not active.
  */
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
+  // Read the request first: while prerendering this postpones the work to
+  // request time, so the database is never opened at build time.
+  const requestHeaders = await headers();
   await databaseReady();
-  const session = await getAuth().api.getSession({ headers: await headers() });
+  const session = await getAuth().api.getSession({ headers: requestHeaders });
   if (!session) return null;
 
   const { user } = session;

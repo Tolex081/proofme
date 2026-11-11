@@ -30,7 +30,9 @@ export function useFormAction<S extends FormState = FormState>(
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    // Include the clicked button, so forms with several submit buttons work.
+    const submitter = (event.nativeEvent as SubmitEvent).submitter;
+    const data = new FormData(event.currentTarget, submitter);
     startTransition(() => dispatch(data));
   }
 

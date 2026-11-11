@@ -26,5 +26,6 @@ export const config = {
     "/org/:slug/settings/:path*",
     "/org/:slug/verifications/:path*",
     "/org/:slug/attestations/:path*",
+    "/admin/:path*",
   ],
 };

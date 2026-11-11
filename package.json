@@ -16,7 +16,8 @@
     "test:integration": "vitest run tests/integration",
     "db:generate": "drizzle-kit generate",
     "test:e2e": "playwright test",
-    "capture:screens": "playwright test --config playwright.capture.config.ts"
+    "capture:screens": "playwright test --config playwright.capture.config.ts",
+    "admin:grant": "node scripts/grant-admin.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "0.5.16",

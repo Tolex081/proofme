@@ -8,6 +8,8 @@ Last updated: 11 November 2026
 - **Milestone 1** is complete except Impeccable's finish review, which has not run.
 - **Milestone 6** is started: the NFT contract is written and unit-tested. It is not deployed and
   the app does not call it yet; approved records still show "awaiting NEAR anchor".
+- **Milestone 7** (non-NEAR parts) is complete: admin area, reports, explore, and verified work on
+  public pages. The NEAR-side parts of Milestone 7 depend on Milestone 6.
 - **Deadline:** NEAR Hackathon submissions close 14 November 2026, 23:59 UTC (track 10, NFTs).
 
 ## Milestone 6 — NFT contract and NEAR wiring (in progress)
@@ -26,6 +28,34 @@ Last updated: 11 November 2026
 | Deployment to testnet                     | Not done: needs a contract account                                                                                                                          |
 | Supersession in the app                   | Not built (the contract supports it)                                                                                                                        |
 | Reconciliation                            | Not built: if the browser closes after the wallet signs, the hash is lost and the record stays "not on NEAR" although the token exists                      |
+
+## Milestone 7 — Administration, reports and discovery (complete, non-NEAR parts)
+
+| Task                          | State                                                                                                                                                          |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Admin area `/admin`           | Done: overview, organisations, reports, accounts, NEAR issuers (read-only), audit log. Anyone who is not an active administrator gets "not found"              |
+| Organisation review           | Done: approve, ask for more, decline, suspend, reinstate. Every decision except approve needs a reason; owners and admins are notified; every decision audited |
+| Account suspension            | Done: needs a reason, signs the account out everywhere. Cannot target yourself or another administrator                                                        |
+| Reports                       | Done: "Report this" on public profiles and organisation pages, signed-in only, 10 per person per day; administrators mark them handled or dismissed            |
+| Explore `/explore`            | Done: people (public profiles only), organisations (not suspended), projects (active or completed); filter by verified work and category                       |
+| Verified work on public pages | Done: verified contributions link to their `/verify/[id]` record; organisation pages list issued attestations, including revoked ones                          |
+| Granting admin rights         | `npm run admin:grant -- email [--revoke]`; locally, `PROOFME_LOCAL_ADMIN_EMAIL` makes that account an admin at sign-up (ignored outside `APP_ENV=local`)       |
+| Tests                         | 13 integration tests (`tests/integration/admin.test.ts`), 1 browser test (`tests/e2e/admin.spec.ts`)                                                           |
+
+### Problems found and fixed
+
+- The production build opened the database while prerendering `/admin`: `getCurrentUser` touched
+  the database before reading request headers. It now reads headers first.
+- The form-reset guard only matched `<form action=` on one line, so a form Prettier wrapped across
+  lines escaped it. It now reads the whole opening tag, and allows plain `method="get"` search
+  forms, which React never resets.
+- Forms with two submit buttons lost the button's value: `useFormAction` now passes the clicked
+  button to `FormData`.
+
+### Not done
+
+- Administrators cannot see a report's target content inline; they follow the link.
+- The admin area has not been through Impeccable's design review or a screen-reader pass.
 
 ## Redesign (10 Nov 2026)
 
@@ -253,16 +283,16 @@ both sizes, are now captured by `npm run capture:screens` into `.impeccable/revi
 - Tablet (768) and laptop (1280) widths have not been inspected yet.
 - Keyboard-only and screen-reader passes have not been done yet.
 
-## Check results (run 11 Nov 2026, after Milestone 5)
+## Check results (run 11 Nov 2026, after Milestone 7)
 
 | Command                                              | Result                        |
 | ---------------------------------------------------- | ----------------------------- |
 | `npm run format:check`                               | Passed                        |
 | `npm run lint`                                       | Passed, no warnings           |
 | `npm run typecheck`                                  | Passed                        |
-| `npm run test` (unit and integration)                | 322 passed, 0 failed          |
+| `npm run test` (unit and integration)                | 371 passed, 0 failed          |
 | `npm run build`                                      | Passed, no warnings           |
-| `npm run test:e2e` (Playwright, desktop and phone)   | 27 passed, 0 failed           |
+| `npm run test:e2e` (Playwright, desktop and phone)   | 29 passed, 0 failed           |
 | Contract tests (`cargo test` in the contract folder) | 48 passed, 0 failed (unit)    |
 | CI on GitHub                                         | Never run; there is no remote |
 

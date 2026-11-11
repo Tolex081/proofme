@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
 
 import type { Database } from "@/lib/db/client";
-import { auditEvents, contributions, evidence } from "@/lib/db/schema";
+import { attestations, auditEvents, contributions, evidence, organisations } from "@/lib/db/schema";
 import {
   isContributionEditable,
   isContributionPubliclyListable,
@@ -261,6 +261,8 @@ export interface PublicContribution {
   endDate: string | null;
   status: ContributionStatus;
   evidence: { type: Evidence["type"]; url: string; label: string }[];
+  /** The active attestation confirming it, when there is one. */
+  attestation: { id: string; issuerName: string; issuerSlug: string } | null;
 }
 
 /**
@@ -283,6 +285,28 @@ export async function listPublicContributions(
     db,
     listable.map((row) => row.id),
   );
+  const confirmed =
+    listable.length === 0
+      ? []
+      : await db
+          .select({
+            id: attestations.id,
+            contributionId: attestations.contributionId,
+            issuerName: organisations.name,
+            issuerSlug: organisations.slug,
+          })
+          .from(attestations)
+          .innerJoin(organisations, eq(organisations.id, attestations.issuerOrganisationId))
+          .where(
+            and(
+              inArray(
+                attestations.contributionId,
+                listable.map((row) => row.id),
+              ),
+              eq(attestations.status, "active"),
+            ),
+          )
+          .orderBy(desc(attestations.issuedAt));
   return listable.map((row) => ({
     id: row.id,
     title: row.title,
@@ -296,5 +320,11 @@ export async function listPublicContributions(
     evidence: items
       .filter((item) => item.contributionId === row.id && item.visibility === "public")
       .map((item) => ({ type: item.type, url: item.url, label: item.label })),
+    attestation: (() => {
+      const found = confirmed.find((item) => item.contributionId === row.id);
+      return found
+        ? { id: found.id, issuerName: found.issuerName, issuerSlug: found.issuerSlug }
+        : null;
+    })(),
   }));
 }

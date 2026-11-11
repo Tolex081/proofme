@@ -5,11 +5,26 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { IssuerBadge, PlatformBadge, platformMeaning } from "@/components/organisations/badges";
+import { ReportForm } from "@/components/reports/report-form";
+import { getCurrentUser } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/client";
 import { ORGANISATION_CATEGORY_LABELS, PROJECT_STATUS_LABELS } from "@/lib/validation/organisation";
 import { getPublicOrganisation } from "@/server/services/organisations";
 
 export const metadata: Metadata = { title: "Organisation" };
+
+const ISSUED = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+const ATTESTATION_STATUS = {
+  active: { label: "Active", tone: "chip-ok" },
+  revoked: { label: "Revoked", tone: "chip-bad" },
+  superseded: { label: "Replaced by a newer record", tone: "chip-neutral" },
+} as const;
 
 const SINCE = new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
 
@@ -29,6 +44,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]">, "params">) {
   const { slug } = await params;
   const organisation = await getPublicOrganisation(await getDb(), slug);
   if (!organisation) notFound();
+  const viewer = await getCurrentUser();
 
   return (
     <div className="grid gap-4">
@@ -128,11 +144,50 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]">, "params">) {
 
       <section className="card p-6 sm:p-8">
         <h2 className="text-[1.3rem]">Attestations issued</h2>
-        <p className="mt-2 max-w-[62ch] text-muted">
-          None yet. Attestations this organisation issues will be listed here, including any it
-          later revokes.
-        </p>
+        {organisation.attestations.length === 0 ? (
+          <p className="mt-2 max-w-[62ch] text-muted">
+            None to show. Attestations this organisation issues are listed here, including any it
+            later revokes, when the contributor keeps that work public.
+          </p>
+        ) : (
+          <>
+            <p className="mt-2 max-w-[62ch] text-muted">
+              Work this organisation confirmed, including any it later revoked. Work the contributor
+              keeps private is not listed.
+            </p>
+            <ul className="mt-5 grid gap-3">
+              {organisation.attestations.map((item) => (
+                <li key={item.id} className="well flex flex-wrap items-center gap-3 p-4">
+                  <div className="min-w-[12rem] flex-1">
+                    <p className="font-semibold">
+                      <Link href={`/verify/${item.id}`} className="text-ink">
+                        {item.title}
+                      </Link>
+                    </p>
+                    <p className="text-[0.9rem] text-muted">
+                      <Link href={`/u/${item.contributorUsername}`} className="text-link">
+                        {item.contributorName}
+                      </Link>{" "}
+                      · issued {ISSUED.format(item.issuedAt)}
+                    </p>
+                  </div>
+                  <span className={`chip ${ATTESTATION_STATUS[item.status].tone}`}>
+                    {ATTESTATION_STATUS[item.status].label}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </section>
+
+      <ReportForm
+        targetType="organisation"
+        targetId={organisation.slug}
+        returnTo={`/org/${organisation.slug}`}
+        noun="organisation"
+        signedIn={Boolean(viewer)}
+      />
     </div>
   );
 }

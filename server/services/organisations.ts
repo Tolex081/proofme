@@ -3,6 +3,7 @@ import { and, asc, desc, eq, inArray, isNull, ne, sql } from "drizzle-orm";
 
 import type { Database } from "@/lib/db/client";
 import {
+  attestations,
   auditEvents,
   contributions,
   organisationInvitations,
@@ -305,6 +306,18 @@ export interface PublicOrganisation {
   nearIssuerAccountId: string | null;
   createdAt: Date;
   projects: { name: string; slug: string; status: Project["status"]; description: string | null }[];
+  /**
+   * Attestations it issued, including revoked and superseded ones, for work
+   * whose contributor keeps both the contribution and their profile public.
+   */
+  attestations: {
+    id: string;
+    title: string;
+    contributorName: string;
+    contributorUsername: string;
+    status: "active" | "revoked" | "superseded";
+    issuedAt: Date;
+  }[];
 }
 
 export async function getPublicOrganisation(
@@ -331,6 +344,30 @@ export async function getPublicOrganisation(
       ),
     )
     .orderBy(asc(projects.name));
+  const issued = await db
+    .select({
+      id: attestations.id,
+      title: contributions.title,
+      contributorName: userProfiles.displayName,
+      contributorUsername: userProfiles.username,
+      status: attestations.status,
+      issuedAt: attestations.issuedAt,
+    })
+    .from(attestations)
+    .innerJoin(contributions, eq(contributions.id, attestations.contributionId))
+    .innerJoin(userProfiles, eq(userProfiles.userId, attestations.subjectUserId))
+    .innerJoin(users, eq(users.id, attestations.subjectUserId))
+    .where(
+      and(
+        eq(attestations.issuerOrganisationId, organisation.id),
+        eq(contributions.visibility, "public"),
+        eq(userProfiles.visibility, "public"),
+        sql`${userProfiles.onboardedAt} is not null`,
+        eq(users.status, "active"),
+      ),
+    )
+    .orderBy(desc(attestations.issuedAt))
+    .limit(50);
   return {
     name: organisation.name,
     slug: organisation.slug,
@@ -343,6 +380,10 @@ export async function getPublicOrganisation(
       organisation.nearIssuerStatus === "registered" ? organisation.nearIssuerAccountId : null,
     createdAt: organisation.createdAt,
     projects: visibleProjects,
+    attestations: issued.map((row) => ({
+      ...row,
+      contributorUsername: row.contributorUsername ?? "",
+    })),
   };
 }
 

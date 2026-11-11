@@ -1,4 +1,5 @@
-import { ExternalLink, MapPin } from "lucide-react";
+import { BadgeCheck, ExternalLink, MapPin } from "lucide-react";
+import Link from "next/link";
 
 import { PROFESSIONAL_ROLE_LABELS, type ProfessionalRole } from "@/lib/validation/profile";
 import { StatusChip } from "@/components/contributions/status";
@@ -181,6 +182,23 @@ function ContributionList({ items }: { items: PublicContribution[] }) {
             </div>
             <StatusChip status={item.status} />
           </div>
+          {item.attestation ? (
+            <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.92rem]">
+              <BadgeCheck aria-hidden="true" size={16} className="text-ok-ink" />
+              <span>
+                Confirmed by{" "}
+                <Link href={`/org/${item.attestation.issuerSlug}`} className="text-link">
+                  {item.attestation.issuerName}
+                </Link>
+              </span>
+              <span aria-hidden="true" className="text-muted">
+                ·
+              </span>
+              <Link href={`/verify/${item.attestation.id}`} className="text-link">
+                Check the record<span className="sr-only">: {item.title}</span>
+              </Link>
+            </p>
+          ) : null}
           {item.summary ? <p className="mt-2">{item.summary}</p> : null}
           {item.evidence.length > 0 ? (
             <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1">

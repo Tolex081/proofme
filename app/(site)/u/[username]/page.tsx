@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { PublicProfileView } from "@/components/profile/public-profile";
+import { ReportForm } from "@/components/reports/report-form";
+import { getCurrentUser } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/client";
 import { listPublicContributions } from "@/server/services/contributions";
 import { findPublicProfile } from "@/server/services/profile";
@@ -28,5 +30,19 @@ async function ProfileContent({ params }: Pick<PageProps<"/u/[username]">, "para
   // A private, unfinished or missing profile all look the same from outside.
   if (!found) notFound();
   const contributions = await listPublicContributions(db, found.userId);
-  return <PublicProfileView profile={found.view} contributions={contributions} />;
+  const viewer = await getCurrentUser();
+  return (
+    <div className="grid gap-4">
+      <PublicProfileView profile={found.view} contributions={contributions} />
+      {viewer?.id === found.userId ? null : (
+        <ReportForm
+          targetType="profile"
+          targetId={found.view.username}
+          returnTo={`/u/${found.view.username}`}
+          noun="profile"
+          signedIn={Boolean(viewer)}
+        />
+      )}
+    </div>
+  );
 }

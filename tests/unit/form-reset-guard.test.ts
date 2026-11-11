@@ -10,6 +10,8 @@ import { describe, expect, it } from "vitest";
  *
  * Rule: a `<form action={...}>` may only wrap buttons. Any form with an input,
  * select, textarea or field component must use `useFormAction` (onSubmit).
+ * Plain search forms that navigate with `method="get"` to a URL are not
+ * server actions and are never reset, so they are allowed.
  */
 
 function files(directory: string): string[] {
@@ -20,19 +22,25 @@ function files(directory: string): string[] {
   });
 }
 
-/** The source of each `<form action=` element, up to its closing tag. */
+/**
+ * The source of each `<form action={...}>` element, up to its closing
+ * tag. The opening tag may span several lines once Prettier wraps it.
+ */
 function actionForms(source: string): string[] {
   const forms: string[] = [];
-  let index = source.indexOf("<form action=");
-  while (index !== -1) {
-    const end = source.indexOf("</form>", index);
-    forms.push(source.slice(index, end === -1 ? undefined : end));
-    index = source.indexOf("<form action=", index + 1);
+  for (const match of source.matchAll(/<form\b[^>]*>/g)) {
+    // Only `action={...}` can be a React action; `action="/url"` is plain HTML.
+    if (!/\saction=\{/.test(match[0])) continue;
+    const end = source.indexOf("</form>", match.index);
+    forms.push(source.slice(match.index, end === -1 ? undefined : end));
   }
   return forms;
 }
 
 const FIELD = /<(input|select|textarea)\b|<(TextField|Select|SelectField)\b/;
+
+/** A GET form navigates to a URL; React never resets it. */
+const isGetForm = (form: string) => /^<form\b[^>]*\bmethod="get"/.test(form);
 
 describe("forms with fields never use React's auto-resetting form action", () => {
   const sources = [...files("components"), ...files("app")];
@@ -43,7 +51,7 @@ describe("forms with fields never use React's auto-resetting form action", () =>
 
   for (const file of sources) {
     const source = readFileSync(file, "utf8");
-    const offending = actionForms(source).filter((form) => FIELD.test(form));
+    const offending = actionForms(source).filter((form) => FIELD.test(form) && !isGetForm(form));
     if (offending.length > 0) {
       it(`${file} has no auto-resetting form with fields`, () => {
         expect(offending.map((form) => form.slice(0, 120))).toEqual([]);
@@ -56,5 +64,8 @@ describe("forms with fields never use React's auto-resetting form action", () =>
     expect(actionForms(bad).some((form) => FIELD.test(form))).toBe(true);
     const fine = `<form action={action}><button type="submit">Go</button></form>`;
     expect(actionForms(fine).some((form) => FIELD.test(form))).toBe(false);
+    const search = `<form action={path} method="get" role="search"><input name="q" /></form>`;
+    expect(actionForms(search).every(isGetForm)).toBe(true);
+    expect(isGetForm(bad)).toBe(false);
   });
 });

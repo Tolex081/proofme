@@ -9,6 +9,7 @@ const GROUPS = [
       { href: "/how-it-works", label: "How it works" },
       { href: "/for-contributors", label: "For contributors" },
       { href: "/for-organisations", label: "For organisations" },
+      { href: "/explore", label: "Explore" },
     ],
   },
   {
