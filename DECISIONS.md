@@ -75,3 +75,25 @@ eslint 9.x with eslint-config-next 16.4.6 · typescript 5.x (as installed by cre
 drizzle-orm 0.45.4 · better-auth 1.7.18 · vitest 5.1.0 · @playwright/test 1.65.0 ·
 near-api-js 7.4.0 · @near-wallet-selector/core 10.1.4 · @hot-labs/near-connect 0.12.0 ·
 near-workspaces (npm) 5.0.0 · @electric-sql/pglite 0.5.16.
+
+## D16 — Better Auth, email and password first
+
+**Why:** maintained, stores users in our own database, no per-user cost. Google sign-in is not set up:
+it needs OAuth credentials from the user. Fields a request must never set (`status`,
+`isPlatformAdmin`) are declared `input: false` and tested.
+
+## D17 — Every form posts and waits for hydration
+
+**Why:** a form submitted before its script runs is sent by the browser as a GET, which put a
+password in the URL during testing. Forms declare `method="post"` and disable submit until hydrated.
+
+## D18 — Not-found profiles return 200 with noindex
+
+**Why:** with Cache Components the response starts before the database is read (documented by
+Next.js). A request-time 404 would need the proxy to query the database. Private and missing
+profiles render identically, so nothing leaks.
+
+## D19 — PGlite warmed at server start
+
+**Why:** opening the embedded database and applying migrations on the first request made that
+request slow enough to time out. `instrumentation.ts` does it at start.

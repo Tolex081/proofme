@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { FormMessage, TextField } from "@/components/forms/fields";
+import { useHydrated } from "@/components/forms/use-hydrated";
 import { authClient } from "@/lib/auth/client";
+import { safeReturnPath } from "@/lib/auth/return-path";
 
 const PASSWORD_MIN_LENGTH = 10;
 
@@ -37,12 +39,14 @@ function Submit({
   label: string;
   pendingLabel: string;
 }) {
+  const hydrated = useHydrated();
+  const disabled = pending || !hydrated;
   return (
     <button
       type="submit"
       className="action action-primary"
-      disabled={pending}
-      aria-disabled={pending}
+      disabled={disabled}
+      aria-disabled={disabled}
     >
       {pending ? pendingLabel : label}
     </button>
@@ -79,7 +83,7 @@ export function RegisterForm() {
   }
 
   return (
-    <form onSubmit={submit} className="form-stack" noValidate={false}>
+    <form onSubmit={submit} method="post" action="/register" className="form-stack">
       {error ? <FormMessage tone="error">{error}</FormMessage> : null}
       <TextField name="name" label="Your name" required autoComplete="name" maxLength={80} />
       <TextField
@@ -113,7 +117,7 @@ export function RegisterForm() {
   );
 }
 
-export function LoginForm({ next }: { next: string | null }) {
+export function LoginForm() {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -132,12 +136,16 @@ export function LoginForm({ next }: { next: string | null }) {
       setError(describeAuthError(failure.code, failure.status));
       return;
     }
+    // Read at submit time, so the page needs no request-time rendering.
+    const next = safeReturnPath(
+      new URLSearchParams(window.location.search).get("next") ?? undefined,
+    );
     router.replace(next ?? "/dashboard");
     router.refresh();
   }
 
   return (
-    <form onSubmit={submit} className="form-stack">
+    <form onSubmit={submit} method="post" action="/login" className="form-stack">
       {error ? <FormMessage tone="error">{error}</FormMessage> : null}
       <TextField
         name="email"

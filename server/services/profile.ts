@@ -247,7 +247,15 @@ export async function getPublicProfile(
   if (!row || row.status !== "active") return null;
   const { profile } = row;
   if (profile.visibility !== "public" || profile.onboardedAt === null) return null;
+  return publicViewOf(profile);
+}
 
+/**
+ * What a visitor would see, with the owner's section choices applied. Used by
+ * the public page (after the visibility check above) and the owner's preview.
+ * Built field by field, never by spreading the row.
+ */
+export function publicViewOf(profile: Profile): PublicProfile {
   const show = (section: ProfileSection) => isSectionVisible(profile, section);
 
   return {

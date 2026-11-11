@@ -12,7 +12,7 @@ follows the brief's strategy and current framework documentation.
 | Typecheck        | `npm run typecheck`                          | M0             |
 | Build            | `npm run build`                              | M0             |
 | All of the above | `npm run check`                              | M0             |
-| Unit             | `npm run test:unit`                          | M2             |
+| Unit             | `npm run test:unit`                          | M0             |
 | Integration      | `npm run test:integration`                   | M2             |
 | E2E              | `npm run test:e2e`                           | M2             |
 | Contract         | `cargo test` in `contracts/proofme-registry` | M6             |

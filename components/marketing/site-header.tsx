@@ -14,8 +14,13 @@ const LINKS = [
   { href: "/for-organisations", label: "For organisations" },
 ] as const;
 
+/** The header with the current page marked. Reads the URL, so it streams in. */
 export function SiteHeader() {
-  const pathname = usePathname();
+  return <SiteHeaderView pathname={usePathname()} />;
+}
+
+/** Rendered while the URL is not yet known (and as the static shell). */
+export function SiteHeaderView({ pathname }: { pathname: string | null }) {
   const menuId = useId();
   const [open, setOpen] = useState(false);
 

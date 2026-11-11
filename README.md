@@ -25,6 +25,15 @@ npm run dev
 
 Open http://localhost:3000.
 
+## First run
+
+```bash
+npx playwright install chromium   # once, for the browser tests
+```
+
+Locally the app uses an embedded PostgreSQL stored in `.pglite/`, created on first start. Delete
+that folder to start again with an empty database.
+
 ## Checks
 
 ```bash
@@ -35,6 +44,8 @@ npm run build
 npm run test:unit
 npm run test:integration   # runs migrations on an in-memory PostgreSQL
 npm run check              # everything above
+npm run test:e2e           # Playwright, desktop and phone (builds the app first)
+npm run capture:screens    # review screenshots into .impeccable/review/
 ```
 
 Test, seed and deployment commands are added here as those parts are built.

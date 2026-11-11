@@ -74,11 +74,6 @@ export function TextField({
         {label}
         {required ? null : <span className="field-optional"> (optional)</span>}
       </label>
-      {hint ? (
-        <p id={hintId} className="field-hint">
-          {hint}
-        </p>
-      ) : null}
       {multiline ? (
         <textarea {...shared} rows={4} />
       ) : prefix ? (
@@ -89,6 +84,11 @@ export function TextField({
       ) : (
         <input {...shared} type={type} inputMode={inputMode} />
       )}
+      {hint ? (
+        <p id={hintId} className="field-hint">
+          {hint}
+        </p>
+      ) : null}
       <FieldError id={errorId} message={error} />
     </div>
   );

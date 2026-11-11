@@ -1,6 +1,6 @@
 # ProofMe — Build status
 
-Last updated: 10 November 2026
+Last updated: 11 November 2026
 
 ## Where things stand
 
@@ -29,24 +29,56 @@ was rebuilt in it:
 - Impeccable detector: 29 advisories, no errors (font sizes, two radii and one colour that are not
   named steps in DESIGN.md). Not yet resolved.
 
-## Milestone 2 progress (in progress)
+## Milestone 2 — Database, authentication and contributor identity (complete)
 
-| Piece                                                                                      | State                                              |
-| ------------------------------------------------------------------------------------------ | -------------------------------------------------- |
-| Authentication tables and migration                                                        | Done                                               |
-| Runtime database (hosted PostgreSQL, or embedded PGlite locally)                           | Done                                               |
-| Better Auth: email and password sign-up, sign-in, sign-out                                 | Done and tested against the running server         |
-| Rate limits on sign-in and sign-up                                                         | Configured; off in local development, on elsewhere |
-| Signed-out visitors sent from private pages to sign in                                     | Done (proxy plus server checks)                    |
-| Profile rules and service (onboarding, profile, links, NEAR account, privacy, public view) | Done, 43 integration tests                         |
-| Onboarding page, workspace shell, dashboard, settings, public profile                      | **Not built yet**                                  |
-| Playwright end-to-end tests                                                                | **Not started**                                    |
-| Email verification and password reset                                                      | **Blocked**: needs an email provider               |
+| Task                                                                        | State                                                                                                                                                                       |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PostgreSQL configured                                                       | Done. Hosted PostgreSQL through `DATABASE_URL`; embedded PGlite in `.pglite/` locally and in memory for tests. A hosted database for preview still needs the user's account |
+| Schema and migrations                                                       | Done: 20 tables, three migrations, integrity triggers                                                                                                                       |
+| Authentication and sessions                                                 | Done with Better Auth: email and password, HttpOnly session cookies, database-backed rate limits outside local development                                                  |
+| Onboarding with contributor / organisation / both                           | Done                                                                                                                                                                        |
+| Profile, unique username, public/private visibility, per-section visibility | Done                                                                                                                                                                        |
+| External account links and NEAR account field                               | Done. Self-declared and labelled so; wallet proof comes in Milestone 6                                                                                                      |
+| Protected routes and server-side helpers                                    | Done: proxy redirect plus a database check on every private page and server action                                                                                          |
+| Signed-in workspace shell                                                   | Done, in the layout the user chose (top bar, side navigation)                                                                                                               |
+| Public profile `/u/[username]`                                              | Done (basic; contributions are added in Milestone 7)                                                                                                                        |
+| Data export and account closure                                             | Done                                                                                                                                                                        |
+| Notifications page                                                          | Done (list, unread count, mark all read); nothing creates notifications until Milestone 5                                                                                   |
+| Email verification, password reset and change                               | **Blocked**: needs an email provider                                                                                                                                        |
+| Google sign-in                                                              | Not configured: needs OAuth credentials                                                                                                                                     |
 
-Smoke test against the running server: sign-up 200; duplicate email and short password refused
-with clear codes; a request trying to set isPlatformAdmin or status is ignored; the session cookie
-is HttpOnly; wrong password 401; correct password 200; /dashboard while signed out redirects to
-/login.
+### Acceptance
+
+| Criterion                                             | Result                                                                                          |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Sign up, sign in, sign out, access account            | Yes, covered by browser tests                                                                   |
+| One account can hold several roles                    | Yes: onboarding records a starting preference only; organisation membership is a separate table |
+| Profile data persists after refresh and a new session | Yes, browser test                                                                               |
+| Unauthenticated users cannot reach private routes     | Yes, browser test for all six private routes                                                    |
+| Tests cover auth and profile permissions              | Yes: 49 integration tests for profile and account services, 16 browser tests                    |
+
+### Problems found and fixed by the tests
+
+- **Credentials in the URL.** Pressing "Sign in" before the page's script loaded let the browser
+  submit the form itself, putting the email and password in the address. Every form now posts and
+  keeps its button disabled until the page is ready.
+- **Typed sign-in details discarded.** The sign-in page swapped its form after load. It now has a
+  single form that reads the return address when submitted.
+- Two main headings on the portfolio page; a sideways-scrolling phone menu that could hide links;
+  inputs out of line where only one field had a hint; a slow first request (the database now
+  warms at server start).
+
+### Known limitation
+
+A private or missing profile shows the not-found page with `noindex`, but the HTTP status is 200.
+With Cache Components the response has started before the database can be checked; Next.js
+documents this, and a true 404 would need the proxy to query the database. Private and missing
+profiles still look identical.
+
+### Still open from Milestone 1
+
+Impeccable's finish review has not run. Review screenshots of every screen, in both themes and
+both sizes, are now captured by `npm run capture:screens` into `.impeccable/review/`.
 
 ## Milestone 1 — Product identity, design system and public website
 
@@ -92,20 +124,18 @@ is HttpOnly; wrong password 401; correct password 200; /dashboard while signed o
 - Tablet (768) and laptop (1280) widths have not been inspected yet.
 - Keyboard-only and screen-reader passes have not been done yet.
 
-## Check results (run 10 Nov 2026, `npm run check`)
+## Check results (run 11 Nov 2026)
 
-| Command                    | Result                                                                                                |
-| -------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `npm run format:check`     | Passed                                                                                                |
-| `npm run lint`             | Passed, no warnings                                                                                   |
-| `npm run typecheck`        | Passed                                                                                                |
-| `npm run test:unit`        | 183 passed, 0 failed                                                                                  |
-| `npm run test:integration` | 39 passed, 0 failed (in-memory PostgreSQL via PGlite)                                                 |
-| `npm run build`            | Passed. Routes: `/`, `/how-it-works`, `/for-contributors`, `/for-organisations`, `/privacy`, `/terms` |
-| Impeccable detector        | No findings                                                                                           |
-| `npm audit`                | Not re-triaged since Milestone 0 (then: 8 moderate, development tooling only)                         |
-| E2E / contract tests       | Do not exist yet                                                                                      |
-| CI on GitHub               | Never run; there is no remote                                                                         |
+| Command                                            | Result                         |
+| -------------------------------------------------- | ------------------------------ |
+| `npm run format:check`                             | Passed                         |
+| `npm run lint`                                     | Passed, no warnings            |
+| `npm run typecheck`                                | Passed                         |
+| `npm run test` (unit and integration)              | 271 passed, 0 failed           |
+| `npm run build`                                    | Passed, no warnings            |
+| `npm run test:e2e` (Playwright, desktop and phone) | 16 passed, 0 failed            |
+| Contract tests                                     | Do not exist yet (Milestone 6) |
+| CI on GitHub                                       | Never run; there is no remote  |
 
 ## Built ahead of order (belongs to Milestones 2–5)
 
@@ -148,6 +178,4 @@ is HttpOnly; wrong password 401; correct password 200; /dashboard while signed o
 
 ## Next step
 
-Milestone 2: authentication, the runtime database connection, onboarding, profiles and the
-signed-in app shell. Install Playwright there, capture the public pages, and run Impeccable's
-finish review to close Milestone 1.
+Milestone 3: contributions and evidence.
