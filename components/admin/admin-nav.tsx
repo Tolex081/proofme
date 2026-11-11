@@ -24,9 +24,7 @@ const SECTIONS = [
 function AdminNavView({ pathname }: { pathname: string | null }) {
   return (
     <nav aria-label="Administration" className="lg:sticky lg:top-6 lg:self-start">
-      <p className="mb-3 hidden px-4 font-display text-[1.05rem] font-bold lg:block">
-        ProofMe admin
-      </p>
+      <p className="mb-3 hidden px-4 font-display text-lead font-bold lg:block">ProofMe admin</p>
       <ul className="flex flex-wrap gap-1.5 lg:flex-col lg:flex-nowrap lg:gap-1">
         {SECTIONS.map((section) => {
           const current =

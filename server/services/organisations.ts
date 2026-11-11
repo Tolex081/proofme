@@ -31,6 +31,7 @@ import {
 } from "@/lib/validation/organisation";
 import { fieldErrors } from "@/lib/validation/profile";
 import { notify } from "./account";
+import { LIMIT_REACHED, withinLimit } from "./limits";
 
 /**
  * Organisations, projects and teams.
@@ -186,6 +187,7 @@ export async function createOrganisation(
 ): Promise<Result<Organisation>> {
   const parsed = organisationSchema.safeParse(input);
   if (!parsed.success) return { ok: false, errors: fieldErrors(parsed.error) };
+  if (!(await withinLimit(db, userId, "organisation"))) return LIMIT_REACHED;
   try {
     const created = await db.transaction(async (tx) => {
       const [organisation] = await tx
@@ -415,6 +417,7 @@ export async function createProject(
   if (!(await authorise(db, userId, organisationId, "project.manage"))) return DENIED;
   const parsed = projectSchema.safeParse(input);
   if (!parsed.success) return { ok: false, errors: fieldErrors(parsed.error) };
+  if (!(await withinLimit(db, userId, "project"))) return LIMIT_REACHED;
   const [organisation] = await db
     .select()
     .from(organisations)
@@ -567,6 +570,7 @@ export async function createInvitation(
   if (!parsed.success) return { ok: false, errors: fieldErrors(parsed.error) };
   const allowed = canAssignRole(membership.role, parsed.data.role);
   if (!allowed.allowed) return { ok: false, errors: { role: allowed.reason } };
+  if (!(await withinLimit(db, userId, "invitation"))) return LIMIT_REACHED;
 
   const [existingMember] = await db
     .select({ status: organisationMembers.status })

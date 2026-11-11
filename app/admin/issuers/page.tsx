@@ -41,8 +41,8 @@ async function Content() {
                 className="card flex flex-wrap items-center gap-x-5 gap-y-2 p-5 text-ink no-underline hover:border-line-strong sm:p-6"
               >
                 <div className="min-w-[14rem] flex-1">
-                  <p className="font-display text-[1.1rem] font-bold">{row.name}</p>
-                  <p className="font-mono text-[0.85rem] break-all text-muted">
+                  <p className="font-display text-lead font-bold">{row.name}</p>
+                  <p className="font-mono text-meta break-all text-muted">
                     {row.nearIssuerAccountId ?? "No account recorded"} · {row.issued} issued
                   </p>
                 </div>

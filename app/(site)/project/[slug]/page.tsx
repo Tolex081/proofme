@@ -45,7 +45,7 @@ async function Content({ params }: Pick<PageProps<"/project/[slug]">, "params">)
           <span className="chip chip-neutral">{PROJECT_STATUS_LABELS[project.status]}</span>
           <PlatformBadge status={project.organisation.platformVerificationStatus} />
         </div>
-        <h1 className="mt-3 text-[clamp(1.8rem,3.4vw,2.4rem)] leading-tight font-extrabold tracking-[-0.035em]">
+        <h1 className="mt-3 text-page leading-tight font-extrabold tracking-[-0.035em]">
           {project.name}
         </h1>
         <p className="text-muted">
@@ -54,7 +54,7 @@ async function Content({ params }: Pick<PageProps<"/project/[slug]">, "params">)
           {when(project.endDate) ? ` · until ${when(project.endDate)}` : ""}
         </p>
         {project.description ? (
-          <p className="mt-5 max-w-[62ch] text-[1.05rem]">{project.description}</p>
+          <p className="mt-5 max-w-[62ch] text-lead">{project.description}</p>
         ) : null}
         <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
           {project.websiteUrl ? (
@@ -80,7 +80,7 @@ async function Content({ params }: Pick<PageProps<"/project/[slug]">, "params">)
         </div>
       </section>
       <section className="card p-6 sm:p-8">
-        <h2 className="text-[1.3rem]">Verified contributions</h2>
+        <h2 className="text-subhead">Verified contributions</h2>
         <p className="mt-2 max-w-[62ch] text-muted">
           None yet. Contributions to this project appear here once {project.organisation.name} has
           confirmed them.

@@ -18,7 +18,8 @@
   --line-strong: #d9d1c3;
   --ink: #1b1a2e;
   --muted: #5a5770;
-  --faint: #8a8799;
+  --faint: #6b6880;
+  --mark: #4c6ef5;
 
   --brand: #2f54eb;
   --brand-ink: #ffffff;
@@ -52,7 +53,7 @@
   --line-strong: #3b3b58;
   --ink: #f3f0ea;
   --muted: #aaa7bf;
-  --faint: #8582a0;
+  --faint: #9895b0;
 
   --brand: #2f54eb;
   --brand-ink: #ffffff;
@@ -87,7 +88,7 @@
     --line-strong: #3b3b58;
     --ink: #f3f0ea;
     --muted: #aaa7bf;
-    --faint: #8582a0;
+    --faint: #9895b0;
 
     --brand: #2f54eb;
     --brand-ink: #ffffff;
@@ -140,6 +141,20 @@
   --font-mono: var(--font-geist-mono), ui-monospace, "Cascadia Mono", monospace;
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* The type scale (DESIGN.md, Typography). Use these, never literal sizes. */
+  --text-label: 0.8rem;
+  --text-meta: 0.875rem;
+  --text-note: 0.92rem;
+  --text-body: 1rem;
+  --text-lead: 1.1rem;
+  --text-title: 1.25rem;
+  --text-subhead: 1.35rem;
+  --text-figure: 2rem;
+  --text-subpage: clamp(1.6rem, 2.8vw, 2.15rem);
+  --text-page: clamp(1.85rem, 3.6vw, 2.5rem);
+  --text-heading: clamp(2rem, 4vw, 3rem);
+  --text-display: clamp(2.6rem, 6.2vw, 4.75rem);
 }
 
 @layer base {
@@ -243,7 +258,7 @@
     padding: 0.7rem 1.4rem;
     border-radius: 999px;
     font-weight: 600;
-    font-size: 0.98rem;
+    font-size: var(--text-body);
     line-height: 1.2;
     text-decoration: none;
     cursor: pointer;
@@ -303,7 +318,7 @@
     gap: 0.35rem;
     border-radius: 999px;
     padding: 0.3rem 0.7rem;
-    font-size: 0.8rem;
+    font-size: var(--text-label);
     font-weight: 700;
     line-height: 1.2;
     white-space: nowrap;
@@ -337,15 +352,17 @@
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 0.75rem;
+    /* Organisations have no logo upload yet: every monogram uses the mark colour. */
+    background: var(--mark);
     color: #fff;
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1rem;
+    font-size: var(--text-body);
   }
 
   .digest {
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: var(--text-label);
     line-height: 1.55;
     overflow-wrap: anywhere;
     font-variant-numeric: tabular-nums;
@@ -362,7 +379,7 @@
 
   .prose-notes h3 {
     margin-top: 2em;
-    font-size: 1.3rem;
+    font-size: var(--text-subhead);
     line-height: 1.25;
   }
 
@@ -392,7 +409,7 @@
 
   .field-label {
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: var(--text-note);
   }
 
   .field-optional {
@@ -401,7 +418,7 @@
   }
 
   .field-hint {
-    font-size: 0.88rem;
+    font-size: var(--text-meta);
     color: var(--muted);
   }
 
@@ -458,7 +475,7 @@
   .field-error {
     display: flex;
     gap: 0.4rem;
-    font-size: 0.9rem;
+    font-size: var(--text-note);
     font-weight: 600;
     color: var(--bad-ink);
   }
@@ -467,7 +484,7 @@
     border-radius: 0.875rem;
     padding: 0.8rem 1rem;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: var(--text-note);
   }
 
   .form-message-error {

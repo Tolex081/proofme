@@ -54,12 +54,12 @@ export function PublicProfileView({
         <div className="flex flex-wrap items-center gap-5">
           <span
             aria-hidden="true"
-            className="grid size-20 place-items-center rounded-[1.4rem] bg-[#FFD166] font-display text-[1.75rem] font-extrabold text-[#1B1A2E]"
+            className="grid size-20 place-items-center rounded-[1.4rem] bg-[#FFD166] font-display text-figure font-extrabold text-[#1B1A2E]"
           >
             {initialsOf(profile.displayName)}
           </span>
           <div className="min-w-0">
-            <Name className="text-[clamp(1.8rem,3.4vw,2.4rem)] leading-tight font-extrabold tracking-[-0.035em]">
+            <Name className="text-page leading-tight font-extrabold tracking-[-0.035em]">
               {profile.displayName}
             </Name>
             <p className="text-muted">
@@ -69,7 +69,7 @@ export function PublicProfileView({
           </div>
         </div>
 
-        {profile.bio ? <p className="mt-6 max-w-[62ch] text-[1.05rem]">{profile.bio}</p> : null}
+        {profile.bio ? <p className="mt-6 max-w-[62ch] text-lead">{profile.bio}</p> : null}
 
         <div className="mt-5 flex flex-wrap items-center gap-2">
           {profile.roles.map((role) => (
@@ -78,7 +78,7 @@ export function PublicProfileView({
             </span>
           ))}
           {profile.location ? (
-            <span className="inline-flex items-center gap-1.5 text-[0.9rem] text-muted">
+            <span className="inline-flex items-center gap-1.5 text-note text-muted">
               <MapPin aria-hidden="true" size={15} /> {profile.location}
             </span>
           ) : null}
@@ -86,12 +86,10 @@ export function PublicProfileView({
 
         {profile.skills.length > 0 ? (
           <div className="mt-6">
-            <h2 className="font-sans text-[0.85rem] font-semibold tracking-normal text-muted">
-              Skills
-            </h2>
+            <h2 className="font-sans text-meta font-semibold tracking-normal text-muted">Skills</h2>
             <ul className="mt-2 flex flex-wrap gap-2">
               {profile.skills.map((skill) => (
-                <li key={skill} className="rounded-full bg-surface-2 px-3 py-1 text-[0.9rem]">
+                <li key={skill} className="rounded-full bg-surface-2 px-3 py-1 text-note">
                   {skill}
                 </li>
               ))}
@@ -123,7 +121,7 @@ export function PublicProfileView({
               </a>
             ))}
             {profile.nearAccountId ? (
-              <span className="inline-flex items-center gap-2 text-[0.9rem] text-muted">
+              <span className="inline-flex items-center gap-2 text-note text-muted">
                 NEAR testnet: <span className="digest text-ink">{profile.nearAccountId}</span>
                 <span className="chip chip-neutral">Self-declared</span>
               </span>
@@ -133,7 +131,7 @@ export function PublicProfileView({
       </section>
 
       <section className="card p-6 sm:p-8">
-        <Section className="text-[1.3rem]">Verified contributions</Section>
+        <Section className="text-subhead">Verified contributions</Section>
         {verified.length === 0 ? (
           <p className="mt-2 max-w-[60ch] text-muted">
             None yet. Contributions appear here once the organisation they were done for has
@@ -146,7 +144,7 @@ export function PublicProfileView({
 
       {selfReported.length > 0 ? (
         <section className="card p-6 sm:p-8">
-          <Section className="text-[1.3rem]">Self-reported</Section>
+          <Section className="text-subhead">Self-reported</Section>
           <p className="mt-2 max-w-[60ch] text-muted">
             {profile.displayName}&rsquo;s own account of their work. No organisation has confirmed
             these.
@@ -156,7 +154,7 @@ export function PublicProfileView({
       ) : null}
 
       {links.length > 0 || profile.websiteUrl || profile.nearAccountId ? (
-        <p className="px-2 text-[0.88rem] text-muted">
+        <p className="px-2 text-meta text-muted">
           Links and accounts on this profile were added by {profile.displayName} and have not been
           verified by ProofMe.
         </p>
@@ -172,10 +170,8 @@ function ContributionList({ items }: { items: PublicContribution[] }) {
         <li key={item.id} className="well p-4 sm:p-5">
           <div className="flex flex-wrap items-start gap-3">
             <div className="min-w-[12rem] flex-1">
-              <p className="font-display text-[1.1rem] font-bold tracking-[-0.015em]">
-                {item.title}
-              </p>
-              <p className="text-[0.88rem] text-muted">
+              <p className="font-display text-lead font-bold tracking-[-0.015em]">{item.title}</p>
+              <p className="text-meta text-muted">
                 {CATEGORY_LABELS[item.category]}
                 {item.role ? ` · ${item.role}` : ""}
               </p>
@@ -183,7 +179,7 @@ function ContributionList({ items }: { items: PublicContribution[] }) {
             <StatusChip status={item.status} />
           </div>
           {item.attestation ? (
-            <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.92rem]">
+            <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-note">
               <BadgeCheck aria-hidden="true" size={16} className="text-ok-ink" />
               <span>
                 Confirmed by{" "}
@@ -208,7 +204,7 @@ function ContributionList({ items }: { items: PublicContribution[] }) {
                     href={link.url}
                     target="_blank"
                     rel="nofollow noopener noreferrer"
-                    className="text-link inline-flex items-center gap-1.5 text-[0.92rem]"
+                    className="text-link inline-flex items-center gap-1.5 text-note"
                   >
                     {link.label} <ExternalLink aria-hidden="true" size={13} />
                   </a>

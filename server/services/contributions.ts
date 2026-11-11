@@ -1,6 +1,7 @@
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
 
 import type { Database } from "@/lib/db/client";
+import { LIMIT_REACHED, withinLimit } from "./limits";
 import { attestations, auditEvents, contributions, evidence, organisations } from "@/lib/db/schema";
 import {
   isContributionEditable,
@@ -89,6 +90,7 @@ export async function createContribution(
 ): Promise<Result<ContributionWithEvidence>> {
   const parsed = contributionSchema.safeParse(input);
   if (!parsed.success) return { ok: false, errors: contributionFieldErrors(parsed.error) };
+  if (!(await withinLimit(db, userId, "contribution"))) return LIMIT_REACHED;
 
   const created = await db.transaction(async (tx) => {
     const [row] = await tx

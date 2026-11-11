@@ -39,7 +39,7 @@ async function Content({ params }: Pick<PageProps<"/invitations/[token]">, "para
   if (invitation.state === "invalid") {
     return (
       <div className="card p-7 sm:p-9">
-        <h1 className="text-[1.8rem] leading-tight font-extrabold tracking-[-0.03em]">
+        <h1 className="text-page leading-tight font-extrabold tracking-[-0.03em]">
           This invitation cannot be used
         </h1>
         <p className="mt-3 text-muted">
@@ -57,15 +57,15 @@ async function Content({ params }: Pick<PageProps<"/invitations/[token]">, "para
   const path = `/invitations/${token}`;
   return (
     <div className="card p-7 sm:p-9">
-      <p className="text-[0.9rem] font-semibold text-muted">You are invited to join</p>
-      <h1 className="mt-1 text-[clamp(1.8rem,4vw,2.4rem)] leading-tight font-extrabold tracking-[-0.035em]">
+      <p className="text-note font-semibold text-muted">You are invited to join</p>
+      <h1 className="mt-1 text-page leading-tight font-extrabold tracking-[-0.035em]">
         {invitation.organisation.name}
       </h1>
       <p className="mt-4">
         as <span className="font-semibold">{ROLE_LABELS[invitation.role].toLowerCase()}</span>.{" "}
         <span className="text-muted">{ROLE_DESCRIPTIONS[invitation.role]}</span>
       </p>
-      <p className="mt-3 text-[0.92rem] text-muted">
+      <p className="mt-3 text-note text-muted">
         Sent to <span className="font-semibold text-ink">{invitation.email}</span>. Only that
         account can accept it.
       </p>
@@ -73,7 +73,7 @@ async function Content({ params }: Pick<PageProps<"/invitations/[token]">, "para
         {user ? (
           <div className="grid gap-5">
             <InvitationResponse token={token} />
-            <p className="text-[0.9rem] text-muted">
+            <p className="text-note text-muted">
               Signed in as <span className="font-semibold text-ink">{user.email}</span>.{" "}
               <SignOutButton className="text-link" />
             </p>

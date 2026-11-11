@@ -28,10 +28,8 @@ export default function ExplorePage({ searchParams }: PageProps<"/explore">) {
   return (
     <div className="column pt-6 pb-20 lg:pt-12">
       <div className="mx-auto max-w-[56rem]">
-        <h1 className="text-[clamp(2.2rem,5vw,3.4rem)] leading-[1.02] font-extrabold tracking-[-0.045em]">
-          Explore
-        </h1>
-        <p className="mt-3 max-w-[56ch] text-[1.08rem] text-muted">
+        <h1 className="text-heading leading-[1.02] font-extrabold tracking-[-0.045em]">Explore</h1>
+        <p className="mt-3 max-w-[56ch] text-lead text-muted">
           People who chose to make their record public, the organisations that confirm work, and
           their projects. Private profiles never appear here.
         </p>
@@ -151,8 +149,8 @@ async function Results({ searchParams }: Pick<PageProps<"/explore">, "searchPara
                   className="card flex flex-wrap items-center gap-x-5 gap-y-2 p-5 text-ink no-underline hover:border-line-strong sm:p-6"
                 >
                   <div className="min-w-[14rem] flex-1">
-                    <p className="font-display text-[1.15rem] font-bold">{person.displayName}</p>
-                    <p className="text-[0.9rem] text-muted">@{person.username}</p>
+                    <p className="font-display text-lead font-bold">{person.displayName}</p>
+                    <p className="text-note text-muted">@{person.username}</p>
                     {person.bio ? <p className="mt-1.5 line-clamp-2">{person.bio}</p> : null}
                   </div>
                   {person.verified > 0 ? (
@@ -177,7 +175,7 @@ async function Results({ searchParams }: Pick<PageProps<"/explore">, "searchPara
                   className="card flex flex-wrap items-center gap-x-5 gap-y-2 p-5 text-ink no-underline hover:border-line-strong sm:p-6"
                 >
                   <div className="min-w-[14rem] flex-1">
-                    <p className="font-display text-[1.15rem] font-bold">{organisation.name}</p>
+                    <p className="font-display text-lead font-bold">{organisation.name}</p>
                     {organisation.description ? (
                       <p className="mt-1 line-clamp-2 text-muted">{organisation.description}</p>
                     ) : null}
@@ -197,8 +195,8 @@ async function Results({ searchParams }: Pick<PageProps<"/explore">, "searchPara
                   className="card flex flex-wrap items-center gap-x-5 gap-y-2 p-5 text-ink no-underline hover:border-line-strong sm:p-6"
                 >
                   <div className="min-w-[14rem] flex-1">
-                    <p className="font-display text-[1.15rem] font-bold">{project.name}</p>
-                    <p className="text-[0.9rem] text-muted">{project.organisationName}</p>
+                    <p className="font-display text-lead font-bold">{project.name}</p>
+                    <p className="text-note text-muted">{project.organisationName}</p>
                     {project.description ? (
                       <p className="mt-1 line-clamp-2">{project.description}</p>
                     ) : null}
@@ -218,7 +216,7 @@ function ResultList({ empty, children }: { empty: boolean; children: React.React
   if (empty) {
     return (
       <div className="card px-6 py-12 text-center">
-        <p className="font-display text-[1.25rem] font-bold">Nothing found</p>
+        <p className="font-display text-title font-bold">Nothing found</p>
         <p className="mx-auto mt-2 max-w-[44ch] text-muted">
           Try a shorter search or remove a filter.
         </p>

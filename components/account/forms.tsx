@@ -67,7 +67,7 @@ function RoleChoices({ selected, error }: { selected: string[]; error?: string }
         {PROFESSIONAL_ROLES.map((role) => (
           <label
             key={role}
-            className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border-[1.5px] border-line-strong bg-surface px-4 text-[0.92rem] font-semibold transition-colors hover:border-ink has-[:checked]:border-ink has-[:checked]:bg-ink has-[:checked]:text-canvas has-[:focus-visible]:outline-[2.5px] has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-link"
+            className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border-[1.5px] border-line-strong bg-surface px-4 text-note font-semibold transition-colors hover:border-ink has-[:checked]:border-ink has-[:checked]:bg-ink has-[:checked]:text-canvas has-[:focus-visible]:outline-[2.5px] has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-link"
           >
             <input
               type="checkbox"
@@ -139,8 +139,8 @@ export function OnboardingForm({
                   className="size-4"
                 />
               </span>
-              <span className="font-display text-[1.1rem] font-bold">{intent.title}</span>
-              <span className="text-[0.88rem] text-muted">{intent.body}</span>
+              <span className="font-display text-lead font-bold">{intent.title}</span>
+              <span className="text-meta text-muted">{intent.body}</span>
             </label>
           ))}
         </div>
@@ -184,7 +184,7 @@ export function OnboardingForm({
 
       <div className="flex flex-wrap items-center gap-4 border-t border-line pt-6">
         <Submit pending={pending} label="Finish setting up" pendingLabel="Saving…" />
-        <p className="text-[0.9rem] text-muted">
+        <p className="text-note text-muted">
           Your profile stays private until you choose to share it.
         </p>
       </div>
@@ -377,7 +377,7 @@ export function PrivacyForm({
               />
               <span>
                 <span className="block font-semibold">{title}</span>
-                <span className="block text-[0.88rem] text-muted">{body}</span>
+                <span className="block text-meta text-muted">{body}</span>
               </span>
             </label>
           ))}

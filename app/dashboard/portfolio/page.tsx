@@ -46,7 +46,7 @@ async function PortfolioContent() {
           <p className="font-semibold">
             {isPublic ? "Your profile is public" : "Your profile is private"}
           </p>
-          <p className="text-[0.92rem] text-muted">
+          <p className="text-note text-muted">
             {isPublic ? (
               <>
                 Anyone with the link can see it at <span className="digest text-ink">{path}</span>
@@ -66,7 +66,7 @@ async function PortfolioContent() {
         </Link>
       </div>
 
-      <p className="mb-3 text-[0.85rem] font-semibold text-muted">Preview</p>
+      <p className="mb-3 text-meta font-semibold text-muted">Preview</p>
       <PublicProfileView profile={publicViewOf(profile)} contributions={contributions} embedded />
     </>
   );

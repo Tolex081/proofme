@@ -76,7 +76,7 @@ async function ContributionsContent({
                       : `/dashboard/contributions?status=${filter.value}`
                   }
                   aria-current={current ? "page" : undefined}
-                  className="inline-flex min-h-10 items-center rounded-full border border-line bg-surface px-4 text-[0.92rem] font-semibold text-muted no-underline hover:text-ink aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
+                  className="inline-flex min-h-10 items-center rounded-full border border-line bg-surface px-4 text-note font-semibold text-muted no-underline hover:text-ink aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
                 >
                   {filter.label}
                 </Link>
@@ -91,7 +91,7 @@ async function ContributionsContent({
           <span className="grid size-14 place-items-center rounded-2xl bg-highlight text-highlight-ink">
             <FileText aria-hidden="true" size={24} />
           </span>
-          <h2 className="mt-5 text-[1.3rem]">
+          <h2 className="mt-5 text-subhead">
             {status === "all" ? "No contributions yet" : "Nothing with this status"}
           </h2>
           <p className="mt-2 max-w-[46ch] text-muted">
@@ -114,15 +114,15 @@ async function ContributionsContent({
                 className="card flex flex-wrap items-center gap-x-5 gap-y-3 p-5 text-ink no-underline transition-colors hover:border-line-strong sm:p-6"
               >
                 <div className="min-w-[14rem] flex-1">
-                  <p className="font-display text-[1.15rem] font-bold tracking-[-0.015em]">
+                  <p className="font-display text-lead font-bold tracking-[-0.015em]">
                     {item.title}
                   </p>
-                  <p className="mt-0.5 text-[0.9rem] text-muted">
+                  <p className="mt-0.5 text-note text-muted">
                     {CATEGORY_LABELS[item.category]}
                     {item.role ? ` · ${item.role}` : ""} · updated {UPDATED.format(item.updatedAt)}
                   </p>
                 </div>
-                <span className="inline-flex items-center gap-1.5 text-[0.88rem] text-muted">
+                <span className="inline-flex items-center gap-1.5 text-meta text-muted">
                   <Link2 aria-hidden="true" size={15} />
                   {item.evidence.length} {item.evidence.length === 1 ? "link" : "links"}
                 </span>

@@ -62,10 +62,10 @@ export default function Home() {
       {/* Hero: the promise, and a sample of what a ProofMe record looks like. */}
       <section className="column grid items-center gap-12 pt-6 pb-20 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pt-12 lg:pb-28">
         <div className="rise">
-          <h1 className="text-[clamp(2.6rem,6.2vw,4.75rem)] leading-[0.98] font-extrabold tracking-[-0.045em]">
+          <h1 className="text-display leading-[0.98] font-extrabold tracking-[-0.045em]">
             Your work, <span className="marker">confirmed</span> by the people who saw it.
           </h1>
-          <p className="mt-6 max-w-[34rem] text-[1.15rem] text-muted">
+          <p className="mt-6 max-w-[34rem] text-lead text-muted">
             One portable record of what you built across every DAO, protocol and project. Each piece
             is confirmed by the team behind it, so anyone can trust it, and check it.
           </p>
@@ -77,7 +77,7 @@ export default function Home() {
               Check a sample record
             </a>
           </div>
-          <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-[0.92rem] text-muted">
+          <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-note text-muted">
             {PROMISES.map((promise) => (
               <li key={promise} className="inline-flex items-center gap-2">
                 <CircleCheck
@@ -101,14 +101,14 @@ export default function Home() {
       <section id="check" className="scroll-mt-6 bg-surface-2 py-20 lg:py-28">
         <div className="column grid items-start gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
           <div className="lg:sticky lg:top-10">
-            <h2 className="text-[clamp(2rem,4vw,3rem)] leading-[1.04]">
+            <h2 className="text-heading leading-[1.04]">
               Don&rsquo;t take our word for it. Check it.
             </h2>
-            <p className="mt-5 max-w-[30rem] text-[1.08rem] text-muted">
+            <p className="mt-5 max-w-[30rem] text-lead text-muted">
               Every approved record has a digest: a fingerprint of the whole record, computed with
               SHA-256. Change anything, even one word, and the fingerprint changes completely.
             </p>
-            <p className="mt-4 max-w-[30rem] text-[1.08rem] text-muted">
+            <p className="mt-4 max-w-[30rem] text-lead text-muted">
               On a real record, the digest you compare against is read from the NEAR testnet
               registry, not from ProofMe. This one is a sample, so it lives on this page.
             </p>
@@ -120,10 +120,10 @@ export default function Home() {
       {/* How a record is made. */}
       <section className="column py-20 lg:py-28">
         <div className="max-w-[40rem]">
-          <h2 className="text-[clamp(2rem,4vw,3rem)] leading-[1.04]">
+          <h2 className="text-heading leading-[1.04]">
             Four steps, each taken by someone different.
           </h2>
-          <p className="mt-5 text-[1.08rem] text-muted">
+          <p className="mt-5 text-lead text-muted">
             Nobody verifies their own work, and ProofMe never verifies it for them.
           </p>
         </div>
@@ -134,13 +134,13 @@ export default function Home() {
                 <span className="grid size-11 place-items-center rounded-2xl bg-highlight text-highlight-ink">
                   <step.icon aria-hidden="true" size={21} strokeWidth={2} />
                 </span>
-                <span className="font-display text-[0.95rem] font-bold text-faint">
+                <span className="font-display text-note font-bold text-faint">
                   Step {index + 1}
                 </span>
               </div>
-              <p className="mt-5 text-[0.85rem] font-semibold text-muted">{step.who}</p>
-              <h3 className="mt-1 text-[1.25rem] leading-tight tracking-[-0.02em]">{step.title}</h3>
-              <p className="mt-2 text-[0.95rem] text-muted">{step.body}</p>
+              <p className="mt-5 text-meta font-semibold text-muted">{step.who}</p>
+              <h3 className="mt-1 text-title leading-tight tracking-[-0.02em]">{step.title}</h3>
+              <p className="mt-2 text-note text-muted">{step.body}</p>
             </li>
           ))}
         </ol>
@@ -159,15 +159,13 @@ export default function Home() {
             <span className="grid size-12 place-items-center rounded-2xl bg-brand text-brand-ink">
               <ShieldCheck aria-hidden="true" size={24} strokeWidth={2} />
             </span>
-            <h2 className="mt-5 text-[clamp(1.7rem,3vw,2.2rem)] leading-[1.08]">
-              Honest about what it proves.
-            </h2>
+            <h2 className="mt-5 text-subpage leading-[1.08]">Honest about what it proves.</h2>
             <p className="mt-3 text-muted">
               A record is an organisation&rsquo;s word about one piece of work. No more, no less.
             </p>
           </div>
           <div>
-            <h3 className="text-[1.05rem] tracking-[-0.01em]">It proves</h3>
+            <h3 className="text-lead tracking-[-0.01em]">It proves</h3>
             <ul className="mt-4 grid gap-3">
               {PROVES.map((line) => (
                 <li key={line} className="flex gap-3">
@@ -180,7 +178,7 @@ export default function Home() {
             </ul>
           </div>
           <div>
-            <h3 className="text-[1.05rem] tracking-[-0.01em]">It does not prove</h3>
+            <h3 className="text-lead tracking-[-0.01em]">It does not prove</h3>
             <ul className="mt-4 grid gap-3 text-muted">
               {DOES_NOT_PROVE.map((line) => (
                 <li key={line} className="flex gap-3">
@@ -198,7 +196,7 @@ export default function Home() {
       {/* Two ways in. */}
       <section className="column grid gap-4 pb-20 md:grid-cols-2 lg:pb-28">
         <div className="card flex flex-col p-8 sm:p-10">
-          <h2 className="text-[clamp(1.6rem,2.8vw,2.1rem)] leading-[1.1]">
+          <h2 className="text-subpage leading-[1.1]">
             Did the work? Keep a record that outlasts the Discord server.
           </h2>
           <p className="mt-4 text-muted">
@@ -215,7 +213,7 @@ export default function Home() {
           </div>
         </div>
         <div className="card flex flex-col bg-ink p-8 text-canvas sm:p-10 [&_.text-muted]:text-canvas/75">
-          <h2 className="text-[clamp(1.6rem,2.8vw,2.1rem)] leading-[1.1]">
+          <h2 className="text-subpage leading-[1.1]">
             Run the project? Put your name to the work you stand behind.
           </h2>
           <p className="text-muted mt-4">

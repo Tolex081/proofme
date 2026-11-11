@@ -32,11 +32,28 @@ const envSchema = z
     BETTER_AUTH_SECRET: z.string().min(32, "must be at least 32 characters"),
   })
   .superRefine((value, context) => {
-    if (value.APP_ENV !== "local" && !value.DATABASE_URL) {
+    if (value.APP_ENV === "local") return;
+    // Preview and production must never run on local-only settings.
+    if (!value.DATABASE_URL) {
       context.addIssue({
         code: "custom",
         path: ["DATABASE_URL"],
         message: "is required outside local development",
+      });
+    }
+    const url = new URL(value.NEXT_PUBLIC_APP_URL);
+    if (url.protocol !== "https:" || ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)) {
+      context.addIssue({
+        code: "custom",
+        path: ["NEXT_PUBLIC_APP_URL"],
+        message: "must be the public https:// address outside local development",
+      });
+    }
+    if (value.NEAR_NETWORK !== "testnet") {
+      context.addIssue({
+        code: "custom",
+        path: ["NEAR_NETWORK"],
+        message: "must be testnet outside local development",
       });
     }
   });

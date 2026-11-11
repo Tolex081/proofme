@@ -20,7 +20,7 @@ export function Logo({ size = 30 }: { size?: number }) {
   return (
     <span className="inline-flex items-center gap-2.5">
       <LogoMark size={size} />
-      <span className="font-display text-[1.4rem] font-extrabold tracking-[-0.03em] text-ink">
+      <span className="font-display text-subhead font-extrabold tracking-[-0.03em] text-ink">
         ProofMe
       </span>
     </span>

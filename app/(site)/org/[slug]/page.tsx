@@ -50,15 +50,11 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]">, "params">) {
     <div className="grid gap-4">
       <section className="card p-6 sm:p-8">
         <div className="flex flex-wrap items-center gap-5">
-          <span
-            aria-hidden="true"
-            className="org-mark size-20 rounded-[1.4rem] text-[1.9rem]"
-            style={{ background: "#4C6EF5" }}
-          >
+          <span aria-hidden="true" className="org-mark size-20 rounded-[1.4rem] text-figure">
             {organisation.name.charAt(0).toUpperCase()}
           </span>
           <div className="min-w-0">
-            <h1 className="text-[clamp(1.8rem,3.4vw,2.4rem)] leading-tight font-extrabold tracking-[-0.035em]">
+            <h1 className="text-page leading-tight font-extrabold tracking-[-0.035em]">
               {organisation.name}
             </h1>
             <p className="text-muted">
@@ -68,7 +64,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]">, "params">) {
           </div>
         </div>
         {organisation.description ? (
-          <p className="mt-6 max-w-[62ch] text-[1.05rem]">{organisation.description}</p>
+          <p className="mt-6 max-w-[62ch] text-lead">{organisation.description}</p>
         ) : null}
         {organisation.websiteUrl ? (
           <a
@@ -83,25 +79,25 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]">, "params">) {
       </section>
 
       <section className="card p-6 sm:p-8">
-        <h2 className="text-[1.3rem]">Standing</h2>
+        <h2 className="text-subhead">Standing</h2>
         <p className="mt-2 max-w-[62ch] text-muted">
           Two separate facts. Neither implies the other.
         </p>
         <dl className="mt-5 grid gap-5 sm:grid-cols-2">
           <div>
-            <dt className="text-[0.85rem] font-semibold text-muted">ProofMe review</dt>
+            <dt className="text-meta font-semibold text-muted">ProofMe review</dt>
             <dd className="mt-2">
               <PlatformBadge status={organisation.platformVerificationStatus} />
-              <p className="mt-2 text-[0.92rem] text-muted">
+              <p className="mt-2 text-note text-muted">
                 {platformMeaning(organisation.platformVerificationStatus)}
               </p>
             </dd>
           </div>
           <div>
-            <dt className="text-[0.85rem] font-semibold text-muted">NEAR testnet issuer</dt>
+            <dt className="text-meta font-semibold text-muted">NEAR testnet issuer</dt>
             <dd className="mt-2">
               <IssuerBadge status={organisation.nearIssuerStatus} />
-              <p className="mt-2 text-[0.92rem] text-muted">
+              <p className="mt-2 text-note text-muted">
                 {organisation.nearIssuerAccountId ? (
                   <>
                     Registered account{" "}
@@ -117,7 +113,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]">, "params">) {
       </section>
 
       <section className="card p-6 sm:p-8">
-        <h2 className="text-[1.3rem]">Projects</h2>
+        <h2 className="text-subhead">Projects</h2>
         {organisation.projects.length === 0 ? (
           <p className="mt-2 text-muted">No public projects yet.</p>
         ) : (
@@ -131,7 +127,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]">, "params">) {
                   <div className="min-w-[12rem] flex-1">
                     <p className="font-semibold">{project.name}</p>
                     {project.description ? (
-                      <p className="line-clamp-1 text-[0.9rem] text-muted">{project.description}</p>
+                      <p className="line-clamp-1 text-note text-muted">{project.description}</p>
                     ) : null}
                   </div>
                   <span className="chip chip-neutral">{PROJECT_STATUS_LABELS[project.status]}</span>
@@ -143,7 +139,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]">, "params">) {
       </section>
 
       <section className="card p-6 sm:p-8">
-        <h2 className="text-[1.3rem]">Attestations issued</h2>
+        <h2 className="text-subhead">Attestations issued</h2>
         {organisation.attestations.length === 0 ? (
           <p className="mt-2 max-w-[62ch] text-muted">
             None to show. Attestations this organisation issues are listed here, including any it
@@ -164,7 +160,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]">, "params">) {
                         {item.title}
                       </Link>
                     </p>
-                    <p className="text-[0.9rem] text-muted">
+                    <p className="text-note text-muted">
                       <Link href={`/u/${item.contributorUsername}`} className="text-link">
                         {item.contributorName}
                       </Link>{" "}

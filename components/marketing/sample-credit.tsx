@@ -76,12 +76,12 @@ export function SampleCredit() {
       }}
     >
       <div className="flex flex-wrap items-center gap-3 border-b border-line px-6 py-4 sm:px-8">
-        <span aria-hidden="true" className="org-mark" style={{ background: "#4C6EF5" }}>
+        <span aria-hidden="true" className="org-mark">
           N
         </span>
         <div className="min-w-[8.5rem] flex-1">
           <p className="font-semibold">Sample record</p>
-          <p className="text-[0.85rem] text-muted">Fictional, and not anchored on NEAR</p>
+          <p className="text-meta text-muted">Fictional, and not anchored on NEAR</p>
         </div>
         <span className="chip chip-ok">
           <Check aria-hidden="true" size={13} strokeWidth={3} /> Organisation approved
@@ -90,21 +90,21 @@ export function SampleCredit() {
 
       <dl className="grid gap-x-8 gap-y-4 px-6 py-6 sm:grid-cols-2 sm:px-8">
         <div className="sm:col-span-2">
-          <dt className="text-[0.82rem] font-semibold text-faint">Contribution</dt>
-          <dd className="mt-0.5 font-display text-[1.5rem] font-bold tracking-[-0.02em]">
+          <dt className="text-label font-semibold text-faint">Contribution</dt>
+          <dd className="mt-0.5 font-display text-subhead font-bold tracking-[-0.02em]">
             {SAMPLE_ATTESTATION.claim.title}
           </dd>
         </div>
         <div>
-          <dt className="text-[0.82rem] font-semibold text-faint">Credited to</dt>
+          <dt className="text-label font-semibold text-faint">Credited to</dt>
           <dd className="mt-0.5 font-semibold">{SAMPLE_SUBJECT_DISPLAY_NAME}</dd>
         </div>
         <div>
-          <dt className="text-[0.82rem] font-semibold text-faint">Confirmed by</dt>
+          <dt className="text-label font-semibold text-faint">Confirmed by</dt>
           <dd className="mt-0.5 font-semibold">{SAMPLE_ATTESTATION.issuer.name}</dd>
         </div>
         <div>
-          <dt className="text-[0.82rem] font-semibold text-faint">
+          <dt className="text-label font-semibold text-faint">
             <label htmlFor={roleId}>Role (you can edit this)</label>
           </dt>
           <dd className="mt-1">
@@ -122,18 +122,18 @@ export function SampleCredit() {
           </dd>
         </div>
         <div>
-          <dt className="text-[0.82rem] font-semibold text-faint">Issued</dt>
+          <dt className="text-label font-semibold text-faint">Issued</dt>
           <dd className="mt-0.5 font-semibold">{ISSUED}</dd>
         </div>
       </dl>
 
       <div className="mx-6 grid gap-3 rounded-2xl bg-surface-2 p-4 sm:mx-8">
         <div>
-          <p className="text-[0.82rem] font-semibold text-faint">Recorded digest</p>
+          <p className="text-label font-semibold text-faint">Recorded digest</p>
           <p className="digest mt-0.5 text-muted">{SAMPLE_ATTESTATION_DIGEST}</p>
         </div>
         <div>
-          <p className="text-[0.82rem] font-semibold text-faint">Computed by your browser</p>
+          <p className="text-label font-semibold text-faint">Computed by your browser</p>
           <p className="digest mt-0.5 min-h-[1.25rem]" aria-live="polite">
             {check.state === "done" ? (
               <span key={check.run} className="resolve inline-block">
@@ -162,7 +162,7 @@ export function SampleCredit() {
             Restore the original
           </button>
         ) : null}
-        <div role="status" className="min-w-0 basis-full text-[0.95rem]">
+        <div role="status" className="min-w-0 basis-full text-note">
           {check.state === "done" && matches ? (
             <p key={check.run} className="pop chip chip-ok whitespace-normal">
               <Check aria-hidden="true" size={15} strokeWidth={3} className="shrink-0" />

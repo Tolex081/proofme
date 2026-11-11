@@ -130,7 +130,7 @@ function EvidenceEditor({
           return (
             <li key={row.key} className="well grid gap-3 p-4 sm:grid-cols-[11rem_1fr]">
               <div className="field">
-                <label htmlFor={`${rowId}-type`} className="field-label text-[0.88rem]">
+                <label htmlFor={`${rowId}-type`} className="field-label text-meta">
                   Link {index + 1}: kind
                 </label>
                 <select
@@ -148,7 +148,7 @@ function EvidenceEditor({
                 </select>
               </div>
               <div className="field">
-                <label htmlFor={`${rowId}-url`} className="field-label text-[0.88rem]">
+                <label htmlFor={`${rowId}-url`} className="field-label text-meta">
                   Link {index + 1}: address
                 </label>
                 <input
@@ -169,7 +169,7 @@ function EvidenceEditor({
               </div>
               <div className="field sm:col-span-2 sm:grid sm:grid-cols-[1fr_auto] sm:items-end sm:gap-3">
                 <div className="field">
-                  <label htmlFor={`${rowId}-label`} className="field-label text-[0.88rem]">
+                  <label htmlFor={`${rowId}-label`} className="field-label text-meta">
                     Link {index + 1}: description
                   </label>
                   <input
@@ -336,7 +336,7 @@ export function ContributionForm({
               />
               <span>
                 <span className="block font-semibold">{title}</span>
-                <span className="block text-[0.88rem] text-muted">{body}</span>
+                <span className="block text-meta text-muted">{body}</span>
               </span>
             </label>
           ))}

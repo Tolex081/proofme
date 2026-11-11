@@ -8,7 +8,7 @@ export function NoAccess({ what, backHref }: { what: string; backHref: string })
       <span className="grid size-14 place-items-center rounded-2xl bg-surface-2 text-muted">
         <Lock aria-hidden="true" size={24} />
       </span>
-      <h1 className="mt-5 text-[1.5rem]">Your role cannot {what}</h1>
+      <h1 className="mt-5 text-subhead">Your role cannot {what}</h1>
       <p className="mt-2 max-w-[46ch] text-muted">
         An owner or admin of this organisation can do this, or change your role.
       </p>

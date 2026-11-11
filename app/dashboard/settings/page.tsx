@@ -49,11 +49,11 @@ async function SettingsContent() {
         <Panel id="account" title="Account">
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>
-              <dt className="text-[0.85rem] font-semibold text-muted">Email</dt>
+              <dt className="text-meta font-semibold text-muted">Email</dt>
               <dd className="mt-0.5 font-semibold break-all">{user.email}</dd>
             </div>
             <div>
-              <dt className="text-[0.85rem] font-semibold text-muted">Password</dt>
+              <dt className="text-meta font-semibold text-muted">Password</dt>
               <dd className="mt-0.5 text-muted">
                 Changing or resetting it needs an email service, which this build does not have yet.
               </dd>
@@ -64,7 +64,7 @@ async function SettingsContent() {
               <Download aria-hidden="true" size={17} />
               Download my data
             </a>
-            <p className="text-[0.9rem] text-muted">
+            <p className="text-note text-muted">
               A JSON file of everything ProofMe holds about you.
             </p>
           </div>

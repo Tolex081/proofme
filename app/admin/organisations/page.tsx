@@ -72,8 +72,8 @@ async function Content({ searchParams }: Pick<PageProps<"/admin/organisations">,
                 className="card flex flex-wrap items-center gap-x-5 gap-y-2 p-5 text-ink no-underline hover:border-line-strong sm:p-6"
               >
                 <div className="min-w-[14rem] flex-1">
-                  <p className="font-display text-[1.15rem] font-bold">{row.name}</p>
-                  <p className="text-[0.9rem] text-muted">
+                  <p className="font-display text-lead font-bold">{row.name}</p>
+                  <p className="text-note text-muted">
                     /org/{row.slug} · updated {DAY.format(row.updatedAt)}
                   </p>
                 </div>

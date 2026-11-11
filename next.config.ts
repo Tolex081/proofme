@@ -1,9 +1,12 @@
 import type { NextConfig } from "next";
 
+import { securityHeaders } from "./lib/security/headers";
+
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  // Do not advertise the framework in every response.
+  poweredByHeader: false,
   turbopack: {
     rules: {
       "*.css": {
@@ -11,6 +14,17 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: securityHeaders({
+          appEnv: process.env.APP_ENV ?? "local",
+          development: process.env.NODE_ENV === "development",
+        }),
+      },
+    ];
   },
 };
 

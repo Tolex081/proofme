@@ -39,8 +39,8 @@ async function Content({ searchParams }: Pick<PageProps<"/admin/users">, "search
             <li key={row.id} className="card p-5 sm:p-6">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <div className="min-w-[14rem] flex-1">
-                  <p className="font-display text-[1.1rem] font-bold">{row.name}</p>
-                  <p className="text-[0.9rem] break-all text-muted">
+                  <p className="font-display text-lead font-bold">{row.name}</p>
+                  <p className="text-note break-all text-muted">
                     {row.email}
                     {row.username ? (
                       <>

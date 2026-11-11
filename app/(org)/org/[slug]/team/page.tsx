@@ -67,7 +67,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]/team">, "params">
                       {member.name}
                       {isSelf ? <span className="font-normal text-muted"> (you)</span> : null}
                     </p>
-                    <p className="text-[0.88rem] text-muted">
+                    <p className="text-meta text-muted">
                       {member.username ? `@${member.username} · ` : ""}joined{" "}
                       {DAY.format(member.joinedAt)}
                     </p>
@@ -111,7 +111,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]/team">, "params">
                 </li>
               ))}
             </ul>
-            <p className="mt-4 text-[0.92rem] text-muted">
+            <p className="mt-4 text-note text-muted">
               Only owners and admins can invite people or change roles.
             </p>
           </Panel>
@@ -127,7 +127,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]/team">, "params">
                 >
                   <div className="min-w-[12rem] flex-1">
                     <p className="font-semibold break-all">{invitation.email}</p>
-                    <p className="text-[0.88rem] text-muted">
+                    <p className="text-meta text-muted">
                       {ROLE_LABELS[invitation.role]} · expires {DAY.format(invitation.expiresAt)}
                     </p>
                   </div>

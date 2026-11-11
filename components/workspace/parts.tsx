@@ -39,9 +39,7 @@ export function PageHeading({
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div className="max-w-[44rem]">
-        <h1 className="text-[clamp(1.9rem,3.6vw,2.6rem)] leading-[1.05] font-extrabold tracking-[-0.04em]">
-          {title}
-        </h1>
+        <h1 className="text-page leading-[1.05] font-extrabold tracking-[-0.04em]">{title}</h1>
         {intro ? <p className="mt-2 text-muted">{intro}</p> : null}
       </div>
       {action}
@@ -68,7 +66,7 @@ export function Panel({
       aria-labelledby={id ? `${id}-title` : undefined}
       className={`card scroll-mt-6 p-6 sm:p-8 ${tone === "danger" ? "border-bad-ink/40" : ""}`}
     >
-      <h2 id={id ? `${id}-title` : undefined} className="text-[1.35rem] leading-tight">
+      <h2 id={id ? `${id}-title` : undefined} className="text-subhead leading-tight">
         {title}
       </h2>
       {intro ? <p className="mt-1.5 max-w-[60ch] text-muted">{intro}</p> : null}

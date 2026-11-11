@@ -58,11 +58,11 @@ async function Content({ searchParams }: Pick<PageProps<"/admin/reports">, "sear
         <ul className="grid gap-3">
           {rows.map((row) => (
             <li key={row.id} className="card p-5 sm:p-6">
-              <h2 className="font-display text-[1.1rem] font-bold">
+              <h2 className="font-display text-lead font-bold">
                 {REPORT_REASON_LABELS[row.reason as keyof typeof REPORT_REASON_LABELS] ??
                   row.reason}
               </h2>
-              <p className="text-[0.9rem] text-muted">
+              <p className="text-note text-muted">
                 {row.targetType}{" "}
                 <Link href={targetHref(row.targetType, row.targetId)} className="text-link">
                   {row.targetId}

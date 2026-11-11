@@ -44,7 +44,7 @@ export default defineConfig({
       PGLITE_DATA_DIR: "memory://",
       DATABASE_URL: "",
       BETTER_AUTH_SECRET: "e2e-only-secret-not-used-anywhere-else-0123456789",
-      PROOFME_LOCAL_ADMIN_EMAIL: "e2e-admin@example.test",
+      PROOFME_LOCAL_ADMIN_EMAIL: "e2e-admin@example.test,e2e-quality@example.test",
     },
   },
 });

@@ -42,7 +42,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]/projects">, "para
           <span className="grid size-14 place-items-center rounded-2xl bg-highlight text-highlight-ink">
             <FolderKanban aria-hidden="true" size={24} />
           </span>
-          <h2 className="mt-5 text-[1.3rem]">No projects yet</h2>
+          <h2 className="mt-5 text-subhead">No projects yet</h2>
           <p className="mt-2 max-w-[44ch] text-muted">
             {canManage
               ? "Add the projects people contribute to, so contributors can say which one their work was for."
@@ -58,9 +58,9 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]/projects">, "para
                 className="card flex flex-wrap items-center gap-4 p-5 text-ink no-underline hover:border-line-strong sm:p-6"
               >
                 <div className="min-w-[14rem] flex-1">
-                  <p className="font-display text-[1.15rem] font-bold">{project.name}</p>
+                  <p className="font-display text-lead font-bold">{project.name}</p>
                   {project.description ? (
-                    <p className="mt-0.5 line-clamp-1 text-[0.92rem] text-muted">
+                    <p className="mt-0.5 line-clamp-1 text-note text-muted">
                       {project.description}
                     </p>
                   ) : null}

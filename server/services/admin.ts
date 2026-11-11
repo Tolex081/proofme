@@ -16,6 +16,7 @@ import {
 } from "@/lib/db/schema";
 import { CONTRIBUTION_CATEGORIES } from "@/lib/attestations/payload";
 import { notify } from "./account";
+import { withinLimit } from "./limits";
 
 /**
  * Platform administration.
@@ -414,8 +415,6 @@ const reportSchema = z.object({
   details: reasonSchema,
 });
 
-const REPORTS_PER_DAY = 10;
-
 /** Anyone signed in can report a public profile, organisation or attestation. */
 export async function createReport(
   db: Database,
@@ -427,16 +426,7 @@ export async function createReport(
     const issue = parsed.error.issues[0];
     return { ok: false, errors: { [String(issue.path[0] ?? "form")]: issue.message } };
   }
-  const [recent] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(reports)
-    .where(
-      and(
-        eq(reports.reporterUserId, reporterId),
-        sql`${reports.createdAt} > now() - interval '1 day'`,
-      ),
-    );
-  if (recent.count >= REPORTS_PER_DAY) {
+  if (!(await withinLimit(db, reporterId, "report"))) {
     return {
       ok: false,
       errors: { form: "You have sent a lot of reports today. Try again tomorrow." },

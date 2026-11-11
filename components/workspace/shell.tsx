@@ -53,7 +53,7 @@ export function SideNavView({ pathname, unread }: { pathname: string | null; unr
                 <link.icon aria-hidden="true" size={18} strokeWidth={2} />
                 {link.label}
                 {link.href === "/dashboard/notifications" && unread > 0 ? (
-                  <span className="ml-auto rounded-full bg-brand px-2 py-0.5 text-[0.75rem] font-bold text-brand-ink">
+                  <span className="ml-auto rounded-full bg-brand px-2 py-0.5 text-label font-bold text-brand-ink">
                     {unread}
                     <span className="sr-only"> unread</span>
                   </span>
@@ -115,7 +115,7 @@ export function AccountMenu({ name, username }: { name: string; username: string
       >
         <span
           aria-hidden="true"
-          className="grid size-9 place-items-center rounded-full bg-[#FFD166] font-display text-[0.9rem] font-extrabold text-[#1B1A2E]"
+          className="grid size-9 place-items-center rounded-full bg-[#FFD166] font-display text-note font-extrabold text-[#1B1A2E]"
         >
           {initials || "?"}
         </span>
@@ -124,7 +124,7 @@ export function AccountMenu({ name, username }: { name: string; username: string
         <span className="sr-only">Account menu</span>
       </button>
       <div id={menuId} hidden={!open} className="card absolute right-0 z-30 mt-2 w-64 p-2">
-        <p className="px-3 pt-2 pb-3 text-[0.85rem] text-muted">
+        <p className="px-3 pt-2 pb-3 text-meta text-muted">
           Signed in as <span className="font-semibold text-ink">{username}</span>
         </p>
         <Link

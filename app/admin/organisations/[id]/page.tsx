@@ -55,7 +55,7 @@ async function Content({
         </p>
       ) : null}
       <div className="mb-8">
-        <h1 className="text-[clamp(1.9rem,3.6vw,2.6rem)] leading-[1.05] font-extrabold tracking-[-0.04em]">
+        <h1 className="text-page leading-[1.05] font-extrabold tracking-[-0.04em]">
           {organisation.name}
         </h1>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -68,7 +68,7 @@ async function Content({
         <Panel title="What they told us">
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>
-              <dt className="text-[0.85rem] font-semibold text-muted">Public page</dt>
+              <dt className="text-meta font-semibold text-muted">Public page</dt>
               <dd>
                 <Link href={`/org/${organisation.slug}`} className="text-link">
                   /org/{organisation.slug}
@@ -76,7 +76,7 @@ async function Content({
               </dd>
             </div>
             <div>
-              <dt className="text-[0.85rem] font-semibold text-muted">Website</dt>
+              <dt className="text-meta font-semibold text-muted">Website</dt>
               <dd>
                 {organisation.websiteUrl ? (
                   <a
@@ -95,7 +95,7 @@ async function Content({
               </dd>
             </div>
             <div>
-              <dt className="text-[0.85rem] font-semibold text-muted">Owners</dt>
+              <dt className="text-meta font-semibold text-muted">Owners</dt>
               <dd>
                 <ul>
                   {view.owners.map((owner) => (
@@ -107,19 +107,19 @@ async function Content({
               </dd>
             </div>
             <div>
-              <dt className="text-[0.85rem] font-semibold text-muted">Activity</dt>
+              <dt className="text-meta font-semibold text-muted">Activity</dt>
               <dd>
                 {view.members} active {view.members === 1 ? "member" : "members"},{" "}
                 {view.attestationsIssued} attestations issued
               </dd>
             </div>
             <div className="sm:col-span-2">
-              <dt className="text-[0.85rem] font-semibold text-muted">Description</dt>
+              <dt className="text-meta font-semibold text-muted">Description</dt>
               <dd className="whitespace-pre-line">{organisation.description || "None given"}</dd>
             </div>
             {organisation.platformVerificationReason ? (
               <div className="sm:col-span-2">
-                <dt className="text-[0.85rem] font-semibold text-muted">Last reason given</dt>
+                <dt className="text-meta font-semibold text-muted">Last reason given</dt>
                 <dd>{organisation.platformVerificationReason}</dd>
               </div>
             ) : null}
@@ -149,7 +149,7 @@ async function Content({
               {view.history.map((event, index) => (
                 <li key={index} className="border-b border-line pb-3 last:border-0">
                   <p className="font-semibold">{event.action}</p>
-                  <p className="text-[0.88rem] text-muted">
+                  <p className="text-meta text-muted">
                     {event.actorName ?? "Deleted account"} · {MOMENT.format(event.createdAt)}
                   </p>
                   {typeof (event.metadata as { reason?: unknown })?.reason === "string" ? (

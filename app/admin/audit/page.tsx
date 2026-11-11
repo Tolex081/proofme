@@ -68,7 +68,7 @@ async function Content({ searchParams }: Pick<PageProps<"/admin/audit">, "search
         <EmptyState title="No entries" body="Nothing matches this filter." />
       ) : (
         <div className="card overflow-x-auto">
-          <table className="w-full min-w-[40rem] text-left text-[0.92rem]">
+          <table className="w-full min-w-[40rem] text-left text-note">
             <caption className="sr-only">Audit events</caption>
             <thead className="border-b border-line text-muted">
               <tr>
@@ -96,8 +96,8 @@ async function Content({ searchParams }: Pick<PageProps<"/admin/audit">, "search
                       <span className="block text-muted">{row.organisationName}</span>
                     ) : null}
                   </td>
-                  <td className="px-5 py-3 font-mono text-[0.85rem]">{row.action}</td>
-                  <td className="px-5 py-3 font-mono text-[0.8rem] break-all text-muted">
+                  <td className="px-5 py-3 font-mono text-meta">{row.action}</td>
+                  <td className="px-5 py-3 font-mono text-label break-all text-muted">
                     {row.entityType} {row.entityId}
                   </td>
                 </tr>

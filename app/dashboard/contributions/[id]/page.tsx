@@ -118,11 +118,11 @@ async function DetailContent({
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-[44rem]">
           <StatusChip status={contribution.status} />
-          <h1 className="mt-3 text-[clamp(1.9rem,3.6vw,2.6rem)] leading-[1.05] font-extrabold tracking-[-0.04em]">
+          <h1 className="mt-3 text-page leading-[1.05] font-extrabold tracking-[-0.04em]">
             {contribution.title}
           </h1>
           {contribution.summary ? (
-            <p className="mt-2 text-[1.05rem] text-muted">{contribution.summary}</p>
+            <p className="mt-2 text-lead text-muted">{contribution.summary}</p>
           ) : null}
         </div>
         {editable ? (
@@ -140,15 +140,15 @@ async function DetailContent({
           <Panel title="The work">
             <dl className="grid gap-4 sm:grid-cols-2">
               <div>
-                <dt className="text-[0.85rem] font-semibold text-muted">Kind of work</dt>
+                <dt className="text-meta font-semibold text-muted">Kind of work</dt>
                 <dd className="mt-0.5 font-semibold">{CATEGORY_LABELS[contribution.category]}</dd>
               </div>
               <div>
-                <dt className="text-[0.85rem] font-semibold text-muted">Your role</dt>
+                <dt className="text-meta font-semibold text-muted">Your role</dt>
                 <dd className="mt-0.5 font-semibold">{contribution.role || "Not given"}</dd>
               </div>
               <div>
-                <dt className="text-[0.85rem] font-semibold text-muted">When</dt>
+                <dt className="text-meta font-semibold text-muted">When</dt>
                 <dd className="mt-0.5 font-semibold">
                   {started && finished
                     ? `${started} to ${finished}`
@@ -160,7 +160,7 @@ async function DetailContent({
                 </dd>
               </div>
               <div>
-                <dt className="text-[0.85rem] font-semibold text-muted">Visibility</dt>
+                <dt className="text-meta font-semibold text-muted">Visibility</dt>
                 <dd className="mt-0.5 font-semibold">
                   {contribution.visibility === "public"
                     ? "Can appear on your public profile"
@@ -171,7 +171,7 @@ async function DetailContent({
             {contribution.skills.length > 0 ? (
               <ul className="mt-5 flex flex-wrap gap-2">
                 {contribution.skills.map((skill) => (
-                  <li key={skill} className="rounded-full bg-surface-2 px-3 py-1 text-[0.9rem]">
+                  <li key={skill} className="rounded-full bg-surface-2 px-3 py-1 text-note">
                     {skill}
                   </li>
                 ))}
@@ -196,7 +196,7 @@ async function DetailContent({
                   <li key={item.id} className="well flex flex-wrap items-center gap-3 p-4">
                     <div className="min-w-[12rem] flex-1">
                       <p className="font-semibold">{item.label}</p>
-                      <p className="text-[0.85rem] text-muted">
+                      <p className="text-meta text-muted">
                         {EVIDENCE_TYPE_LABELS[item.type]} ·{" "}
                         {new URL(item.url).hostname.replace(/^www\./, "")}
                       </p>
@@ -225,10 +225,8 @@ async function DetailContent({
               <div className="mt-5 grid gap-4 border-t border-line pt-5">
                 {problems.length > 0 ? (
                   <>
-                    <p className="text-[0.92rem] text-muted">
-                      Before it can be confirmed or shown:
-                    </p>
-                    <ul className="grid gap-1 text-[0.92rem]">
+                    <p className="text-note text-muted">Before it can be confirmed or shown:</p>
+                    <ul className="grid gap-1 text-note">
                       {problems.map((problem) => (
                         <li key={problem} className="text-wait-ink">
                           {problem}
@@ -241,7 +239,7 @@ async function DetailContent({
                 )}
                 {contribution.status === "draft" && problems.length === 0 ? (
                   <div className="border-t border-line pt-4">
-                    <p className="mb-3 text-[0.9rem] text-muted">
+                    <p className="mb-3 text-note text-muted">
                       Or show it on your profile as your own account, without confirmation.
                     </p>
                     <PublishButton contributionId={contribution.id} />
@@ -257,7 +255,7 @@ async function DetailContent({
 
             {contribution.status === "pending" && current ? (
               <div className="mt-5 grid gap-4 border-t border-line pt-5">
-                <p className="text-[0.92rem]">
+                <p className="text-note">
                   With <span className="font-semibold">{current.organisation.name}</span>&rsquo;s
                   reviewers since {DAY.format(current.submittedAt)}.
                 </p>
@@ -268,7 +266,7 @@ async function DetailContent({
             {contribution.status === "needs_information" && current ? (
               <div className="mt-5 grid gap-4 border-t border-line pt-5">
                 <div className="rounded-2xl bg-wait p-4 text-wait-ink">
-                  <p className="text-[0.85rem] font-semibold">{current.organisation.name} asks</p>
+                  <p className="text-meta font-semibold">{current.organisation.name} asks</p>
                   <p className="mt-1 whitespace-pre-line">{lastMessage("request_information")}</p>
                 </div>
                 <RespondForm contributionId={contribution.id} />
@@ -279,7 +277,7 @@ async function DetailContent({
             {contribution.status === "rejected" && current ? (
               <div className="mt-5 grid gap-4 border-t border-line pt-5">
                 <div className="rounded-2xl bg-bad p-4 text-bad-ink">
-                  <p className="text-[0.85rem] font-semibold">{current.organisation.name} said</p>
+                  <p className="text-meta font-semibold">{current.organisation.name} said</p>
                   <p className="mt-1 whitespace-pre-line">{lastMessage("reject")}</p>
                 </div>
                 <ReviseButton contributionId={contribution.id} />
@@ -288,11 +286,11 @@ async function DetailContent({
 
             {history?.attestation ? (
               <div className="mt-5 grid gap-3 border-t border-line pt-5">
-                <p className="text-[0.92rem]">
+                <p className="text-note">
                   Approved by <span className="font-semibold">{current?.organisation.name}</span> on{" "}
                   {DAY.format(history.attestation.issuedAt)}.
                 </p>
-                <dl className="grid gap-2 text-[0.9rem]">
+                <dl className="grid gap-2 text-note">
                   <div>
                     <dt className="text-muted">Attestation</dt>
                     <dd className="digest">{history.attestation.id}</dd>
@@ -317,7 +315,7 @@ async function DetailContent({
                     Public verification page
                   </Link>
                 ) : (
-                  <p className="text-[0.9rem] text-muted">
+                  <p className="text-note text-muted">
                     This contribution is private, so it has no public verification page.
                   </p>
                 )}
@@ -331,7 +329,7 @@ async function DetailContent({
                 {requests.flatMap((request) =>
                   request.reviews.map((review) => (
                     <li key={review.id} className="border-l-2 border-line pl-4">
-                      <p className="text-[0.85rem] font-semibold text-muted">
+                      <p className="text-meta font-semibold text-muted">
                         {review.byContributor ? "You" : request.organisation.name} ·{" "}
                         {REVIEW_LABELS[review.kind]} · {DAY.format(review.createdAt)}
                       </p>

@@ -34,7 +34,7 @@ export function SiteFooter() {
       <div className="column grid gap-10 py-14 md:grid-cols-[1.4fr_repeat(3,1fr)]">
         <div className="max-w-[34ch]">
           <Logo />
-          <p className="mt-4 text-[0.92rem] text-muted">
+          <p className="mt-4 text-note text-muted">
             An early build running on NEAR testnet only. ProofMe is independent and has no
             partnership with NEAR or with any organisation in its sample records, all of which are
             fictional.
@@ -42,7 +42,7 @@ export function SiteFooter() {
         </div>
         {GROUPS.map((group) => (
           <div key={group.title}>
-            <h2 className="font-sans text-[0.85rem] font-semibold tracking-normal text-faint">
+            <h2 className="font-sans text-meta font-semibold tracking-normal text-faint">
               {group.title}
             </h2>
             <ul className="mt-3 grid gap-1">

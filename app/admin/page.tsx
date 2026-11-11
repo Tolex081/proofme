@@ -52,7 +52,7 @@ async function Content() {
               href={tile.href}
               className="card flex h-full flex-col gap-1 p-6 text-ink no-underline hover:border-line-strong"
             >
-              <span className="font-display text-[2.2rem] leading-none font-extrabold tabular-nums">
+              <span className="font-display text-figure leading-none font-extrabold tabular-nums">
                 {tile.value}
               </span>
               <span className="text-muted">{tile.label}</span>

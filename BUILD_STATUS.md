@@ -10,6 +10,8 @@ Last updated: 11 November 2026
   the app does not call it yet; approved records still show "awaiting NEAR anchor".
 - **Milestone 7** (non-NEAR parts) is complete: admin area, reports, explore, and verified work on
   public pages. The NEAR-side parts of Milestone 7 depend on Milestone 6.
+- **Milestone 8** (hardening) is complete for this session's parts; open items are listed in its
+  section. Nothing found in the review is critical or high severity and unresolved.
 - **Deadline:** NEAR Hackathon submissions close 14 November 2026, 23:59 UTC (track 10, NFTs).
 
 ## Milestone 6 — NFT contract and NEAR wiring (in progress)
@@ -28,6 +30,33 @@ Last updated: 11 November 2026
 | Deployment to testnet                     | Not done: needs a contract account                                                                                                                          |
 | Supersession in the app                   | Not built (the contract supports it)                                                                                                                        |
 | Reconciliation                            | Not built: if the browser closes after the wallet signs, the hash is lost and the record stays "not on NEAR" although the token exists                      |
+
+## Milestone 8 — Security, accessibility and release hardening (complete, with open items)
+
+| Task                            | State                                                                                                                                                                          |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Security headers and CSP        | Done: `lib/security/headers.ts`, unit-tested; the browser suite fails on any policy violation; the real wallet picker opens under the policy (D36)                             |
+| Rate limiting                   | Done: per-person limits on claims, submissions, decisions, invitations, organisations, projects and reports (D37); sign-in limits from Better Auth                             |
+| Organisation isolation and IDOR | Reviewed: every server action authenticates; every service checks membership against the record's own organisation, including the NEAR service. Existing tests cover it        |
+| CSRF, sessions, URL handling    | Reviewed: framework origin checks, SameSite cookies, https-only evidence URLs (SECURITY.md)                                                                                    |
+| Error pages                     | Done: `app/error.tsx` and `app/global-error.tsx` show a reference code, never the error                                                                                        |
+| Environment separation          | Done: hosted environments refuse a missing database, a local or http address, or a network other than testnet; 6 unit tests                                                    |
+| Migrations, seed, reset         | Done: `db:migrate` (was referenced but missing), `db:seed` (fictional demo data through the real services), `db:reset` (local only); refusals tested by hand                   |
+| Accessibility                   | Done for automated checks: axe (WCAG 2.2 A/AA) finds nothing on 35 screens in light and dark. Fixed: the faint text colour failed contrast. Keyboard checks for the main flows |
+| Responsive                      | Done: no sideways scrolling at 320px on the same 35 screens; phone tests at 390px                                                                                              |
+| Impeccable audit                | Detector run: 158 notes, all type sizes off the ramp, reduced to the 7 in the other session's NEAR files by a 13-step type scale (D38); monogram colour made a token           |
+| React review                    | Lint (React hooks and Next.js rules) clean; forms follow the no-reset rule enforced by a test                                                                                  |
+| Secrets                         | Checked: no keys, secrets or recordings in the git history; `.pglite*` and `.env*` ignored                                                                                     |
+| Dependencies                    | `npm audit`: 4 moderate, all in drizzle-kit's bundled esbuild (development only)                                                                                               |
+
+### Open items
+
+- Impeccable's screenshot-based finish review has still not run; only its detector audit has.
+- No screen-reader pass with a real screen reader (NVDA or VoiceOver).
+- Tablet width (768px) is not in the automated checks.
+- The other session's NEAR files keep 7 literal type sizes; that session should move them onto
+  the scale.
+- Signing in a real wallet under the policy is untested until the contract is on testnet.
 
 ## Milestone 7 — Administration, reports and discovery (complete, non-NEAR parts)
 
@@ -283,18 +312,20 @@ both sizes, are now captured by `npm run capture:screens` into `.impeccable/revi
 - Tablet (768) and laptop (1280) widths have not been inspected yet.
 - Keyboard-only and screen-reader passes have not been done yet.
 
-## Check results (run 11 Nov 2026, after Milestone 7)
+## Check results (run 11 Nov 2026, after Milestone 8)
 
 | Command                                              | Result                        |
 | ---------------------------------------------------- | ----------------------------- |
 | `npm run format:check`                               | Passed                        |
 | `npm run lint`                                       | Passed, no warnings           |
 | `npm run typecheck`                                  | Passed                        |
-| `npm run test` (unit and integration)                | 371 passed, 0 failed          |
+| `npm run test` (unit and integration)                | 384 passed, 0 failed          |
 | `npm run build`                                      | Passed, no warnings           |
-| `npm run test:e2e` (Playwright, desktop and phone)   | 29 passed, 0 failed           |
+| `npm run test:e2e` (Playwright, desktop and phone)   | 32 passed, 1 skipped¹         |
 | Contract tests (`cargo test` in the contract folder) | 48 passed, 0 failed (unit)    |
 | CI on GitHub                                         | Never run; there is no remote |
+
+¹ The skipped test needs internet access (`PROOFME_NETWORK_TESTS=1`); it passed when run that way.
 
 ## Built ahead of order (belongs to Milestones 2–5)
 
@@ -329,8 +360,6 @@ both sizes, are now captured by `npm run capture:screens` into `.impeccable/revi
 ## Known risks
 
 - Next.js 16 has breaking changes from earlier versions; bundled docs are consulted before use.
-- The `users` table is shaped for Better Auth from memory; it must be reconciled when
-  authentication is added.
 - Racing reviewers are not tested, because PGlite is single-connection.
 - NEAR sandbox does not run natively on Windows; contract tests depend on WSL and CI.
 - The automated E2E run cannot drive a real wallet approval; that step is manual on testnet.

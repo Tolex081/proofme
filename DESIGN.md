@@ -9,8 +9,9 @@ colors:
   line-strong: "#d9d1c3"
   ink: "#1b1a2e"
   muted: "#5a5770"
-  faint: "#8a8799"
+  faint: "#6b6880"
   brand: "#2f54eb"
+  mark: "#4c6ef5"
   link: "#2f54eb"
   highlight: "#c9f4e6"
   highlight-ink: "#0b6b57"
@@ -53,9 +54,51 @@ typography:
     letterSpacing: "0em"
   label:
     fontFamily: "Figtree, Segoe UI, system-ui, sans-serif"
-    fontSize: "0.82rem"
+    fontSize: "0.8rem"
     fontWeight: 600
     lineHeight: 1.3
+    letterSpacing: "0em"
+  page:
+    fontFamily: "Bricolage Grotesque, Segoe UI, system-ui, sans-serif"
+    fontSize: "clamp(1.85rem, 3.6vw, 2.5rem)"
+    fontWeight: 800
+    lineHeight: 1.05
+    letterSpacing: "-0.04em"
+  subpage:
+    fontFamily: "Bricolage Grotesque, Segoe UI, system-ui, sans-serif"
+    fontSize: "clamp(1.6rem, 2.8vw, 2.15rem)"
+    fontWeight: 700
+    lineHeight: 1.1
+    letterSpacing: "-0.03em"
+  figure:
+    fontFamily: "Bricolage Grotesque, Segoe UI, system-ui, sans-serif"
+    fontSize: "2rem"
+    fontWeight: 800
+    lineHeight: 1
+    letterSpacing: "-0.03em"
+  subhead:
+    fontFamily: "Bricolage Grotesque, Segoe UI, system-ui, sans-serif"
+    fontSize: "1.35rem"
+    fontWeight: 700
+    lineHeight: 1.2
+    letterSpacing: "-0.02em"
+  lead:
+    fontFamily: "Figtree, Segoe UI, system-ui, sans-serif"
+    fontSize: "1.1rem"
+    fontWeight: 400
+    lineHeight: 1.5
+    letterSpacing: "0em"
+  note:
+    fontFamily: "Figtree, Segoe UI, system-ui, sans-serif"
+    fontSize: "0.92rem"
+    fontWeight: 400
+    lineHeight: 1.5
+    letterSpacing: "0em"
+  meta:
+    fontFamily: "Figtree, Segoe UI, system-ui, sans-serif"
+    fontSize: "0.875rem"
+    fontWeight: 400
+    lineHeight: 1.45
     letterSpacing: "0em"
   digest:
     fontFamily: "Geist Mono, ui-monospace, monospace"
@@ -69,6 +112,8 @@ rounded:
   input: "14px"
   mark: "12px"
   pill: "999px"
+  focus: "6px"
+  marker: "0.4em"
 spacing:
   gutter: "clamp(1.25rem, 4vw, 4rem)"
   section: "clamp(5rem, 8vw, 7rem)"
@@ -182,7 +227,17 @@ symbol and words. Mint highlight is not a status colour and never sits on a stat
 - **Heading** (700, `clamp(2rem, 4vw, 3rem)`, 1.04): section headings.
 - **Title** (700, 1.25rem): card and step titles.
 - **Body** (400, 1rem, 1.55); lead paragraphs at 1.08–1.15rem in the muted colour.
-- **Label** (600, 0.82rem, muted or faint): field and data labels. Never set above a heading.
+- **Page** (800, `clamp(1.85rem, 3.6vw, 2.5rem)`): page titles in the workspace and record pages.
+- **Subpage** (700, `clamp(1.6rem, 2.8vw, 2.15rem)`): large section headings inside a page.
+- **Subhead** (700, 1.35rem): panel and card-group headings.
+- **Figure** (800, 2rem): counts, stats and monogram initials.
+- **Lead** (400, 1.1rem): lead paragraphs and list item names.
+- **Note** (400, 0.92rem): hints, secondary lines, small links.
+- **Meta** (400, 0.875rem): dates, IDs and other metadata.
+- **Label** (600, 0.8rem, muted or faint): field and data labels, chips. Never set above a heading.
+
+Every size in the code is one of these steps, as Tailwind classes (`text-page`, `text-note`,
+…) defined in `app/globals.css`. Literal sizes are not used.
 
 ## Layout
 

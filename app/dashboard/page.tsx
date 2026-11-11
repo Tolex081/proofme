@@ -83,11 +83,11 @@ async function OverviewContent({ searchParams }: Pick<PageProps<"/dashboard">, "
               </span>
               <div className="min-w-[12rem] flex-1">
                 <p
-                  className={`font-display text-[1.1rem] font-bold ${step.done ? "text-muted line-through decoration-1" : ""}`}
+                  className={`font-display text-lead font-bold ${step.done ? "text-muted line-through decoration-1" : ""}`}
                 >
                   {step.title}
                 </p>
-                <p className="text-[0.92rem] text-muted">{step.body}</p>
+                <p className="text-note text-muted">{step.body}</p>
               </div>
               <Link
                 href={step.href}
@@ -105,7 +105,7 @@ async function OverviewContent({ searchParams }: Pick<PageProps<"/dashboard">, "
           <span className="grid size-11 place-items-center rounded-2xl bg-highlight text-highlight-ink">
             <FilePlus2 aria-hidden="true" size={21} />
           </span>
-          <h2 className="mt-4 text-[1.2rem]">Your contributions</h2>
+          <h2 className="mt-4 text-title">Your contributions</h2>
           <p className="mt-1.5 text-muted">
             {own.length === 0
               ? "Record one specific piece of work you did, with the links that show it."
@@ -126,7 +126,7 @@ async function OverviewContent({ searchParams }: Pick<PageProps<"/dashboard">, "
           <span className="grid size-11 place-items-center rounded-2xl bg-surface-2 text-muted">
             <Building2 aria-hidden="true" size={21} />
           </span>
-          <h2 className="mt-4 text-[1.2rem]">
+          <h2 className="mt-4 text-title">
             {wantsOrganisation ? "Your organisation" : "Organisations"}
           </h2>
           <p className="mt-1.5 text-muted">

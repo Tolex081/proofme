@@ -383,7 +383,7 @@ export function InviteForm({
             options={roles.map((role) => ({ value: role, label: ROLE_LABELS[role] }))}
           />
         </div>
-        <ul className="grid gap-1 text-[0.88rem] text-muted">
+        <ul className="grid gap-1 text-meta text-muted">
           {roles.map((role) => (
             <li key={role}>
               <span className="font-semibold text-ink">{ROLE_LABELS[role]}:</span>{" "}
@@ -401,7 +401,7 @@ export function InviteForm({
       {state.status === "success" && state.link ? (
         <div role="status" className="rounded-2xl border border-ok-ink/30 bg-ok p-5 text-ok-ink">
           <p className="font-semibold">Invitation for {state.email} created.</p>
-          <p className="mt-1 text-[0.92rem]">
+          <p className="mt-1 text-note">
             This build cannot send email. Copy this link and send it to them yourself. It is shown
             only once, works only when they sign in with that address, and expires in 7 days.
           </p>
@@ -496,7 +496,7 @@ export function MemberControls({
         <form action={ownerAction}>
           <button
             type="submit"
-            className="text-link text-[0.88rem]"
+            className="text-link text-meta"
             disabled={ownerPending || !hydrated}
           >
             Make {name} an owner too

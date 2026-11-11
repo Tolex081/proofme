@@ -215,7 +215,7 @@ export function DecisionForm({
                   className="size-4"
                 />
               </span>
-              <span className="text-[0.88rem] text-muted">{option.body}</span>
+              <span className="text-meta text-muted">{option.body}</span>
             </label>
           ))}
         </div>

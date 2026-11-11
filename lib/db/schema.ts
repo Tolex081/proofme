@@ -552,6 +552,8 @@ export const auditEvents = pgTable(
   (table) => [
     index("audit_events_org_created").on(table.organisationId, table.createdAt),
     index("audit_events_entity").on(table.entityType, table.entityId),
+    // Per-person rate limits count recent events by actor (server/services/limits.ts).
+    index("audit_events_actor_created").on(table.actorUserId, table.createdAt),
   ],
 );
 

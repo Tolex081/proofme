@@ -52,7 +52,7 @@ async function Content({
           <span className="grid size-14 place-items-center rounded-2xl bg-highlight text-highlight-ink">
             <Building2 aria-hidden="true" size={24} />
           </span>
-          <h2 className="mt-5 text-[1.3rem]">You are not in any organisation</h2>
+          <h2 className="mt-5 text-subhead">You are not in any organisation</h2>
           <p className="mt-2 max-w-[46ch] text-muted">
             Set one up if you run a project, or open the invitation link an organisation sent you.
           </p>
@@ -65,12 +65,12 @@ async function Content({
                 href={`/org/${organisation.slug}/dashboard`}
                 className="card flex flex-wrap items-center gap-4 p-5 text-ink no-underline hover:border-line-strong sm:p-6"
               >
-                <span aria-hidden="true" className="org-mark" style={{ background: "#4C6EF5" }}>
+                <span aria-hidden="true" className="org-mark">
                   {organisation.name.charAt(0).toUpperCase()}
                 </span>
                 <div className="min-w-[12rem] flex-1">
-                  <p className="font-display text-[1.15rem] font-bold">{organisation.name}</p>
-                  <p className="text-[0.9rem] text-muted">
+                  <p className="font-display text-lead font-bold">{organisation.name}</p>
+                  <p className="text-note text-muted">
                     {ORGANISATION_CATEGORY_LABELS[organisation.category]} · you are{" "}
                     {ROLE_LABELS[organisation.role].toLowerCase()}
                   </p>

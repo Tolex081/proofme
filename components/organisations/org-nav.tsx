@@ -38,9 +38,7 @@ function OrgNavView({
 }) {
   return (
     <nav aria-label={`${name} workspace`} className="lg:sticky lg:top-6 lg:self-start">
-      <p className="mb-3 hidden truncate px-4 font-display text-[1.05rem] font-bold lg:block">
-        {name}
-      </p>
+      <p className="mb-3 hidden truncate px-4 font-display text-lead font-bold lg:block">{name}</p>
       <ul className="flex flex-wrap gap-1.5 lg:flex-col lg:flex-nowrap lg:gap-1">
         {SECTIONS.filter(
           (section) =>

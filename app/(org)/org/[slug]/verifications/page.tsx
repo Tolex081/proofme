@@ -68,7 +68,7 @@ async function Content({
                     : `/org/${organisation.slug}/verifications?status=${item.value}`
                 }
                 aria-current={item.value === filter ? "page" : undefined}
-                className="inline-flex min-h-10 items-center rounded-full border border-line bg-surface px-4 text-[0.92rem] font-semibold text-muted no-underline hover:text-ink aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
+                className="inline-flex min-h-10 items-center rounded-full border border-line bg-surface px-4 text-note font-semibold text-muted no-underline hover:text-ink aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
               >
                 {item.label}
               </Link>
@@ -81,7 +81,7 @@ async function Content({
           <span className="grid size-14 place-items-center rounded-2xl bg-surface-2 text-muted">
             <Inbox aria-hidden="true" size={24} />
           </span>
-          <h2 className="mt-5 text-[1.3rem]">
+          <h2 className="mt-5 text-subhead">
             {filter === "open" ? "Nothing waiting" : "Nothing here"}
           </h2>
           <p className="mt-2 max-w-[44ch] text-muted">
@@ -99,8 +99,8 @@ async function Content({
                 className="card flex flex-wrap items-center gap-x-5 gap-y-2 p-5 text-ink no-underline hover:border-line-strong sm:p-6"
               >
                 <div className="min-w-[14rem] flex-1">
-                  <p className="font-display text-[1.15rem] font-bold">{item.title}</p>
-                  <p className="text-[0.9rem] text-muted">
+                  <p className="font-display text-lead font-bold">{item.title}</p>
+                  <p className="text-note text-muted">
                     {item.contributorName} · {CATEGORY_LABELS[item.category]}
                     {item.projectName ? ` · ${item.projectName}` : ""} · sent{" "}
                     {DAY.format(item.submittedAt)}

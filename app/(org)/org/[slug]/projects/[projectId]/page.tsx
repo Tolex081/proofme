@@ -57,7 +57,7 @@ async function Content({
           <span className={`chip ${project.status === "active" ? "chip-ok" : "chip-neutral"}`}>
             {PROJECT_STATUS_LABELS[project.status]}
           </span>
-          <h1 className="mt-3 text-[clamp(1.9rem,3.6vw,2.6rem)] leading-[1.05] font-extrabold tracking-[-0.04em]">
+          <h1 className="mt-3 text-page leading-[1.05] font-extrabold tracking-[-0.04em]">
             {project.name}
           </h1>
         </div>

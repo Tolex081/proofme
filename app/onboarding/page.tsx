@@ -57,7 +57,7 @@ async function OnboardingContent() {
     <>
       <div className="mb-8">
         <div>
-          <h1 className="text-[clamp(2rem,4vw,2.9rem)] leading-[1.02] font-extrabold tracking-[-0.04em]">
+          <h1 className="text-heading leading-[1.02] font-extrabold tracking-[-0.04em]">
             Set up your <span className="marker">profile</span>.
           </h1>
           <p className="mt-3 max-w-[40rem] text-muted">

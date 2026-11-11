@@ -23,7 +23,7 @@ function DesktopLinks({ pathname }: { pathname: string | null }) {
           <Link
             href={link.href}
             aria-current={pathname === link.href ? "page" : undefined}
-            className="inline-flex min-h-11 items-center text-[0.95rem] font-medium text-muted no-underline transition-colors hover:text-ink aria-[current=page]:text-ink aria-[current=page]:underline aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8"
+            className="inline-flex min-h-11 items-center text-note font-medium text-muted no-underline transition-colors hover:text-ink aria-[current=page]:text-ink aria-[current=page]:underline aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8"
           >
             {link.label}
           </Link>
@@ -40,7 +40,7 @@ function MenuLinks({ pathname, onNavigate }: { pathname: string | null; onNaviga
         href={link.href}
         aria-current={pathname === link.href ? "page" : undefined}
         onClick={onNavigate}
-        className="flex min-h-12 items-center rounded-2xl px-4 font-display text-[1.15rem] font-bold text-ink no-underline hover:bg-surface-2 aria-[current=page]:bg-surface-2"
+        className="flex min-h-12 items-center rounded-2xl px-4 font-display text-lead font-bold text-ink no-underline hover:bg-surface-2 aria-[current=page]:bg-surface-2"
       >
         {link.label}
       </Link>

@@ -1,36 +1,57 @@
 # ProofMe — Security and privacy
 
-Status: Milestone 0. This is the control plan. Each control is marked done only when it is
-implemented and tested; the table is updated every milestone.
+Status: Milestone 8 (11 November 2026). Each control is marked done only when it is implemented
+and tested; the table is updated every milestone.
 
 ## Threats that matter most
 
 | Threat                                             | Control                                                                                                    | State     |
 | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | --------- |
-| Contributor approves their own claim               | Service rejects any review where reviewer = contributor, regardless of role                                | planned   |
-| Non-member or wrong-role user reviews              | Membership + role checked in the service on every review action                                            | planned   |
-| Organisation A reads/mutates Organisation B's data | Every query scoped by organisation ID resolved from membership, never from the URL alone                   | planned   |
-| IDOR on contributions, requests, notifications     | Ownership/membership check on every read and write by ID                                                   | planned   |
-| Role escalation via request body                   | Roles only settable by owner/admin through the membership service; never read from client input elsewhere  | planned   |
-| Racing reviewers produce conflicting decisions     | Optimistic lock on the request row inside a transaction                                                    | planned   |
-| Approved claim edited after the fact               | Frozen canonical payload; service refuses updates; database trigger blocks them                            | planned   |
-| Fake "on-chain verified" status                    | Server confirms the transaction on RPC (success, contract, signer, digest) before recording it             | planned   |
-| Duplicate anchor after a retry                     | Attestation ID is the on-chain key; contract rejects duplicates; reconcile reads instead of re-sending     | planned   |
-| Unsafe evidence URLs                               | https-only allow-list; reject `javascript:`, `data:`, `file:`, credentials in URL; no server-side fetching | planned   |
-| Admin forges or edits an attestation               | No admin code path writes attestation content; admin actions limited to organisation state and reports     | planned   |
-| Invitation token theft from the database           | Only a SHA-256 hash stored; tokens expire and are single-use                                               | planned   |
-| Brute force / abuse                                | Rate limits on auth, invitations, submissions, reviews, public endpoints                                   | planned   |
+| Contributor approves their own claim               | Service rejects any review where reviewer = contributor, regardless of role                                | done      |
+| Non-member or wrong-role user reviews              | Membership + role checked in the service on every review action                                            | done      |
+| Organisation A reads/mutates Organisation B's data | Every query scoped by organisation ID resolved from membership, never from the URL alone                   | done      |
+| IDOR on contributions, requests, notifications     | Ownership/membership check on every read and write by ID                                                   | done      |
+| Role escalation via request body                   | Roles only settable by owner/admin through the membership service; never read from client input elsewhere  | done      |
+| Racing reviewers produce conflicting decisions     | Optimistic lock on the request row inside a transaction                                                    | done¹     |
+| Approved claim edited after the fact               | Frozen canonical payload; service refuses updates; database trigger blocks them                            | done      |
+| Fake "on-chain verified" status                    | Server confirms the transaction on RPC (success, contract, signer, digest) before recording it             | done²     |
+| Duplicate anchor after a retry                     | Attestation ID is the on-chain key; contract rejects duplicates; reconcile reads instead of re-sending     | partly³   |
+| Unsafe evidence URLs                               | https-only allow-list; reject `javascript:`, `data:`, `file:`, credentials in URL; no server-side fetching | done      |
+| Admin forges or edits an attestation               | No admin code path writes attestation content; admin actions limited to organisation state and reports     | done      |
+| Invitation token theft from the database           | Only a SHA-256 hash stored; tokens expire and are single-use                                               | done      |
+| Brute force / abuse                                | Rate limits on auth, invitations, submissions, reviews, public endpoints                                   | partly⁴   |
 | Secrets in the repo                                | `.env*` ignored (except `.env.example`); no keys in code; CI has read-only permissions                     | done      |
 | Server-held wallet keys                            | None exist. All NEAR writes are signed in the user's wallet                                                | by design |
 
+1. A row lock and a version check inside one transaction. Not exercised with truly concurrent
+   requests, because the test database (PGlite) has a single connection.
+2. Tested in the service against a stand-in chain; not yet run with a real wallet on testnet.
+3. The contract rejects a second token with the same ID. Reconciliation (finding a token whose
+   confirmation never reached the server) is not built yet.
+4. Sign-in and sign-up are rate-limited by the auth library outside local development. Creating
+   claims, sending them for review, deciding, inviting, creating organisations and projects, and
+   reporting are limited per person (`server/services/limits.ts`). Public pages have no
+   application limit; that is left to the hosting platform's protection.
+
 ## Platform controls
 
-- Sessions through a maintained auth library; HTTP-only, secure, same-site cookies.
-- CSRF: mutations go through server actions / same-origin checks provided by the framework and
-  auth library; verified in Milestone 8.
-- Security headers and a Content Security Policy, added and tested in Milestone 8.
-- Errors shown to users never include stack traces or internal identifiers.
-- `npm audit` reviewed each milestone; critical findings investigated.
+- Sessions through Better Auth: HTTP-only, SameSite=Lax cookies, `Secure` outside local
+  development. Suspending an account deletes its sessions.
+- CSRF: server actions accept only POST and Next.js rejects them when the Origin and Host headers
+  differ; Better Auth checks the origin of its own endpoints. The one route handler
+  (`/api/account/export`) is a GET that only reads the caller's own data.
+- Security headers on every response (`lib/security/headers.ts`, unit-tested): a Content
+  Security Policy, `X-Frame-Options: DENY`, `nosniff`, a strict referrer policy, a permissions
+  policy, and HSTS outside local development. Why the policy allows inline scripts and HTTPS
+  connections is in DECISIONS.md (D36). The browser suite fails on any policy violation; the
+  wallet picker is checked under the policy with `PROOFME_NETWORK_TESTS=1`.
+- Errors shown to users never include messages or stack traces: `app/error.tsx` shows only the
+  reference code that matches the server log entry.
+- Environment validation refuses hosted environments without a real database, on a local or
+  plain-http address, or on any NEAR network but testnet. Values never appear in its errors.
+- `npm audit` (11 Nov 2026): 4 moderate findings, all in the esbuild copy bundled with
+  `drizzle-kit`, the migration generator. It is a development tool that is never deployed; the
+  fix requires a breaking major upgrade, so it is left for now.
 
 ## Privacy
 
@@ -50,9 +71,12 @@ Mainnet is not enabled. Environment validation rejects it. Enabling it requires 
 separate approval, a contract review, an ownership/upgrade plan, issuer onboarding and suspension
 policy, an incident plan, and a privacy review of every on-chain field.
 
-## Known gaps at this milestone
+## Known gaps
 
-Everything marked planned. No application features exist yet.
+- No nonce-based script policy (pages are prerendered; see D36).
+- No email provider: email verification and password reset are off.
+- Reconciliation of NEAR tokens is not built (see note 3).
+- No uploads exist, so no upload controls are needed yet.
 
 ## Reporting
 

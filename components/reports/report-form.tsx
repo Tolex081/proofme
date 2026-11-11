@@ -36,7 +36,7 @@ export function ReportForm({
   signedIn: boolean;
 }) {
   return (
-    <details className="group px-2 text-[0.92rem]">
+    <details className="group px-2 text-note">
       <summary className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 font-semibold text-muted hover:text-ink">
         <Flag aria-hidden="true" size={15} />
         Report this {noun}

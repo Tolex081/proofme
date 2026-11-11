@@ -52,7 +52,7 @@ async function NotificationsContent() {
           <span className="grid size-14 place-items-center rounded-2xl bg-surface-2 text-muted">
             <BellOff aria-hidden="true" size={24} />
           </span>
-          <h2 className="mt-5 text-[1.3rem]">Nothing yet</h2>
+          <h2 className="mt-5 text-subhead">Nothing yet</h2>
           <p className="mt-2 max-w-[44ch] text-muted">
             When an organisation reviews your work or something changes on one of your records, it
             will appear here.
@@ -78,7 +78,7 @@ async function NotificationsContent() {
                   )}
                 </p>
                 {item.body ? <p className="mt-0.5 text-muted">{item.body}</p> : null}
-                <p className="mt-1 text-[0.82rem] text-faint">{WHEN.format(item.createdAt)} UTC</p>
+                <p className="mt-1 text-label text-faint">{WHEN.format(item.createdAt)} UTC</p>
               </div>
             </li>
           ))}

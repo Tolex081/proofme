@@ -81,7 +81,7 @@ async function Content({
             <PlatformBadge status={status} />
             <IssuerBadge status={organisation.nearIssuerStatus} />
           </div>
-          <h1 className="mt-3 text-[clamp(1.9rem,3.6vw,2.6rem)] leading-[1.05] font-extrabold tracking-[-0.04em]">
+          <h1 className="mt-3 text-page leading-[1.05] font-extrabold tracking-[-0.04em]">
             {organisation.name}
           </h1>
           <p className="mt-2 text-muted">
@@ -104,15 +104,15 @@ async function Content({
           ["Claims awaiting review", overview?.awaitingReview ?? 0],
         ].map(([label, value]) => (
           <div key={label} className="card p-5">
-            <dt className="text-[0.85rem] font-semibold text-muted">{label}</dt>
-            <dd className="mt-1 font-display text-[2rem] leading-none font-extrabold">{value}</dd>
+            <dt className="text-meta font-semibold text-muted">{label}</dt>
+            <dd className="mt-1 font-display text-figure leading-none font-extrabold">{value}</dd>
           </div>
         ))}
       </dl>
 
       {canManage ? (
         <section aria-labelledby="setup" className="card mb-4 overflow-hidden">
-          <h2 id="setup" className="px-6 pt-6 text-[1.25rem] sm:px-8">
+          <h2 id="setup" className="px-6 pt-6 text-title sm:px-8">
             Getting set up
           </h2>
           <ol className="mt-3 divide-y divide-line">
@@ -125,8 +125,8 @@ async function Content({
                   <span className="sr-only">{step.done ? "Done:" : "To do:"}</span>
                 </span>
                 <div className="min-w-[12rem] flex-1">
-                  <p className="font-display text-[1.05rem] font-bold">{step.title}</p>
-                  <p className="text-[0.92rem] text-muted">{step.body}</p>
+                  <p className="font-display text-lead font-bold">{step.title}</p>
+                  <p className="text-note text-muted">{step.body}</p>
                 </div>
                 <Link
                   href={step.href}

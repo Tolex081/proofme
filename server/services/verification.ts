@@ -8,6 +8,7 @@ import {
   sealAttestation,
 } from "@/lib/attestations/payload";
 import type { Database } from "@/lib/db/client";
+import { LIMIT_REACHED, withinLimit } from "./limits";
 import {
   attestationStatusEvents,
   attestations,
@@ -149,6 +150,7 @@ export async function submitForReview(
   const transition = transitionContribution(contribution.status, "submit");
   if (!transition.ok)
     return { ok: false, errors: { form: "This contribution cannot be sent for review now." } };
+  if (!(await withinLimit(db, userId, "submission"))) return LIMIT_REACHED;
 
   const organisationId = typeof target.organisationId === "string" ? target.organisationId : "";
   const projectId =
@@ -549,6 +551,7 @@ export async function decide(
   const parsed = decisionSchema.safeParse(input);
   if (!parsed.success) return { ok: false, errors: { form: parsed.error.issues[0].message } };
   const { decision, message, internalNote, expectedVersion } = parsed.data;
+  if (!(await withinLimit(db, userId, "decision"))) return LIMIT_REACHED;
   if (decision === "reject" && message.length === 0) {
     return {
       ok: false,

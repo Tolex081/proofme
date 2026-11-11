@@ -45,14 +45,17 @@ function createAuth() {
     databaseHooks: {
       user: {
         create: {
-          // Local development and automated tests only: the account whose email
-          // matches PROOFME_LOCAL_ADMIN_EMAIL becomes a platform administrator
-          // when it signs up. Ignored everywhere else; real environments use
-          // `npm run admin:grant`.
+          // Local development and automated tests only: an account whose email
+          // is listed in PROOFME_LOCAL_ADMIN_EMAIL (comma-separated) becomes a
+          // platform administrator when it signs up. Ignored everywhere else;
+          // real environments use `npm run admin:grant`.
           before: async (user) => {
-            const localAdmin = process.env.PROOFME_LOCAL_ADMIN_EMAIL?.trim().toLowerCase();
-            if (env.APP_ENV !== "local" || !localAdmin) return;
-            if (user.email.toLowerCase() !== localAdmin) return;
+            if (env.APP_ENV !== "local") return;
+            const admins = (process.env.PROOFME_LOCAL_ADMIN_EMAIL ?? "")
+              .split(",")
+              .map((email) => email.trim().toLowerCase())
+              .filter(Boolean);
+            if (!admins.includes(user.email.toLowerCase())) return;
             return { data: { ...user, isPlatformAdmin: true } };
           },
         },

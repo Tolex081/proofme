@@ -74,7 +74,7 @@ export function OrganisationDecisionForm({
                   className="size-4"
                 />
               </span>
-              <span className="text-[0.88rem] text-muted">{DECISION_TEXT[value].body}</span>
+              <span className="text-meta text-muted">{DECISION_TEXT[value].body}</span>
             </label>
           ))}
         </div>

@@ -37,7 +37,7 @@ const ENTRIES = [
 export function SampleTimeline() {
   return (
     <figure className="card relative p-6 sm:p-8" aria-label="A sample ProofMe profile">
-      <figcaption className="absolute -top-3.5 right-6 rounded-full bg-ink px-3.5 py-1.5 text-[0.78rem] font-semibold text-canvas">
+      <figcaption className="absolute -top-3.5 right-6 rounded-full bg-ink px-3.5 py-1.5 text-label font-semibold text-canvas">
         Sample profile
       </figcaption>
 
@@ -49,8 +49,8 @@ export function SampleTimeline() {
           DO
         </span>
         <div>
-          <p className="font-display text-[1.35rem] font-bold tracking-[-0.02em]">Daniel Okafor</p>
-          <p className="text-[0.9rem] text-muted">Frontend engineer · 2 verified contributions</p>
+          <p className="font-display text-subhead font-bold tracking-[-0.02em]">Daniel Okafor</p>
+          <p className="text-note text-muted">Frontend engineer · 2 verified contributions</p>
         </div>
       </div>
 
@@ -62,14 +62,14 @@ export function SampleTimeline() {
               className="absolute top-1 -left-[1.6rem] size-3.5 rounded-full border-[3px] bg-surface"
               style={{ borderColor: entry.colour }}
             />
-            <p className="text-[0.8rem] font-semibold text-faint">{entry.when}</p>
+            <p className="text-label font-semibold text-faint">{entry.when}</p>
             <div className="well mt-1.5 flex flex-wrap items-center gap-3.5 p-3.5">
               <span aria-hidden="true" className="org-mark" style={{ background: entry.colour }}>
                 {entry.initial}
               </span>
               <div className="min-w-[8.5rem] flex-1">
                 <p className="font-semibold leading-snug">{entry.title}</p>
-                <p className="text-[0.85rem] text-muted">
+                <p className="text-meta text-muted">
                   {entry.org} · {entry.kind}
                 </p>
               </div>

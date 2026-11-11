@@ -203,3 +203,38 @@ service function re-checks the flag and the account status in the database.
 
 **Why:** reporting someone should not expose the reporter. Only administrators see who sent a
 report. Ten reports per person per day limits abuse of the feature itself.
+
+## D36 — Content Security Policy without nonces, and open to HTTPS for wallets
+
+**Why:** pages are prerendered with Cache Components, and the bundled Next.js guide says nonces
+need fully dynamic rendering and do not work with prerendered shells. So `script-src` allows
+`'unsafe-inline'` (Next.js's own inline scripts and our fixed theme script), but only scripts
+from this site. NEAR Connect runs each wallet in a sandboxed `srcdoc` frame that inherits the
+policy, and wallets fetch from their own servers and load remote fonts and stylesheets, so
+`connect-src`, `img-src`, `style-src` and `font-src` allow any HTTPS host. Plain HTTP, plugins,
+framing by other sites, foreign form posts and foreign base URLs are refused. The browser
+suite fails on any policy violation, and `tests/e2e/wallet-csp.spec.ts` opened the real wallet
+picker under the policy (11 Nov 2026). Next.js's experimental subresource integrity was not
+adopted while it is experimental.
+
+## D37 — Per-person limits count audit events
+
+**Why:** every abusable action already writes an audit event naming the actor, so the limit
+counts those (`server/services/limits.ts`) instead of keeping a second table that could drift.
+An index on actor and time (migration 0004) keeps the count cheap. Limits are generous; they stop
+scripts and accidents, not real use. Sign-in limits stay with Better Auth.
+
+## D38 — One type scale, as named classes
+
+**Why:** Impeccable's detector found 158 font sizes in the code that were not on the documented
+ramp: 42 distinct literal sizes. They were mapped onto 13 named steps (`text-label` to
+`text-display`) defined once in `app/globals.css` and documented in DESIGN.md. Most moved by
+0.05rem or less. The NEAR files owned by the other session were left for that session.
+
+## D39 — Demo data goes through the real services
+
+**Why:** `npm run db:seed` creates the demo scenario by calling the same services the app uses, so
+the data obeys every rule (an attestation is issued only by a reviewer's approval). Names and the
+organisation are fictional and labelled; evidence points at example.org. It refuses production,
+does nothing if run twice, and never invents a NEAR transaction. `db:reset` deletes only the
+local embedded database inside the project folder.
