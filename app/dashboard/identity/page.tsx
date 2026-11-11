@@ -40,11 +40,12 @@ async function IdentityContent() {
             }}
           />
         </Panel>
-        <Panel title="Connecting a NEAR wallet">
+        <Panel title="Your NEAR account and attestations">
           <p className="max-w-[62ch] text-muted">
-            You never need a wallet to record your work: organisations anchor records from their own
-            NEAR accounts. Connecting a wallet to prove an account is yours comes with the NEAR part
-            of this build, and ProofMe will never ask for a seed phrase or private key.
+            When an organisation approves your work, it can issue the record to your NEAR account as
+            an NFT that cannot be transferred. Add the account above to receive it; without one, the
+            approval still stands on ProofMe but is not on NEAR. ProofMe will never ask for a seed
+            phrase or private key.
           </p>
         </Panel>
       </div>

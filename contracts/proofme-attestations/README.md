@@ -51,8 +51,11 @@ Needs Rust 1.95 (pinned in `rust-toolchain.toml`; rustup installs it on first us
 ```sh
 cargo test                                             # 48 unit tests
 cargo clippy --all-targets -- -D warnings
-cargo build --target wasm32-unknown-unknown --release  # the contract binary
+cargo near build non-reproducible-wasm --no-abi         # the contract binary, in target/near/
 ```
+
+`--no-abi` is needed on Windows, where the interface file cannot be generated; leave it off on
+Linux and macOS. `cargo near` comes from `npm install cargo-near` or the installer in its README.
 
 Run `cargo test` and see `test result: ok. 48 passed; 0 failed`.
 

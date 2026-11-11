@@ -12,6 +12,14 @@ const envSchema = z
     NEXT_PUBLIC_APP_URL: z.url().default("http://localhost:3000"),
     // Mainnet is intentionally not accepted in this build (brief section 13.5).
     NEAR_NETWORK: z.enum(["sandbox", "testnet"]).default("testnet"),
+    NEAR_RPC_URL: z.url().default("https://test.rpc.fastnear.com"),
+    // The deployed proofme-attestations contract. Until it is set, approved
+    // records stay "awaiting NEAR anchor" and nothing can be minted.
+    NEAR_CONTRACT_ID: z
+      .string()
+      .regex(/^[a-z0-9._-]{2,64}$/, "must be a NEAR account ID")
+      .optional(),
+    NEAR_EXPLORER_BASE_URL: z.url().default("https://testnet.nearblocks.io"),
     // A PostgreSQL connection string. Optional only for local development,
     // where an embedded PostgreSQL (PGlite) is used instead.
     DATABASE_URL: z
@@ -39,6 +47,9 @@ const KEYS = [
   "APP_ENV",
   "NEXT_PUBLIC_APP_URL",
   "NEAR_NETWORK",
+  "NEAR_RPC_URL",
+  "NEAR_CONTRACT_ID",
+  "NEAR_EXPLORER_BASE_URL",
   "DATABASE_URL",
   "PGLITE_DATA_DIR",
   "BETTER_AUTH_SECRET",

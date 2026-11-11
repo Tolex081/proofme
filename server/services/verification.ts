@@ -777,6 +777,10 @@ export async function listIssuedAttestations(db: Database, userId: string, organ
       issuedAt: attestations.issuedAt,
       payloadDigest: attestations.payloadDigest,
       nearAnchorStatus: attestations.nearAnchorStatus,
+      nearTransactionHash: attestations.nearTransactionHash,
+      nearIssuerAccountId: attestations.nearIssuerAccountId,
+      subjectUserId: attestations.subjectUserId,
+      isPublic: sql<boolean>`${contributions.visibility} = 'public'`,
       title: contributions.title,
       contributorName: users.name,
     })

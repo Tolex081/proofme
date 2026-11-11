@@ -124,7 +124,7 @@ test.describe("the review workflow", () => {
     ).toBeVisible();
     await page.goto(`/org/${slug}/attestations`);
     await expect(page.getByText("Organisation approved")).toBeVisible();
-    await expect(page.getByText("Awaiting NEAR anchor")).toBeVisible();
+    await expect(page.getByText("Not on NEAR yet", { exact: true })).toBeVisible();
     await signOut(page);
 
     // The contributor sees the frozen record; it can no longer be edited.

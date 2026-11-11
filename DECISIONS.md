@@ -154,3 +154,26 @@ work record needs. With submissions closing on 14 November 2026 it was not worth
 default was 1.87. The contract folder pins its own toolchain so nothing else on the machine
 changes. Its test-only dependencies need the NASM assembler on Windows, so
 `.cargo/config.toml` selects the prebuilt objects instead.
+
+## D29 — Wallets connect through NEAR Connect (`@hot-labs/near-connect` 0.12.0)
+
+**Why:** checked on npm on 11 Nov 2026. `@near-wallet-selector` had not been published since
+December 2025; NEAR Connect is maintained, has no dependencies, and supports Meteor, the wallet
+the project is tested with. It is loaded only when someone presses a wallet button. It fetches
+each wallet's integration script at run time into a sandboxed frame, which the Content Security
+Policy in Milestone 8 must allow.
+
+## D30 — The server confirms from the contract, not from the browser
+
+**Why:** the browser reports a transaction hash after the wallet signs, but a hash is only a
+claim. `confirmMint` and `revokeAttestation` read the token from the contract and the transaction
+from the network, and record nothing unless the token exists with the same digest, was issued by
+the organisation's registered account, and the transaction is a successful call for that token.
+The chain reader is an interface so these rules are tested against a stand-in.
+
+## D31 — The contract account is its own owner
+
+**Why:** registering an issuer must be signed by the contract owner. With no administrator
+console in this release, the owner is the contract's own account, whose key stays in the NEAR
+command-line tool on the operator's machine, so issuers are registered from the command line.
+The organisation and contributor accounts stay in their own wallets.

@@ -10,15 +10,22 @@ Last updated: 11 November 2026
   the app does not call it yet; approved records still show "awaiting NEAR anchor".
 - **Deadline:** NEAR Hackathon submissions close 14 November 2026, 23:59 UTC (track 10, NFTs).
 
-## Milestone 6 — NFT contract (in progress)
+## Milestone 6 — NFT contract and NEAR wiring (in progress)
 
-| Task                                      | State                                                                                                     |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Contract `contracts/proofme-attestations` | Written: NEP-171/177/181 NFT, non-transferable, issuer registry, issue, revoke, supersede, verify         |
-| Unit tests                                | 48 passing against the SDK mock runtime; clippy clean                                                     |
-| WebAssembly build                         | Builds with plain `cargo build`. Not yet built with `cargo near`, and not yet run on a sandbox or testnet |
-| Deployment to testnet                     | Not done: needs testnet accounts                                                                          |
-| App integration                           | Not started                                                                                               |
+| Task                                      | State                                                                                                                                                       |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Contract `contracts/proofme-attestations` | Written: NEP-171/177/181 NFT, non-transferable, issuer registry, issue, revoke, supersede, verify                                                           |
+| Contract tests                            | 48 unit tests passing against the SDK mock runtime; clippy clean                                                                                            |
+| Contract build                            | Builds with `cargo near build non-reproducible-wasm --no-abi` (202 KB). The interface file cannot be generated on Windows                                   |
+| Reading the chain                         | Done: `lib/near/chain.ts` reads tokens, issuers and transactions over RPC; 10 unit tests                                                                    |
+| Issuer account                            | Done: an owner connects a wallet on the Attestations page; the status shown comes from the contract                                                         |
+| Minting on approval                       | Written: a reviewer presses Issue on NEAR, the organisation's wallet signs, the server confirms from the contract. **Not yet exercised with a real wallet** |
+| Revoking                                  | Done for records not on NEAR (browser-tested). The on-chain path is written and service-tested, **not yet exercised with a real wallet**                    |
+| Public verification page `/verify/[id]`   | Done: re-hashes the record and reads the contract live on every load; browser-tested without a contract                                                     |
+| Service tests                             | 26 integration tests against a stand-in chain                                                                                                               |
+| Deployment to testnet                     | Not done: needs a contract account                                                                                                                          |
+| Supersession in the app                   | Not built (the contract supports it)                                                                                                                        |
+| Reconciliation                            | Not built: if the browser closes after the wallet signs, the hash is lost and the record stays "not on NEAR" although the token exists                      |
 
 ## Redesign (10 Nov 2026)
 
@@ -300,7 +307,7 @@ both sizes, are now captured by `npm run capture:screens` into `.impeccable/revi
 
 ## Next step
 
-Milestone 6, remaining: deploy `contracts/proofme-attestations` to testnet, register an issuer,
-then wire the app to it (wallet connection, minting on approval, revocation, the public
-verification page reading the contract, reconciliation). This needs NEAR testnet accounts and
-wallet signatures from the user.
+Milestone 6, remaining: deploy `contracts/proofme-attestations` to testnet, register a test
+organisation as an issuer, then run the whole loop with a real wallet (connect, mint, verify,
+revoke). After that: update the public pages, which still describe anchoring a digest rather than
+an NFT, and add reconciliation.

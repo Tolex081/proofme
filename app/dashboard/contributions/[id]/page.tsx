@@ -66,7 +66,7 @@ async function DetailContent({
 }: Pick<PageProps<"/dashboard/contributions/[id]">, "params" | "searchParams">) {
   const { id } = await params;
   const { saved, update } = await searchParams;
-  const { user, db } = await requireWorkspace(`/dashboard/contributions/${id}`);
+  const { user, db, profile } = await requireWorkspace(`/dashboard/contributions/${id}`);
   const contribution = await getOwnContribution(db, user.id, id);
   // Someone else's contribution and a missing one look the same.
   if (!contribution) notFound();
@@ -305,11 +305,22 @@ async function DetailContent({
                     <dt className="text-muted">NEAR testnet</dt>
                     <dd>
                       {history.attestation.nearAnchorStatus === "confirmed"
-                        ? "Anchored"
-                        : "Not anchored yet. The organisation anchors it from its NEAR account."}
+                        ? "Issued to your NEAR account as an NFT that cannot be transferred."
+                        : profile.nearAccountId
+                          ? `Not issued yet. The organisation issues it to ${profile.nearAccountId} from its NEAR account.`
+                          : "Not issued yet. Add your NEAR account under Identity so the organisation has somewhere to send it."}
                     </dd>
                   </div>
                 </dl>
+                {contribution.visibility === "public" ? (
+                  <Link href={`/verify/${history.attestation.id}`} className="text-link">
+                    Public verification page
+                  </Link>
+                ) : (
+                  <p className="text-[0.9rem] text-muted">
+                    This contribution is private, so it has no public verification page.
+                  </p>
+                )}
               </div>
             ) : null}
           </Panel>

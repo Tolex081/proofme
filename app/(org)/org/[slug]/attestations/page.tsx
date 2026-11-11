@@ -1,9 +1,12 @@
-import { ScrollText } from "lucide-react";
+import { ExternalLink, ScrollText } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 
+import { IssuerPanel, MintButton, RevokeControl } from "@/components/near/controls";
 import { PageHeading, PageSkeleton } from "@/components/workspace/parts";
 import { requireOrganisation } from "@/lib/auth/org-guard";
+import { getNearConfig } from "@/lib/near/server";
 import { listIssuedAttestations } from "@/server/services/verification";
 
 export const metadata: Metadata = { title: "Attestations" };
@@ -15,6 +18,13 @@ const DAY = new Intl.DateTimeFormat("en-GB", {
   timeZone: "UTC",
 });
 
+const ANCHOR_LABELS = {
+  awaiting: "Not on NEAR yet",
+  submitted: "Sent to NEAR",
+  confirmed: "NFT issued on testnet",
+  failed: "NEAR step failed",
+} as const;
+
 export default function Attestations({ params }: PageProps<"/org/[slug]/attestations">) {
   return (
     <Suspense fallback={<PageSkeleton />}>
@@ -25,14 +35,28 @@ export default function Attestations({ params }: PageProps<"/org/[slug]/attestat
 
 async function Content({ params }: Pick<PageProps<"/org/[slug]/attestations">, "params">) {
   const { slug } = await params;
-  const { organisation, user, db } = await requireOrganisation(slug, `/org/${slug}/attestations`);
+  const { organisation, user, db, can } = await requireOrganisation(
+    slug,
+    `/org/${slug}/attestations`,
+  );
   const items = (await listIssuedAttestations(db, user.id, organisation.id)) ?? [];
+  const near = getNearConfig();
+  const canMint = can("attestation.anchor") && organisation.nearIssuerStatus === "registered";
+  const canRevoke = can("attestation.revoke");
 
   return (
     <>
       <PageHeading
         title="Attestations"
-        intro="Every claim this organisation has approved. Approval and NEAR anchoring are shown separately."
+        intro="Every claim this organisation has approved. Approval and the NFT on NEAR are shown separately."
+      />
+      <IssuerPanel
+        organisationId={organisation.id}
+        slug={organisation.slug}
+        accountId={organisation.nearIssuerAccountId}
+        status={organisation.nearIssuerStatus}
+        canConfigure={can("issuer.configure")}
+        contractId={near?.contractId ?? null}
       />
       {items.length === 0 ? (
         <div className="card grid place-items-center px-6 py-16 text-center">
@@ -46,39 +70,70 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]/attestations">, "
         </div>
       ) : (
         <ul className="grid gap-3">
-          {items.map((item) => (
-            <li
-              key={item.id}
-              className="card flex flex-wrap items-center gap-x-5 gap-y-2 p-5 sm:p-6"
-            >
-              <div className="min-w-[14rem] flex-1">
-                <p className="font-display text-[1.15rem] font-bold">{item.title}</p>
-                <p className="text-[0.9rem] text-muted">
-                  {item.contributorName} · approved {DAY.format(item.issuedAt)}
-                </p>
-                <p className="digest mt-1 text-muted">{item.payloadDigest}</p>
-              </div>
-              <span className={`chip ${item.status === "active" ? "chip-ok" : "chip-bad"}`}>
-                {item.status === "active"
-                  ? "Organisation approved"
-                  : item.status === "revoked"
-                    ? "Revoked"
-                    : "Superseded"}
-              </span>
-              <span
-                className={`chip ${item.nearAnchorStatus === "confirmed" ? "chip-ok" : item.nearAnchorStatus === "failed" ? "chip-bad" : "chip-wait"}`}
-              >
-                {
-                  {
-                    awaiting: "Awaiting NEAR anchor",
-                    submitted: "Anchor submitted",
-                    confirmed: "Anchored on testnet",
-                    failed: "Anchor failed",
-                  }[item.nearAnchorStatus]
-                }
-              </span>
-            </li>
-          ))}
+          {items.map((item) => {
+            const active = item.status === "active";
+            const onNear = item.nearAnchorStatus === "confirmed";
+            // Nobody issues an attestation about their own work.
+            const mintable = active && !onNear && canMint && item.subjectUserId !== user.id;
+            return (
+              <li key={item.id} className="card grid gap-4 p-5 sm:p-6">
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                  <div className="min-w-[14rem] flex-1">
+                    <p className="font-display text-[1.15rem] font-bold">{item.title}</p>
+                    <p className="text-[0.9rem] text-muted">
+                      {item.contributorName} · approved {DAY.format(item.issuedAt)}
+                    </p>
+                    <p className="digest mt-1 text-muted">{item.payloadDigest}</p>
+                  </div>
+                  <span className={`chip ${active ? "chip-ok" : "chip-bad"}`}>
+                    {active
+                      ? "Organisation approved"
+                      : item.status === "revoked"
+                        ? "Revoked"
+                        : "Superseded"}
+                  </span>
+                  <span
+                    className={`chip ${onNear ? "chip-ok" : item.nearAnchorStatus === "failed" ? "chip-bad" : "chip-wait"}`}
+                  >
+                    {ANCHOR_LABELS[item.nearAnchorStatus]}
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap items-start gap-x-5 gap-y-3 border-t border-line pt-4">
+                  {mintable ? (
+                    <MintButton attestationId={item.id} slug={organisation.slug} />
+                  ) : null}
+                  {active && canRevoke ? (
+                    <RevokeControl
+                      attestationId={item.id}
+                      slug={organisation.slug}
+                      issuerAccountId={onNear ? item.nearIssuerAccountId : null}
+                    />
+                  ) : null}
+                  {item.isPublic ? (
+                    <Link href={`/verify/${item.id}`} className="text-link min-h-11 content-center">
+                      Public verification page
+                    </Link>
+                  ) : (
+                    <p className="min-h-11 content-center text-[0.9rem] text-muted">
+                      The contributor keeps this private, so it has no public page.
+                    </p>
+                  )}
+                  {near && item.nearTransactionHash ? (
+                    <a
+                      href={`${near.explorerBaseUrl}/txns/${item.nearTransactionHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-link inline-flex min-h-11 items-center gap-1.5"
+                    >
+                      Transaction <ExternalLink aria-hidden="true" size={14} />
+                      <span className="sr-only"> on the NEAR explorer, in a new tab</span>
+                    </a>
+                  ) : null}
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
     </>
