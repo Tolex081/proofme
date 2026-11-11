@@ -235,16 +235,16 @@ both sizes, are now captured by `npm run capture:screens` into `.impeccable/revi
 - Tablet (768) and laptop (1280) widths have not been inspected yet.
 - Keyboard-only and screen-reader passes have not been done yet.
 
-## Check results (run 11 Nov 2026)
+## Check results (run 11 Nov 2026, after Milestone 5)
 
 | Command                                            | Result                         |
 | -------------------------------------------------- | ------------------------------ |
 | `npm run format:check`                             | Passed                         |
 | `npm run lint`                                     | Passed, no warnings            |
 | `npm run typecheck`                                | Passed                         |
-| `npm run test` (unit and integration)              | 271 passed, 0 failed           |
+| `npm run test` (unit and integration)              | 322 passed, 0 failed           |
 | `npm run build`                                    | Passed, no warnings            |
-| `npm run test:e2e` (Playwright, desktop and phone) | 16 passed, 0 failed            |
+| `npm run test:e2e` (Playwright, desktop and phone) | 27 passed, 0 failed            |
 | Contract tests                                     | Do not exist yet (Milestone 6) |
 | CI on GitHub                                       | Never run; there is no remote  |
 
