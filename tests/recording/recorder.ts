@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { expect, type Locator, type Page } from "@playwright/test";
 
 import { scenesFor, type VideoName } from "./narration";
@@ -80,6 +80,10 @@ export class Recorder {
   }
 
   async start() {
+    // A failed run must never leave an old timeline for the assembler to use.
+    rmSync(`${BUILD}/${this.video}/timeline.json`, { force: true });
+    // Warm the server so the first recorded page load is not a cold start.
+    await this.page.request.get("/", { timeout: 120_000 });
     this.t0 = Date.now();
     await this.page.addInitScript(CURSOR);
   }

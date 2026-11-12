@@ -28,7 +28,7 @@ export default defineConfig({
     colorScheme: "light",
     locale: "en-GB",
     actionTimeout: 20_000,
-    navigationTimeout: 30_000,
+    navigationTimeout: 60_000,
   },
   webServer: {
     command:
