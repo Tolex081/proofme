@@ -57,7 +57,7 @@ fn setup() -> Contract {
 
 fn issue(contract: &mut Contract, token_id: &str, to: &AccountId, at_ms: u64) -> AttestationView {
     call_as(&issuer(), STORAGE, at_ms);
-    contract.issue(token_id.into(), to.clone(), DIGEST.into())
+    contract.issue(token_id.into(), to.clone(), DIGEST.into(), None)
 }
 
 fn last_event() -> Value {
@@ -216,6 +216,8 @@ fn an_issuer_mints_an_attestation_to_a_contributor() {
             status_changed_at: T0 + 5,
             supersedes: None,
             superseded_by: None,
+            reference: None,
+            reference_hash: None,
         }
     );
     assert_eq!(contract.get_attestation(TOKEN.into()), Some(view));
@@ -258,7 +260,7 @@ fn the_token_is_a_standard_nft_carrying_its_status() {
 fn an_unregistered_account_cannot_mint() {
     let mut contract = setup();
     call_as(&bob(), STORAGE, T0);
-    contract.issue(TOKEN.into(), alice(), DIGEST.into());
+    contract.issue(TOKEN.into(), alice(), DIGEST.into(), None);
 }
 
 #[test]
@@ -266,7 +268,7 @@ fn an_unregistered_account_cannot_mint() {
 fn the_contract_owner_cannot_mint() {
     let mut contract = setup();
     call_as(&owner(), STORAGE, T0);
-    contract.issue(TOKEN.into(), alice(), DIGEST.into());
+    contract.issue(TOKEN.into(), alice(), DIGEST.into(), None);
 }
 
 #[test]
@@ -298,7 +300,7 @@ fn an_attestation_id_can_be_used_once() {
 fn rejects_an_uppercase_digest() {
     let mut contract = setup();
     call_as(&issuer(), STORAGE, T0);
-    contract.issue(TOKEN.into(), alice(), DIGEST.to_uppercase());
+    contract.issue(TOKEN.into(), alice(), DIGEST.to_uppercase(), None);
 }
 
 #[test]
@@ -306,7 +308,7 @@ fn rejects_an_uppercase_digest() {
 fn rejects_a_short_digest() {
     let mut contract = setup();
     call_as(&issuer(), STORAGE, T0);
-    contract.issue(TOKEN.into(), alice(), DIGEST[..63].into());
+    contract.issue(TOKEN.into(), alice(), DIGEST[..63].into(), None);
 }
 
 #[test]
@@ -314,7 +316,7 @@ fn rejects_a_short_digest() {
 fn rejects_a_malformed_token_id() {
     let mut contract = setup();
     call_as(&issuer(), STORAGE, T0);
-    contract.issue("Not An ID".into(), alice(), DIGEST.into());
+    contract.issue("Not An ID".into(), alice(), DIGEST.into(), None);
 }
 
 #[test]
@@ -322,7 +324,7 @@ fn rejects_a_malformed_token_id() {
 fn rejects_an_empty_token_id() {
     let mut contract = setup();
     call_as(&issuer(), STORAGE, T0);
-    contract.issue("".into(), alice(), DIGEST.into());
+    contract.issue("".into(), alice(), DIGEST.into(), None);
 }
 
 #[test]
@@ -330,7 +332,7 @@ fn rejects_an_empty_token_id() {
 fn minting_must_pay_for_its_storage() {
     let mut contract = setup();
     call_as(&issuer(), ONE_YOCTO, T0);
-    contract.issue(TOKEN.into(), alice(), DIGEST.into());
+    contract.issue(TOKEN.into(), alice(), DIGEST.into(), None);
 }
 
 // ── Transfers ────────────────────────────────────────────────────────────────
@@ -376,7 +378,7 @@ fn the_issuer_revokes_and_the_token_shows_it() {
     assert_eq!(view.status_changed_at, T0 + 60_000);
     assert_eq!(view.owner_id, alice());
 
-    let event = last_event();
+    let event = events()[0].clone();
     assert_eq!(event["standard"], "proofme");
     assert_eq!(event["event"], "attestation_revoked");
     assert_eq!(event["data"][0]["token_id"], TOKEN);
@@ -471,7 +473,7 @@ fn the_issuer_replaces_an_attestation_with_a_corrected_one() {
     issue(&mut contract, TOKEN, &alice(), T0);
 
     call_as(&issuer(), STORAGE, T0 + 9_000);
-    let replacement = contract.supersede(TOKEN.into(), TOKEN_2.into(), OTHER_DIGEST.into());
+    let replacement = contract.supersede(TOKEN.into(), TOKEN_2.into(), OTHER_DIGEST.into(), None);
     assert_eq!(replacement.owner_id, alice());
     assert_eq!(replacement.status, AttestationStatus::Active);
     assert_eq!(replacement.digest, OTHER_DIGEST);
@@ -501,7 +503,7 @@ fn a_revoked_attestation_cannot_be_superseded() {
     call_as(&issuer(), ONE_YOCTO, T0);
     contract.revoke(TOKEN.into());
     call_as(&issuer(), STORAGE, T0);
-    contract.supersede(TOKEN.into(), TOKEN_2.into(), OTHER_DIGEST.into());
+    contract.supersede(TOKEN.into(), TOKEN_2.into(), OTHER_DIGEST.into(), None);
 }
 
 #[test]
@@ -510,7 +512,7 @@ fn a_superseded_attestation_cannot_be_revoked() {
     let mut contract = setup();
     issue(&mut contract, TOKEN, &alice(), T0);
     call_as(&issuer(), STORAGE, T0);
-    contract.supersede(TOKEN.into(), TOKEN_2.into(), OTHER_DIGEST.into());
+    contract.supersede(TOKEN.into(), TOKEN_2.into(), OTHER_DIGEST.into(), None);
     call_as(&issuer(), ONE_YOCTO, T0);
     contract.revoke(TOKEN.into());
 }
@@ -523,7 +525,7 @@ fn another_issuer_cannot_supersede() {
     call_as(&owner(), STORAGE, T0);
     contract.register_issuer(other_issuer(), "riverbank".into());
     call_as(&other_issuer(), STORAGE, T0);
-    contract.supersede(TOKEN.into(), TOKEN_2.into(), OTHER_DIGEST.into());
+    contract.supersede(TOKEN.into(), TOKEN_2.into(), OTHER_DIGEST.into(), None);
 }
 
 #[test]
@@ -534,7 +536,7 @@ fn a_suspended_issuer_cannot_supersede() {
     call_as(&owner(), ONE_YOCTO, T0);
     contract.suspend_issuer(issuer());
     call_as(&issuer(), STORAGE, T0);
-    contract.supersede(TOKEN.into(), TOKEN_2.into(), OTHER_DIGEST.into());
+    contract.supersede(TOKEN.into(), TOKEN_2.into(), OTHER_DIGEST.into(), None);
 }
 
 #[test]
@@ -543,7 +545,7 @@ fn a_replacement_needs_a_new_id() {
     let mut contract = setup();
     issue(&mut contract, TOKEN, &alice(), T0);
     call_as(&issuer(), STORAGE, T0);
-    contract.supersede(TOKEN.into(), TOKEN.into(), OTHER_DIGEST.into());
+    contract.supersede(TOKEN.into(), TOKEN.into(), OTHER_DIGEST.into(), None);
 }
 
 // ── Verifying ────────────────────────────────────────────────────────────────
@@ -670,4 +672,118 @@ fn lists_one_owners_tokens_in_pages() {
 fn rejects_a_zero_page_size() {
     let contract = setup();
     contract.nft_tokens(None, Some(0));
+}
+
+// ── Portable credential document (NEP-177 reference) ─────────────────────────
+
+const T1: u64 = T0 + 1_000;
+const T2: u64 = T0 + 2_000;
+const CID_REF: &str = "ipfs://bafkreigh2akiscaildcqabsyg3dfr6chu3fgpregiymsck7e7aqa4s52zy";
+/// Base64 SHA-256 of an example document: 44 characters ending in one `=`.
+const REF_HASH: &str = "n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=";
+
+fn reference() -> Option<CredentialReference> {
+    Some(CredentialReference {
+        reference: CID_REF.into(),
+        reference_hash: REF_HASH.into(),
+    })
+}
+
+#[test]
+fn a_credential_points_at_its_public_document() {
+    let mut contract = setup();
+    call_as(&issuer(), STORAGE, T1);
+    let view = contract.issue(TOKEN.into(), alice(), DIGEST.into(), reference());
+    assert_eq!(view.reference.as_deref(), Some(CID_REF));
+    assert_eq!(view.reference_hash.as_deref(), Some(REF_HASH));
+    let token = contract.nft_token(TOKEN.into()).unwrap();
+    assert_eq!(token.metadata.reference.as_deref(), Some(CID_REF));
+    assert_eq!(token.metadata.reference_hash.as_deref(), Some(REF_HASH));
+}
+
+#[test]
+fn a_credential_without_a_document_has_no_reference() {
+    let mut contract = setup();
+    issue(&mut contract, TOKEN, &alice(), T1);
+    let token = contract.nft_token(TOKEN.into()).unwrap();
+    assert_eq!(token.metadata.reference, None);
+    assert_eq!(token.metadata.reference_hash, None);
+}
+
+#[test]
+#[should_panic(expected = "reference must be an ipfs:// or https:// address")]
+fn rejects_a_reference_with_another_scheme() {
+    let mut contract = setup();
+    call_as(&issuer(), STORAGE, T1);
+    contract.issue(
+        TOKEN.into(),
+        alice(),
+        DIGEST.into(),
+        Some(CredentialReference {
+            reference: "http://example.org/credential.json".into(),
+            reference_hash: REF_HASH.into(),
+        }),
+    );
+}
+
+#[test]
+#[should_panic(expected = "reference_hash must be the Base64 SHA-256")]
+fn rejects_a_reference_hash_that_is_not_a_base64_sha256() {
+    let mut contract = setup();
+    call_as(&issuer(), STORAGE, T1);
+    contract.issue(
+        TOKEN.into(),
+        alice(),
+        DIGEST.into(),
+        Some(CredentialReference {
+            reference: CID_REF.into(),
+            reference_hash: DIGEST.into(),
+        }),
+    );
+}
+
+// ── NEP-171 metadata update events ───────────────────────────────────────────
+
+#[test]
+fn revoking_tells_wallets_to_re_read_the_token() {
+    let mut contract = setup();
+    issue(&mut contract, TOKEN, &alice(), T1);
+    call_as(&issuer(), ONE_YOCTO, T2);
+    contract.revoke(TOKEN.into());
+    let logged = events();
+    assert_eq!(logged.len(), 2);
+    assert_eq!(logged[0]["event"], "attestation_revoked");
+    assert_eq!(logged[1]["standard"], "nep171");
+    assert_eq!(logged[1]["version"], "1.2.0");
+    assert_eq!(logged[1]["event"], "nft_metadata_update");
+    assert_eq!(
+        logged[1]["data"][0]["token_ids"],
+        serde_json::json!([TOKEN])
+    );
+}
+
+#[test]
+fn superseding_announces_the_new_token_and_updates_the_old_one() {
+    let mut contract = setup();
+    issue(&mut contract, TOKEN, &alice(), T1);
+    call_as(&issuer(), STORAGE, T2);
+    let replacement = contract.supersede(
+        TOKEN.into(),
+        TOKEN_2.into(),
+        OTHER_DIGEST.into(),
+        reference(),
+    );
+    assert_eq!(replacement.reference.as_deref(), Some(CID_REF));
+    let names: Vec<String> = events()
+        .iter()
+        .map(|event| event["event"].as_str().unwrap().to_string())
+        .collect();
+    assert_eq!(
+        names,
+        ["nft_mint", "attestation_superseded", "nft_metadata_update"]
+    );
+    assert_eq!(
+        last_event()["data"][0]["token_ids"],
+        serde_json::json!([TOKEN])
+    );
 }

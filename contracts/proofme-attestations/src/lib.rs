@@ -12,9 +12,15 @@
 //! - **The owner of the contract cannot touch a token.** It manages the issuer
 //!   list and nothing else.
 //!
+//! - **It points at its own public record.** NEP-177 `reference` holds the
+//!   address of the public credential document (an `ipfs://` CID) and
+//!   `reference_hash` its Base64 SHA-256, so anyone can fetch and check the
+//!   credential without ProofMe.
+//!
 //! Privacy: the chain holds the attestation ID, the SHA-256 digest of the
-//! canonical record, the two accounts and the status. No claim text, names,
-//! evidence or reasons are stored or logged.
+//! canonical record, the two accounts, the status and the address of the
+//! public credential document. No claim text, names, evidence or reasons are
+//! stored or logged.
 
 use near_sdk::json_types::U128;
 use near_sdk::serde_json::json;
@@ -33,6 +39,9 @@ const PROOFME_STANDARD: &str = "proofme";
 const PROOFME_STANDARD_VERSION: &str = "1.0.0";
 
 const MAX_ID_LENGTH: usize = 64;
+const MAX_REFERENCE_LENGTH: usize = 256;
+/// Base64 of a 32-byte SHA-256 hash, with padding.
+const REFERENCE_HASH_LENGTH: usize = 44;
 const DIGEST_LENGTH: usize = 64;
 const DEFAULT_PAGE: u64 = 50;
 const MAX_PAGE: u64 = 100;
@@ -98,6 +107,19 @@ pub struct Attestation {
     status_changed_at: u64,
     supersedes: Option<TokenId>,
     superseded_by: Option<TokenId>,
+    /// NEP-177: where the public credential document lives, and its Base64 SHA-256.
+    reference: Option<String>,
+    reference_hash: Option<String>,
+}
+
+/// Where a credential's public document lives (NEP-177 `reference`).
+#[near(serializers = [json])]
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CredentialReference {
+    /// `ipfs://` or `https://` address of the public credential JSON.
+    pub reference: String,
+    /// Base64-encoded SHA-256 of the exact bytes at `reference`.
+    pub reference_hash: String,
 }
 
 /// The full public record of one attestation.
@@ -115,6 +137,8 @@ pub struct AttestationView {
     pub status_changed_at: u64,
     pub supersedes: Option<TokenId>,
     pub superseded_by: Option<TokenId>,
+    pub reference: Option<String>,
+    pub reference_hash: Option<String>,
 }
 
 /// The answer to "is this record the one that was issued, and does it still stand?"
@@ -268,10 +292,11 @@ impl Contract {
         token_id: TokenId,
         receiver_id: AccountId,
         digest: String,
+        reference: Option<CredentialReference>,
     ) -> AttestationView {
         let storage_before = env::storage_usage();
         let issuer_id = self.assert_active_issuer();
-        self.internal_mint(&token_id, &receiver_id, &issuer_id, digest, None);
+        self.internal_mint(&token_id, &receiver_id, &issuer_id, digest, None, reference);
         self.flush_tokens();
         settle_storage(storage_before);
         self.view_of(&token_id).unwrap()
@@ -299,6 +324,8 @@ impl Contract {
             "attestation_revoked",
             json!([{ "token_id": token_id, "owner_id": owner_id, "issuer_id": issuer_id }]),
         );
+        // The token's title, description, status and updated_at have changed.
+        emit_metadata_update(&[&token_id]);
         self.view_of(&token_id).unwrap()
     }
 
@@ -312,6 +339,7 @@ impl Contract {
         old_token_id: TokenId,
         token_id: TokenId,
         digest: String,
+        reference: Option<CredentialReference>,
     ) -> AttestationView {
         let storage_before = env::storage_usage();
         let issuer_id = self.assert_active_issuer();
@@ -327,6 +355,7 @@ impl Contract {
             &issuer_id,
             digest,
             Some(old_token_id.clone()),
+            reference,
         );
         old.status = AttestationStatus::Superseded;
         old.status_changed_at = env::block_timestamp_ms();
@@ -345,6 +374,7 @@ impl Contract {
                 "issuer_id": issuer_id,
             }]),
         );
+        emit_metadata_update(&[&old_token_id]);
         self.view_of(&token_id).unwrap()
     }
 
@@ -529,9 +559,13 @@ impl Contract {
         issuer_id: &AccountId,
         digest: String,
         supersedes: Option<TokenId>,
+        reference: Option<CredentialReference>,
     ) {
         require_valid_id(token_id, "token_id");
         require_valid_digest(&digest);
+        if let Some(reference) = &reference {
+            require_valid_reference(reference);
+        }
         require!(
             receiver_id != issuer_id,
             "An issuer cannot issue an attestation to itself"
@@ -552,6 +586,8 @@ impl Contract {
                 status_changed_at: now,
                 supersedes,
                 superseded_by: None,
+                reference: reference.as_ref().map(|r| r.reference.clone()),
+                reference_hash: reference.map(|r| r.reference_hash),
             },
         );
         self.all_tokens.push(token_id.clone());
@@ -596,6 +632,8 @@ impl Contract {
             status_changed_at: attestation.status_changed_at,
             supersedes: attestation.supersedes.clone(),
             superseded_by: attestation.superseded_by.clone(),
+            reference: attestation.reference.clone(),
+            reference_hash: attestation.reference_hash.clone(),
         })
     }
 
@@ -629,8 +667,8 @@ impl Contract {
                 starts_at: None,
                 updated_at: Some(view.status_changed_at),
                 extra: Some(extra.to_string()),
-                reference: None,
-                reference_hash: None,
+                reference: view.reference,
+                reference_hash: view.reference_hash,
             },
         }
     }
@@ -665,6 +703,41 @@ fn require_valid_digest(digest: &str) {
     require!(
         ok,
         "digest must be a SHA-256 hash as 64 lowercase hex characters"
+    );
+}
+
+/// A reference must be an `ipfs://` or `https://` address and its hash a
+/// Base64 SHA-256 (44 characters ending in `=`).
+fn require_valid_reference(reference: &CredentialReference) {
+    let address = &reference.reference;
+    require!(
+        address.len() <= MAX_REFERENCE_LENGTH
+            && (address.starts_with("ipfs://") || address.starts_with("https://"))
+            && address.len() > 8
+            && !address
+                .bytes()
+                .any(|byte| byte.is_ascii_whitespace() || byte.is_ascii_control()),
+        "reference must be an ipfs:// or https:// address of at most 256 characters"
+    );
+    let hash = &reference.reference_hash;
+    require!(
+        hash.len() == REFERENCE_HASH_LENGTH
+            && hash.ends_with('=')
+            && !hash.ends_with("==")
+            && hash[..REFERENCE_HASH_LENGTH - 1]
+                .bytes()
+                .all(|byte| byte.is_ascii_alphanumeric() || byte == b'+' || byte == b'/'),
+        "reference_hash must be the Base64 SHA-256 of the referenced document"
+    );
+}
+
+/// NEP-171 1.2.0 `nft_metadata_update`: tells indexers and wallets to re-read these tokens.
+fn emit_metadata_update(token_ids: &[&TokenId]) {
+    emit(
+        NFT_STANDARD,
+        NFT_STANDARD_VERSION,
+        "nft_metadata_update",
+        json!([{ "token_ids": token_ids }]),
     );
 }
 
