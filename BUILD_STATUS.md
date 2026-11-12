@@ -12,8 +12,8 @@ Last updated: 12 November 2026
   public pages. The NEAR-side parts of Milestone 7 depend on Milestone 6.
 - **Milestone 8** (hardening) is complete for this session's parts; open items are listed in its
   section. Nothing found in the review is critical or high severity and unresolved.
-- **Milestone 9** is in progress: repository public, both videos recorded, Vercel project and
-  Neon database set up; the first successful deployment is being validated.
+- **Milestone 9** is in progress: repository public, both videos recorded, and the site live at
+  https://proofme-nine.vercel.app with the demo data (public pages verified 12 Nov 2026).
 - **Deadline:** NEAR Hackathon submissions close 14 November 2026, 23:59 UTC (track 10, NFTs).
 
 ## Milestone 6 — NFT contract and NEAR wiring (in progress)
@@ -45,6 +45,13 @@ Last updated: 12 November 2026
 | Scripts and notes     | `submission/*-script.md`, `*.vtt`, `recording-notes.md`, all generated from `tests/recording/narration.ts`                                                |
 | NEAR in the videos    | Not shown: the contract is not on testnet yet. The scenes are written and are added by re-recording with `WITH_NEAR=1` after a real mint                  |
 
+### Live site checks (12 Nov 2026)
+
+- Public pages, Explore, Daniel Okafor's profile, Northstar Protocol's page and the public
+  verification page load from the hosted database; the record re-hashes to its digest.
+- Unknown pages return 404; private pages redirect signed-out visitors to sign in.
+- Security headers present: CSP, HSTS, X-Frame-Options, nosniff, referrer and permissions policy.
+
 ### Problems found and fixed
 
 - Organisation-approved work waiting for NEAR disappeared from public profiles (only `verified`
@@ -54,7 +61,8 @@ Last updated: 12 November 2026
 
 ### Still to do
 
-- Validate the live site end to end once the first deployment succeeds.
+- Signed-in flows on the live site have not been checked yet: they need the demo password, which
+  only the user holds.
 - `BETTER_AUTH_SECRET` and `DEMO_PASSWORD` are set for Production only; branch preview builds
   will fail until they are added for Preview too.
 - Re-record with a real NEAR mint once the contract is deployed (needs the user's testnet wallet).
