@@ -9,6 +9,7 @@ import { listNotifications } from "@/server/services/account";
 import {
   createContribution,
   getOwnContribution,
+  listPublicContributions,
   updateContribution,
 } from "@/server/services/contributions";
 import { createOrganisation, createProject } from "@/server/services/organisations";
@@ -533,5 +534,26 @@ describe("approval and the attestation record", () => {
       expectedVersion: await version(setup.requestId),
     });
     expect(fresh.ok).toBe(true);
+  });
+});
+
+describe("approved work on public pages", () => {
+  it("lists an approval at once, before any NEAR anchor, with a link to its record", async () => {
+    const setup = await submitted();
+    const decision = await decide(db, setup.reviewer, setup.requestId, {
+      decision: "approve",
+      message: "",
+      internalNote: "",
+      expectedVersion: 0,
+    });
+    if (!decision.ok) throw new Error(JSON.stringify(decision.errors));
+    const listed = await listPublicContributions(db, setup.contributor);
+    const item = listed.find((entry) => entry.id === setup.contribution.id);
+    expect(item?.status).toBe("approved_pending_anchor");
+    expect(item?.attestation).toMatchObject({
+      id: decision.value.attestationId,
+      issuerName: setup.org.name,
+      status: "active",
+    });
   });
 });

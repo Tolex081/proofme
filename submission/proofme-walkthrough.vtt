@@ -1,0 +1,220 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:07.460
+ProofMe is a record of contributions to open
+projects, confirmed by the organisations that saw the work.
+
+00:00:07.810 --> 00:00:09.674
+There are three roles.
+
+00:00:10.024 --> 00:00:13.604
+Contributors describe
+their work and attach evidence.
+
+00:00:13.954 --> 00:00:19.568
+Organisations review those claims,
+and approve, question or decline them.
+
+00:00:19.918 --> 00:00:24.098
+And anyone can check a
+confirmed record, without an account.
+
+00:00:24.447 --> 00:00:32.157
+Each claim moves through clear states:
+self-reported, awaiting review, verified, or not approved.
+
+00:00:32.507 --> 00:00:39.092
+Everyone you will see in this video is fictional
+sample data, and ProofMe runs on NEAR testnet only.
+
+00:00:40.436 --> 00:00:47.536
+Signing up needs only a name, an email and a
+password. No wallet is required to contribute.
+
+00:00:47.886 --> 00:00:52.510
+Onboarding asks for a display
+name, a username and a short bio.
+
+00:00:52.860 --> 00:01:00.765
+Profiles start private. The contributor decides when
+to make one public, and can hide individual sections.
+
+00:01:03.981 --> 00:01:07.381
+Here is a public profile for Daniel Okafor.
+
+00:01:07.730 --> 00:01:13.490
+Verified contributions come first, each
+naming the organisation that confirmed it.
+
+00:01:13.840 --> 00:01:19.914
+Self-reported work is shown separately, and
+clearly labelled as not confirmed by anyone.
+
+00:01:20.264 --> 00:01:25.164
+Links on the profile are marked as
+added by Daniel and not checked by ProofMe.
+
+00:01:26.477 --> 00:01:29.181
+Daniel signs in to add new work.
+
+00:01:29.532 --> 00:01:36.976
+A contribution has a title, a summary, a
+description, the kind of work, his role and the dates.
+
+00:01:37.326 --> 00:01:42.905
+Evidence is a list of links:
+pull requests, documents, demos.
+
+00:01:43.256 --> 00:01:50.825
+Every link is checked on the server. Only secure web
+addresses are accepted, and nothing is fetched from them.
+
+00:01:51.175 --> 00:01:54.665
+He saves a draft, which only he can see.
+
+00:01:55.980 --> 00:02:01.944
+Then he chooses who should confirm it:
+Northstar Protocol's Open Grants Portal project.
+
+00:02:02.294 --> 00:02:08.019
+The claim is now awaiting review. He
+can withdraw it until a reviewer decides.
+
+00:02:09.320 --> 00:02:16.305
+Now the organisation side. Sam owns
+Northstar Protocol, another fictional account.
+
+00:02:16.654 --> 00:02:21.674
+The organisation workspace shows
+open claims, projects and the team.
+
+00:02:22.024 --> 00:02:25.288
+Projects group the work a claim can be about.
+
+00:02:25.638 --> 00:02:30.903
+The team has four roles:
+owners, admins, reviewers and viewers.
+
+00:02:31.253 --> 00:02:39.597
+Only owners and admins invite people, and an invitation
+link works once, for the invited email, for seven days.
+
+00:02:39.947 --> 00:02:49.452
+Northstar has asked ProofMe to review who runs it. That platform
+review is separate from being a NEAR issuer, and the public page shows both.
+
+00:02:50.762 --> 00:02:53.442
+Priya is a reviewer at Northstar.
+
+00:02:53.792 --> 00:02:57.276
+Her queue lists the claims
+sent to the organisation.
+
+00:02:57.626 --> 00:03:01.681
+She sees the full claim and the
+evidence the contributor attached.
+
+00:03:02.031 --> 00:03:08.550
+She can approve it, ask for more information, or
+decline it with a reason the contributor will see.
+
+00:03:08.900 --> 00:03:12.175
+Internal notes stay inside the organisation.
+
+00:03:13.486 --> 00:03:15.151
+She approves.
+
+00:03:15.501 --> 00:03:26.755
+At that moment the claim is frozen into an attestation: a canonical JSON
+record, with a random value so it cannot be guessed, and its SHA-256 digest.
+
+00:03:27.105 --> 00:03:33.560
+A database rule stops anyone,
+administrators included, from editing it afterwards.
+
+00:03:34.863 --> 00:03:41.013
+On the Attestations page, an owner connects the
+NEAR account that will issue for the organisation.
+
+00:03:41.363 --> 00:03:46.482
+That account is registered as an issuer
+on the ProofMe contract on NEAR testnet.
+
+00:03:46.832 --> 00:03:59.417
+Issuing an attestation mints a non-transferable NFT to the contributor, carrying only
+the attestation ID, the digest and the issuer. No names, emails or links go on-chain.
+
+00:03:59.767 --> 00:04:11.556
+ProofMe never sees a key or a seed phrase. Each transaction is shown and signed in the
+organisation's own wallet, and the server then confirms it from the contract before recording anything.
+
+00:04:12.869 --> 00:04:17.129
+This is the public
+verification page, open to anyone.
+
+00:04:17.479 --> 00:04:24.693
+It shows who issued the record, who reviewed it, the
+claim as approved, and the evidence the reviewer was shown.
+
+00:04:25.043 --> 00:04:30.658
+Every time it loads, it hashes the stored
+record again and compares it with the digest.
+
+00:04:31.008 --> 00:04:37.862
+This one has not been issued on NEAR yet, and the
+page says so plainly, rather than implying it has.
+
+00:04:39.163 --> 00:04:42.028
+Organisations can withdraw their word.
+
+00:04:42.378 --> 00:04:47.397
+Sam revokes an older attestation,
+with a reason the contributor will see.
+
+00:04:47.747 --> 00:04:56.297
+Revoking cannot be undone. The record stays public,
+marked as revoked, so nobody can quietly rewrite history.
+
+00:04:56.647 --> 00:05:03.276
+The contract also supports replacing a record with
+a corrected one, which then points to its successor.
+
+00:05:04.592 --> 00:05:10.452
+ProofMe administrators review
+organisations, handle reports and read the audit log.
+
+00:05:10.802 --> 00:05:16.161
+By design they cannot issue, edit or
+revoke an organisation's attestations.
+
+00:05:16.511 --> 00:05:21.291
+Every permission is checked on the
+server, never only in the interface.
+
+00:05:21.641 --> 00:05:28.900
+Sensitive actions are rate-limited and written to the
+audit log, and the site sends a strict content security policy.
+
+00:05:30.203 --> 00:05:36.748
+Private profiles, drafts and pending claims
+never appear in public search or on public pages.
+
+00:05:37.098 --> 00:05:47.992
+Current limitations: ProofMe runs on NEAR testnet only, email verification
+is not switched on yet, and there is no upload of files: evidence is links.
+
+00:05:49.305 --> 00:05:53.570
+What comes next is future
+work, not part of this build.
+
+00:05:53.920 --> 00:05:59.189
+Richer credentials, such as skills
+endorsed across several organisations.
+
+00:05:59.539 --> 00:06:06.044
+And attestations about work done by AI agents,
+confirmed by the people responsible for them.
+
+00:06:06.394 --> 00:06:10.903
+ProofMe: your work,
+confirmed by the people who saw it.

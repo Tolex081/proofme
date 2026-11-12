@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { PROFESSIONAL_ROLE_LABELS, type ProfessionalRole } from "@/lib/validation/profile";
 import { StatusChip } from "@/components/contributions/status";
+import { isContributionOrganisationApproved } from "@/lib/domain/status";
 import { CATEGORY_LABELS } from "@/lib/validation/contribution";
 import type { PublicContribution } from "@/server/services/contributions";
 import type { PublicProfile } from "@/server/services/profile";
@@ -43,8 +44,13 @@ export function PublicProfileView({
 }) {
   const Name = embedded ? "h2" : "h1";
   const Section = embedded ? "h3" : "h2";
-  const verified = contributions.filter((item) => item.status === "verified");
+  // Organisation-approved work counts as verified whether or not it is on NEAR yet;
+  // each item's status chip says which. Withdrawn records stay visible, marked.
+  const verified = contributions.filter((item) => isContributionOrganisationApproved(item.status));
   const selfReported = contributions.filter((item) => item.status === "self_reported");
+  const withdrawn = contributions.filter(
+    (item) => item.status === "revoked" || item.status === "superseded",
+  );
   const links = Object.entries(profile.socialLinks);
   const roleLabel = (role: string) => PROFESSIONAL_ROLE_LABELS[role as ProfessionalRole] ?? role;
 
@@ -153,6 +159,17 @@ export function PublicProfileView({
         </section>
       ) : null}
 
+      {withdrawn.length > 0 ? (
+        <section className="card p-6 sm:p-8">
+          <Section className="text-subhead">No longer confirmed</Section>
+          <p className="mt-2 max-w-[60ch] text-muted">
+            The organisation withdrew or replaced these records. They stay listed so the history
+            cannot be quietly rewritten.
+          </p>
+          <ContributionList items={withdrawn} />
+        </section>
+      ) : null}
+
       {links.length > 0 || profile.websiteUrl || profile.nearAccountId ? (
         <p className="px-2 text-meta text-muted">
           Links and accounts on this profile were added by {profile.displayName} and have not been
@@ -180,9 +197,15 @@ function ContributionList({ items }: { items: PublicContribution[] }) {
           </div>
           {item.attestation ? (
             <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-note">
-              <BadgeCheck aria-hidden="true" size={16} className="text-ok-ink" />
+              {item.attestation.status === "active" ? (
+                <BadgeCheck aria-hidden="true" size={16} className="text-ok-ink" />
+              ) : null}
               <span>
-                Confirmed by{" "}
+                {item.attestation.status === "active"
+                  ? "Confirmed by"
+                  : item.attestation.status === "revoked"
+                    ? "Revoked by"
+                    : "Replaced by a newer record from"}{" "}
                 <Link href={`/org/${item.attestation.issuerSlug}`} className="text-link">
                   {item.attestation.issuerName}
                 </Link>

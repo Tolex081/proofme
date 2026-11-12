@@ -1,0 +1,65 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:06.100
+Work on open projects is scattered
+across repositories, chats and forums.
+
+00:00:06.450 --> 00:00:11.639
+Anyone can claim anything, and
+checking a claim means chasing people down.
+
+00:00:11.989 --> 00:00:18.084
+ProofMe turns a contribution into a record,
+confirmed by the organisation that saw the work.
+
+00:00:19.393 --> 00:00:23.203
+This is Daniel Okafor, a sample contributor.
+
+00:00:23.553 --> 00:00:28.692
+His public profile keeps verified
+work apart from what he reports himself.
+
+00:00:29.042 --> 00:00:35.457
+Each verified item names the organisation that
+confirmed it, and links to a record anyone can check.
+
+00:00:36.769 --> 00:00:42.514
+Daniel adds new work: what he did,
+his role, and a link to the evidence.
+
+00:00:42.864 --> 00:00:48.468
+It starts as a private draft.
+Nobody else can see it until he sends it.
+
+00:00:49.790 --> 00:00:55.545
+He sends it to Northstar Protocol, a
+fictional organisation, to confirm.
+
+00:00:55.895 --> 00:00:58.804
+Only Northstar's reviewers will see it.
+
+00:01:00.105 --> 00:01:07.015
+Priya reviews for Northstar. The claim is waiting
+in her queue, with the evidence Daniel attached.
+
+00:01:07.365 --> 00:01:12.654
+Nobody can approve their own claim, and
+the server checks her role on every decision.
+
+00:01:13.957 --> 00:01:22.252
+She approves it. The claim is frozen into an
+attestation: a canonical record and its SHA-256 digest.
+
+00:01:23.567 --> 00:01:26.212
+Anyone can open the public record.
+
+00:01:26.562 --> 00:01:31.736
+The page hashes the record again, to
+show it has not changed since approval.
+
+00:01:33.050 --> 00:01:36.715
+Portable, accountable proof of contribution.
+
+00:01:37.065 --> 00:01:41.719
+Confirmed by the people who saw
+the work, and checkable by anyone.

@@ -575,7 +575,7 @@ export async function explore(
     const verifiedCount = sql<number>`(
       select count(*)::int from ${contributions}
       where ${contributions.contributorUserId} = ${userProfiles.userId}
-        and ${contributions.status} = 'verified'
+        and ${contributions.status} in ('approved_pending_anchor', 'verified')
         and ${contributions.visibility} = 'public'
         ${category ? sql`and ${contributions.category} = ${category}` : sql``}
     )`;

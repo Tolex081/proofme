@@ -263,8 +263,13 @@ export interface PublicContribution {
   endDate: string | null;
   status: ContributionStatus;
   evidence: { type: Evidence["type"]; url: string; label: string }[];
-  /** The active attestation confirming it, when there is one. */
-  attestation: { id: string; issuerName: string; issuerSlug: string } | null;
+  /** The latest attestation about it, active or withdrawn, when there is one. */
+  attestation: {
+    id: string;
+    issuerName: string;
+    issuerSlug: string;
+    status: "active" | "revoked" | "superseded";
+  } | null;
 }
 
 /**
@@ -296,16 +301,14 @@ export async function listPublicContributions(
             contributionId: attestations.contributionId,
             issuerName: organisations.name,
             issuerSlug: organisations.slug,
+            status: attestations.status,
           })
           .from(attestations)
           .innerJoin(organisations, eq(organisations.id, attestations.issuerOrganisationId))
           .where(
-            and(
-              inArray(
-                attestations.contributionId,
-                listable.map((row) => row.id),
-              ),
-              eq(attestations.status, "active"),
+            inArray(
+              attestations.contributionId,
+              listable.map((row) => row.id),
             ),
           )
           .orderBy(desc(attestations.issuedAt));
@@ -325,7 +328,12 @@ export async function listPublicContributions(
     attestation: (() => {
       const found = confirmed.find((item) => item.contributionId === row.id);
       return found
-        ? { id: found.id, issuerName: found.issuerName, issuerSlug: found.issuerSlug }
+        ? {
+            id: found.id,
+            issuerName: found.issuerName,
+            issuerSlug: found.issuerSlug,
+            status: found.status,
+          }
         : null;
     })(),
   }));

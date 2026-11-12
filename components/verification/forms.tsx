@@ -195,7 +195,7 @@ export function DecisionForm({
       <input type="hidden" name="expectedVersion" value={version} />
       <fieldset className="field">
         <legend className="field-label">Your decision</legend>
-        <div className="mt-2 grid gap-3 sm:grid-cols-3">
+        <div className="mt-2 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
           {DECISIONS.map((option) => (
             <label
               key={option.value}
