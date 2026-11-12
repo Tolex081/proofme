@@ -1,6 +1,6 @@
 # ProofMe — Build status
 
-Last updated: 11 November 2026
+Last updated: 12 November 2026
 
 ## Where things stand
 
@@ -12,6 +12,8 @@ Last updated: 11 November 2026
   public pages. The NEAR-side parts of Milestone 7 depend on Milestone 6.
 - **Milestone 8** (hardening) is complete for this session's parts; open items are listed in its
   section. Nothing found in the review is critical or high severity and unresolved.
+- **Milestone 9** is in progress: repository public, both videos recorded, Vercel project and
+  Neon database set up; the first successful deployment is being validated.
 - **Deadline:** NEAR Hackathon submissions close 14 November 2026, 23:59 UTC (track 10, NFTs).
 
 ## Milestone 6 — NFT contract and NEAR wiring (in progress)
@@ -30,6 +32,32 @@ Last updated: 11 November 2026
 | Deployment to testnet                     | Not done: needs a contract account                                                                                                                          |
 | Supersession in the app                   | Not built (the contract supports it)                                                                                                                        |
 | Reconciliation                            | Not built: if the browser closes after the wallet signs, the hash is lost and the record stays "not on NEAR" although the token exists                      |
+
+## Milestone 9 — Deployment and videos (in progress)
+
+| Task                  | State                                                                                                                                                     |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Repository            | Public at https://github.com/Tolex081/proofme. Commit emails rewritten to the GitHub noreply address before publishing. CI runs on every push and passes  |
+| Hosting               | Vercel project `proofme`, site https://proofme-nine.vercel.app (APP_ENV=preview, NEAR testnet, demo data). Neon Postgres connected through Vercel Storage |
+| Migrations and seed   | Run inside Vercel's build (`npm run vercel-build`), so the database password never leaves Vercel. The seed needs DEMO_PASSWORD and never prints it        |
+| Video A, product demo | `submission/proofme-demo.mp4`, 1:42, 1920×1080 H.264/AAC, 17 captions. Local only (not in git)                                                            |
+| Video B, walkthrough  | `submission/proofme-walkthrough.mp4`, 6:10, 1920×1080 H.264/AAC, 57 captions. Local only (not in git)                                                     |
+| Scripts and notes     | `submission/*-script.md`, `*.vtt`, `recording-notes.md`, all generated from `tests/recording/narration.ts`                                                |
+| NEAR in the videos    | Not shown: the contract is not on testnet yet. The scenes are written and are added by re-recording with `WITH_NEAR=1` after a real mint                  |
+
+### Problems found and fixed
+
+- Organisation-approved work waiting for NEAR disappeared from public profiles (only `verified`
+  was shown). Approved work now shows with its status, and withdrawn records are listed as no
+  longer confirmed. Regression test added.
+- The reviewer's decision options squeezed into a narrow column on wide screens.
+
+### Still to do
+
+- Validate the live site end to end once the first deployment succeeds.
+- `BETTER_AUTH_SECRET` and `DEMO_PASSWORD` are set for Production only; branch preview builds
+  will fail until they are added for Preview too.
+- Re-record with a real NEAR mint once the contract is deployed (needs the user's testnet wallet).
 
 ## Milestone 8 — Security, accessibility and release hardening (complete, with open items)
 
