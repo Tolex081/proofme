@@ -50,6 +50,7 @@ Last updated: 12 November 2026
 - Public pages, Explore, Daniel Okafor's profile, Northstar Protocol's page and the public
   verification page load from the hosted database; the record re-hashes to its digest.
 - Unknown pages return 404; private pages redirect signed-out visitors to sign in.
+- Signing in as the demo contributor works (checked by the user, who holds the demo password).
 - Security headers present: CSP, HSTS, X-Frame-Options, nosniff, referrer and permissions policy.
 
 ### Problems found and fixed
@@ -61,8 +62,6 @@ Last updated: 12 November 2026
 
 ### Still to do
 
-- Signed-in flows on the live site have not been checked yet: they need the demo password, which
-  only the user holds.
 - `BETTER_AUTH_SECRET` and `DEMO_PASSWORD` are set for Production only; branch preview builds
   will fail until they are added for Preview too.
 - Re-record with a real NEAR mint once the contract is deployed (needs the user's testnet wallet).
