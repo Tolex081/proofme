@@ -11,8 +11,8 @@ import {
 } from "@/components/near/controls";
 import { PageHeading, PageSkeleton } from "@/components/workspace/parts";
 import { requireOrganisation } from "@/lib/auth/org-guard";
-import { getNearConfig } from "@/lib/near/server";
-import { mintBlocker } from "@/server/services/near";
+import { getChainReader, getNearConfig } from "@/lib/near/server";
+import { mintBlocker, refreshIssuerStatus } from "@/server/services/near";
 import { issuerEligibility } from "@/server/services/near-identity";
 import { listIssuedAttestations } from "@/server/services/verification";
 
@@ -42,12 +42,26 @@ export default function Attestations({ params }: PageProps<"/org/[slug]/attestat
 
 async function Content({ params }: Pick<PageProps<"/org/[slug]/attestations">, "params">) {
   const { slug } = await params;
-  const { organisation, user, db, can } = await requireOrganisation(
-    slug,
-    `/org/${slug}/attestations`,
-  );
-  const items = (await listIssuedAttestations(db, user.id, organisation.id)) ?? [];
+  const {
+    organisation: loaded,
+    user,
+    db,
+    can,
+  } = await requireOrganisation(slug, `/org/${slug}/attestations`);
   const near = getNearConfig();
+  // A proven issuer account that ProofMe has not yet seen registered: ask the
+  // contract now, so nobody has to press "Check registration" first.
+  let organisation = loaded;
+  if (
+    near &&
+    loaded.nearIssuerAccountId &&
+    loaded.nearIssuerVerifiedAt &&
+    loaded.nearIssuerStatus !== "registered"
+  ) {
+    const checked = await refreshIssuerStatus(db, getChainReader(), user.id, loaded.id);
+    if (checked.ok) organisation = { ...loaded, nearIssuerStatus: checked.value.status };
+  }
+  const items = (await listIssuedAttestations(db, user.id, organisation.id)) ?? [];
   const issuer = issuerEligibility(organisation);
   const canMint = can("attestation.anchor") && issuer.eligible;
   const canRevoke = can("attestation.revoke");
