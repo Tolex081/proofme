@@ -637,6 +637,21 @@ impl Contract {
         })
     }
 
+    /// The JPEG a wallet shows: a badge in the colour of the token's current
+    /// status (blue "Verified work", red "Revoked", grey "Replaced"), served
+    /// by the site in `base_uri`. Built on each read, so it follows the status.
+    fn media_url(&self, status: AttestationStatus) -> String {
+        let base = self
+            .base_uri
+            .as_deref()
+            .unwrap_or("https://proofme-nine.vercel.app/verify");
+        let site = base
+            .strip_suffix("/verify")
+            .unwrap_or(base)
+            .trim_end_matches('/');
+        format!("{site}/nft/{}.jpg", status.as_str())
+    }
+
     /// The NFT a wallet sees. Built on each read, so it always shows the current status.
     fn token_of(&self, view: AttestationView) -> Token {
         let status = view.status.as_str();
@@ -659,8 +674,8 @@ impl Contract {
                     "A work record issued by {}. Status: {}. It cannot be transferred.",
                     view.issuer_id, status
                 )),
-                media: Some(badge(view.status)),
-                media_hash: None,
+                media: Some(self.media_url(view.status)),
+                media_hash: Some(badge_hash(view.status).to_string()),
                 copies: Some(1),
                 issued_at: Some(view.issued_at),
                 expires_at: None,
@@ -767,29 +782,15 @@ fn emit(standard: &str, version: &str, event: &str, data: near_sdk::serde_json::
     env::log_str(&format!("EVENT_JSON:{body}"));
 }
 
-/// The image a wallet shows for a token: a badge in the colour of its current
-/// status, built on each read, so a revoked or replaced credential looks it.
-fn badge(status: AttestationStatus) -> String {
-    let (fill, label, mark) = match status {
-        AttestationStatus::Active => (
-            "%232F54EB",
-            "Verified%20work",
-            "%3Cpath d='M44 66l13 13 27-29' fill='none' stroke='%23fff' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/%3E",
-        ),
-        AttestationStatus::Revoked => (
-            "%23B42318",
-            "Revoked",
-            "%3Cpath d='M48 48l32 32M80 48L48 80' fill='none' stroke='%23fff' stroke-width='9' stroke-linecap='round'/%3E",
-        ),
-        AttestationStatus::Superseded => (
-            "%236B7280",
-            "Replaced",
-            "%3Cpath d='M44 64h40M70 50l14 14-14 14' fill='none' stroke='%23fff' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/%3E",
-        ),
-    };
-    format!(
-        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 160'%3E%3Crect width='128' height='160' rx='20' fill='{fill}'/%3E%3Ccircle cx='64' cy='64' r='38' fill='none' stroke='%23fff' stroke-opacity='.35' stroke-width='4'/%3E{mark}%3Ctext x='64' y='130' fill='%23fff' font-family='sans-serif' font-size='14' font-weight='700' text-anchor='middle'%3EProofMe%3C/text%3E%3Ctext x='64' y='148' fill='%23fff' font-family='sans-serif' font-size='11' text-anchor='middle'%3E{label}%3C/text%3E%3C/svg%3E"
-    )
+/// Base64 SHA-256 of each status badge (NEP-177 `media_hash`), so a wallet
+/// can check the image it fetched. The images are `public/nft/*.jpg` in the
+/// web app; regenerate these hashes if they ever change.
+fn badge_hash(status: AttestationStatus) -> &'static str {
+    match status {
+        AttestationStatus::Active => "gjB9PiCC2k9Np4Ie+0OOeH5puiJuBArGb8MHWyWbxwA=",
+        AttestationStatus::Revoked => "q1OEZGTzSCKRwgB7f+Cpkp3CAu3MG9YQKL2gTBExVng=",
+        AttestationStatus::Superseded => "0lBm7bFsY6FpSEnlfi77AxlwWAOGprhrY22UOynERds=",
+    }
 }
 
 /// The ProofMe mark: a white check on a blue rounded square.

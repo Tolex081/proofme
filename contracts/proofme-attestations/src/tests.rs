@@ -791,25 +791,21 @@ fn superseding_announces_the_new_token_and_updates_the_old_one() {
 // ── Wallet image ─────────────────────────────────────────────────────────────
 
 #[test]
-fn every_token_has_an_image_that_follows_its_status() {
+fn every_token_has_a_jpeg_that_follows_its_status() {
     let mut contract = setup();
     issue(&mut contract, TOKEN, &alice(), T1);
-    let active = contract
-        .nft_token(TOKEN.into())
-        .unwrap()
-        .metadata
-        .media
-        .unwrap();
-    assert!(active.starts_with("data:image/svg+xml,"));
-    assert!(active.contains("Verified%20work"));
+    let active = contract.nft_token(TOKEN.into()).unwrap().metadata;
+    assert_eq!(
+        active.media.as_deref(),
+        Some("https://proofme.example/nft/active.jpg")
+    );
+    assert_eq!(active.media_hash.as_deref().map(str::len), Some(44));
     call_as(&issuer(), ONE_YOCTO, T2);
     contract.revoke(TOKEN.into());
-    let revoked = contract
-        .nft_token(TOKEN.into())
-        .unwrap()
-        .metadata
-        .media
-        .unwrap();
-    assert!(revoked.contains("Revoked"));
-    assert_ne!(active, revoked);
+    let revoked = contract.nft_token(TOKEN.into()).unwrap().metadata;
+    assert_eq!(
+        revoked.media.as_deref(),
+        Some("https://proofme.example/nft/revoked.jpg")
+    );
+    assert_ne!(active.media_hash, revoked.media_hash);
 }
