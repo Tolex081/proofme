@@ -1,3 +1,5 @@
+import { connection } from "next/server";
+
 import { getCurrentUser } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/client";
 import { getEnv } from "@/lib/env";
@@ -15,6 +17,8 @@ import {
  * reports for that token. Nothing in the query string names an account.
  */
 export async function GET(request: Request) {
+  // Runs per request: never prerendered at build time.
+  await connection();
   const env = getEnv();
   const back = new URL("/dashboard/identity", env.NEXT_PUBLIC_APP_URL);
   const done = (outcome: string) => {

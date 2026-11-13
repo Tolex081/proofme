@@ -1,3 +1,5 @@
+import { connection } from "next/server";
+
 import { getCurrentUser } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/client";
 import { getEnv } from "@/lib/env";
@@ -5,6 +7,8 @@ import { startGitHubLink } from "@/server/services/github-identity";
 
 /** Starts linking a GitHub account to the signed-in ProofMe user. */
 export async function GET() {
+  // Runs per request: never prerendered at build time.
+  await connection();
   const env = getEnv();
   const back = new URL("/dashboard/identity", env.NEXT_PUBLIC_APP_URL);
   const user = await getCurrentUser();
