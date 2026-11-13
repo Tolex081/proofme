@@ -3,21 +3,22 @@
 The NEAR contract behind ProofMe. Each work record an organisation approves is issued as an NFT
 that behaves like a credential, not a collectible.
 
-| Behaviour                         | How the contract enforces it                                                                         |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Only real issuers can mint        | `issue` succeeds only for an account the contract owner registered as an organisation's issuer       |
-| Nobody can issue to themselves    | `issue` fails if the receiver is the issuer                                                          |
-| It cannot be sold or lent         | `nft_transfer` and `nft_transfer_call` always fail; there is no approval mechanism                   |
-| Its status changes on-chain       | `revoke` and `supersede` change the status; `nft_token` builds its metadata from the current status  |
-| Only the issuer can withdraw it   | `revoke` and `supersede` work only for the account that issued that token                            |
-| The platform cannot touch a token | The contract owner manages the issuer list and has no method that changes or removes a token         |
-| History is never erased           | Tokens are never burned or deleted. A revoked or superseded token stays with its owner, marked as so |
-| Anyone can check a record         | `verify(token_id, digest)` and `get_attestation(token_id)` are free view calls that need no account  |
-| Nothing personal is on-chain      | Stored: attestation ID, SHA-256 digest, owner account, issuer account, status, timestamps. No text   |
-| It points at its public record    | NEP-177 `reference` (an `ipfs://` CID) and `reference_hash` (Base64 SHA-256 of that document)        |
-| Wallets see status changes        | `revoke` and `supersede` emit the NEP-171 1.2.0 `nft_metadata_update` event for the changed token    |
+| Behaviour                         | How the contract enforces it                                                                                         |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Only real issuers can mint        | `issue` succeeds only for an account the contract owner registered as an organisation's issuer                       |
+| Nobody can issue to themselves    | `issue` fails if the receiver is the issuer                                                                          |
+| It cannot be sold or lent         | `nft_transfer` and `nft_transfer_call` always fail; there is no approval mechanism                                   |
+| Its status changes on-chain       | `revoke` and `supersede` change the status; `nft_token` builds its metadata from the current status                  |
+| Only the issuer can withdraw it   | `revoke` and `supersede` work only for the account that issued that token                                            |
+| The platform cannot touch a token | The contract owner manages the issuer list and has no method that changes or removes a token                         |
+| History is never erased           | Tokens are never burned or deleted. A revoked or superseded token stays with its owner, marked as so                 |
+| Anyone can check a record         | `verify(token_id, digest)` and `get_attestation(token_id)` are free view calls that need no account                  |
+| Nothing personal is on-chain      | Stored: attestation ID, SHA-256 digest, owner account, issuer account, status, timestamps. No text                   |
+| It points at its public record    | NEP-177 `reference` (an `ipfs://` CID) and `reference_hash` (Base64 SHA-256 of that document)                        |
+| Wallets show it                   | NEP-177 `media` is a badge image drawn from the current status: blue "Verified work", red "Revoked", grey "Replaced" |
+| Wallets see status changes        | `revoke` and `supersede` emit the NEP-171 1.2.0 `nft_metadata_update` event for the changed token                    |
 
-**Deployed on NEAR testnet:** [`proofme-attest-1113.testnet`](https://testnet.nearblocks.io/address/proofme-attest-1113.testnet), deployed 13 November 2026 from this source (wasm SHA-256 `b890f80a4aa4a7e2381745b1f274f4bda6ecec91e91d509085acc1a0570863d2`), initialised with itself as owner and `base_uri` `https://proofme-nine.vercel.app/verify`.
+**Deployed on NEAR testnet:** [`proofme-attest-1113.testnet`](https://testnet.nearblocks.io/address/proofme-attest-1113.testnet), deployed 13 November 2026 and upgraded in place the same day from this source (wasm SHA-256 `96a5f4d09ce037aa76bf6df1561473e1fa709dda5411bca9056aab8c45b4165d`), initialised with itself as owner and `base_uri` `https://proofme-nine.vercel.app/verify`.
 
 Standards: NEP-171 (core), NEP-177 (metadata), NEP-181 (enumeration), NEP-297 (events).
 
@@ -68,7 +69,7 @@ logs `nft_mint` (the new token), `attestation_superseded`, then `nft_metadata_up
 Needs Rust 1.95 (pinned in `rust-toolchain.toml`; rustup installs it on first use).
 
 ```sh
-cargo test                                             # 54 unit tests
+cargo test                                             # 55 unit tests
 cargo clippy --all-targets -- -D warnings
 cargo near build non-reproducible-wasm --no-abi         # the contract binary, in target/near/
 ```
@@ -76,7 +77,7 @@ cargo near build non-reproducible-wasm --no-abi         # the contract binary, i
 `--no-abi` is needed on Windows, where the interface file cannot be generated; leave it off on
 Linux and macOS. `cargo near` comes from `npm install cargo-near` or the installer in its README.
 
-Run `cargo test` and see `test result: ok. 54 passed; 0 failed`.
+Run `cargo test` and see `test result: ok. 55 passed; 0 failed`.
 
 ## Threats considered
 

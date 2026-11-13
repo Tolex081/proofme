@@ -787,3 +787,29 @@ fn superseding_announces_the_new_token_and_updates_the_old_one() {
         serde_json::json!([TOKEN])
     );
 }
+
+// ── Wallet image ─────────────────────────────────────────────────────────────
+
+#[test]
+fn every_token_has_an_image_that_follows_its_status() {
+    let mut contract = setup();
+    issue(&mut contract, TOKEN, &alice(), T1);
+    let active = contract
+        .nft_token(TOKEN.into())
+        .unwrap()
+        .metadata
+        .media
+        .unwrap();
+    assert!(active.starts_with("data:image/svg+xml,"));
+    assert!(active.contains("Verified%20work"));
+    call_as(&issuer(), ONE_YOCTO, T2);
+    contract.revoke(TOKEN.into());
+    let revoked = contract
+        .nft_token(TOKEN.into())
+        .unwrap()
+        .metadata
+        .media
+        .unwrap();
+    assert!(revoked.contains("Revoked"));
+    assert_ne!(active, revoked);
+}
