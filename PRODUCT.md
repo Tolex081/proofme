@@ -47,6 +47,49 @@ A person may submit a claim about their own work. They can never verify it. Only
 reviewer of the relevant organisation can approve on that organisation's behalf. Platform
 administrators verify organisations; they do not write or rewrite attestations.
 
+## Issuer trust policy
+
+An organisation can issue a recognised NFT credential only when all three hold:
+
+1. ProofMe has verified the organisation (platform status "verified"). Pending, unverified,
+   rejected and suspended organisations can review claims but cannot mint.
+2. An owner of the organisation proved control of its NEAR issuer account by signing a one-time
+   ProofMe challenge with that account's wallet (NEP-413). A typed or merely linked account is
+   never treated as an issuer.
+3. The contract lists that account as this organisation's active issuer.
+
+Suspending the organisation on ProofMe, or the issuer on the contract, stops new credentials at
+once. The credential-gated page also stops accepting credentials from a suspended issuer.
+
+## Contributor accounts and consent
+
+A contributor's NEAR account is recorded only after their wallet signs a one-time challenge and
+the network confirms the signing key is a full-access key of that account. Credentials go only to
+such proven accounts, and after minting the server checks that the NFT is owned by exactly that
+account. Approving a claim does not publish it: the contributor must agree first, and a private
+contribution can never become a public credential.
+
+## What the NFT does
+
+- **Credential.** The organisation's endorsement of one precise claim, held in the contributor's
+  own NEAR account, non-transferable.
+- **Portable.** Its NEP-177 `reference` points at the public credential document on IPFS, with
+  `reference_hash` its SHA-256, so any application can fetch and check it without ProofMe.
+- **Dynamic.** It can be revoked, or superseded by a corrected credential, on-chain. Wallets are
+  told through `nft_metadata_update`, and the public page shows the full history.
+- **Access right.** Holding a valid credential opens /holders: the wallet signs a challenge, and
+  access is granted only for an active credential from an active, ProofMe-verified issuer.
+
+## Evidence Agent
+
+The Evidence Agent investigates a contribution's GitHub evidence before the organisation decides.
+It checks pull requests, commits, issues and repositories against GitHub itself and against the
+contributor's linked GitHub account (one GitHub account per ProofMe account, by GitHub's numeric
+ID), flags reused and conflicting evidence and, when an AI provider is configured, explains claim
+by claim what the evidence does and does not show. Its report is advice for the human reviewer.
+It never approves, rejects or mints, and never presents an AI interpretation as a fact or as an
+organisation's endorsement.
+
 ## What an attestation proves
 
 That a named issuer approved a precisely described claim at a particular time, and that the
@@ -67,13 +110,15 @@ says this plainly wherever an attestation is shown.
 8. Private by default. Personal data, notes and private evidence stay off-chain.
 9. Immutable history. Corrections revoke or supersede; nothing is silently edited.
 10. Reputation cannot be bought. No tokens, boosts or follower counts.
-11. AI may assist, never decide.
+11. AI may assist, never decide. The Evidence Agent advises reviewers; it cannot approve.
 12. Truth over demo appearance. No fake traction, partners, quotes or statuses.
 
 ## What it is not
 
 A social network, a CV builder, an NFT marketplace (its NFTs cannot be traded), a token launch, an automatic
-GitHub-to-reputation converter, a single trust score, or a mandatory-wallet product.
+GitHub-to-reputation converter (the Evidence Agent informs a human decision and awards nothing), a
+single trust score, or a mandatory-wallet product. No NFT treasuries, royalties, trading,
+speculation or NFT-owned sub-accounts.
 
 ## Voice
 
@@ -88,5 +133,8 @@ The full lifecycle: sign up, profile, contribution with evidence, organisation a
 (approve, reject, request information), immutable attestation, NEAR testnet anchor, public
 profile and verification page, revocation and supersession, notifications, audit, admin review.
 
-Out of scope for now: AI-agent attestations, automated GitHub analysis, other chains, education
-credentials, recruitment marketplace, billing, tokens, mainnet.
+Added for the hackathon: wallet-proven accounts, the issuer trust policy, consent and IPFS
+publication, on-chain corrections, the credential-gated page, and the GitHub Evidence Agent.
+
+Out of scope for now: evidence sources other than GitHub, AI-issued attestations, other chains,
+education credentials, recruitment marketplace, billing, tokens, mainnet.

@@ -1,7 +1,6 @@
 # ProofMe — Architecture
 
-Status: Milestone 0 plan. Items marked _planned_ are decisions not yet exercised by code; they
-are confirmed or revised in the milestone that implements them, and `DECISIONS.md` is updated.
+Status: 13 November 2026. Describes the code as built.
 
 ## Shape
 
@@ -39,7 +38,11 @@ Two rules shape everything else:
 | contributions | Claims, evidence, contributor-side lifecycle                  |
 | verification  | Requests, append-only reviews, decision transitions           |
 | attestations  | Frozen snapshot, canonical payload, digest, status events     |
-| near          | Contract client, transaction confirmation, reconciliation     |
+| near          | Contract reads, transaction confirmation, mint checks         |
+| near identity | NEP-413 challenges, proven accounts, the issuer trust policy  |
+| holders       | Credential-gated access and the published credential document |
+| github        | OAuth linking, identity reservation, read-only API client     |
+| evidence      | The Evidence Agent: source checks, AI analysis, reports       |
 | notifications | In-app notifications                                          |
 | audit         | Append-only audit events                                      |
 | public        | Read models for public profile, verification and explore      |
@@ -47,24 +50,36 @@ Two rules shape everything else:
 
 ## Stack
 
-| Concern          | Choice                                                                     | State          |
-| ---------------- | -------------------------------------------------------------------------- | -------------- |
-| Language         | TypeScript 5.x (strict)                                                    | installed      |
-| Framework        | Next.js 16.4.6 App Router, React 19.3                                      | installed      |
-| Styling          | Tailwind CSS 4.3                                                           | installed      |
-| Validation       | Zod 4.6.7                                                                  | installed      |
-| Lint / format    | ESLint 9 (eslint-config-next), Prettier 3.9.10                             | installed      |
-| Database         | PostgreSQL                                                                 | _planned_ (M2) |
-| ORM/migrations   | Drizzle ORM + drizzle-kit                                                  | _planned_ (M2) |
-| Auth             | Better Auth (email/password; Google when configured)                       | _planned_ (M2) |
-| Unit/integration | Vitest                                                                     | _planned_ (M2) |
-| E2E              | Playwright                                                                 | _planned_ (M2) |
-| Contract         | Rust, `near-sdk`                                                           | _planned_ (M6) |
-| Contract tests   | `near-workspaces` (Rust) against a local sandbox                           | _planned_ (M6) |
-| Wallet           | Maintained NEAR wallet connector, chosen in M6 after checking current docs | _planned_ (M6) |
-| Hosting          | Vercel, its own project                                                    | _planned_ (M9) |
+| Concern          | Choice                                                                     | State     |
+| ---------------- | -------------------------------------------------------------------------- | --------- |
+| Language         | TypeScript 5.x (strict)                                                    | installed |
+| Framework        | Next.js 16.4.6 App Router, React 19.3                                      | installed |
+| Styling          | Tailwind CSS 4.3                                                           | installed |
+| Validation       | Zod 4.6.7                                                                  | installed |
+| Lint / format    | ESLint 9 (eslint-config-next), Prettier 3.9.10                             | installed |
+| Database         | PostgreSQL (Neon hosted; PGlite locally and in tests)                      | in use    |
+| ORM/migrations   | Drizzle ORM + drizzle-kit, plus hand-written integrity triggers            | in use    |
+| Auth             | Better Auth (email and password)                                           | in use    |
+| Unit/integration | Vitest                                                                     | in use    |
+| E2E              | Playwright                                                                 | in use    |
+| Contract         | Rust, `near-sdk`                                                           | in use    |
+| Contract tests   | Unit tests against the SDK's mock runtime                                  | in use    |
+| Wallet           | NEAR Connect (`@hot-labs/near-connect`): transactions and NEP-413 messages | in use    |
+| Hosting          | Vercel (migrations and demo seed run in its build)                         | in use    |
+| Storage          | IPFS through Pinata for published credential documents                     | in use    |
+| AI               | NEAR AI Cloud (OpenAI-compatible), optional, for the Evidence Agent        | in use    |
 
 Exact versions are pinned at install time and listed in `DECISIONS.md`.
+
+## Proving accounts
+
+```text
+wallet connects → server issues a challenge (32-byte nonce, purpose, account, user, 10 minutes)
+  → wallet signs it (NEP-413; not a transaction)
+  → server: signature valid? key is a full-access key of that account (RPC view_access_key)?
+     challenge unused, unexpired, this user's and this purpose's? → use it up atomically
+  → record the account (contributor) or the issuer account (organisation owner)
+```
 
 ## The attestation path
 
@@ -72,14 +87,34 @@ Exact versions are pinned at install time and listed in `DECISIONS.md`.
 approve (reviewer, server-checked)
   → freeze claim snapshot → build canonical payload (versioned schema)
   → SHA-256 over canonical bytes = digest
-  → attestation row: status approved, anchor status awaiting
-issuer opens wallet → signs issue(token_id = attestation_id, receiver_id, digest) on the contract
+  → attestation row: status active, anchor status awaiting (schema v2: no username, public evidence only)
+contributor agrees to publish → document pinned to IPFS → reference + Base64 SHA-256 stored
+issuer policy checked (verified organisation, proven issuer account, registered on contract)
+issuer opens wallet → signs issue(token_id, receiver_id = proven account, digest, reference)
   → the contract mints a non-transferable NFT to the contributor's NEAR account
   → client reports tx hash → server fetches tx result from RPC
-  → server checks: success, correct contract, correct signer, digest matches
+  → server checks: success, contract, signer, and the exact args (token, receiver, digest, reference)
+  → reads the token back: owner = proven account, active, same digest and reference, our issuer
   → only then: anchor status confirmed, contribution verified
 public verify page
   → load canonical payload → recompute digest → view call verify(token_id, digest) → show result
+```
+
+A correction creates a new sealed record linked to the old one; if the old one is on NEAR, the
+issuer signs `supersede(old_token_id, token_id, digest, reference)` and the server records both.
+
+## The Evidence Agent
+
+```text
+contributor links GitHub (OAuth, no scopes, state + PKCE) → identity = GitHub numeric ID (unique)
+contributor presses "Investigate with ProofMe"
+  → each evidence link parsed (github.com only) → read-only calls to api.github.com
+  → layer A: existence, author / committer / reviewer / merger / assignee, attribution against the
+     linked numeric ID, signature, duplicate and conflicting use of the same resource
+  → layer B (if NEAR AI is configured): claim-by-claim analysis of the claim text against the facts,
+     with GitHub text passed as untrusted data; output validated, never "source_confirmed"
+  → versioned report with digest; findings, resources and per-person relationships stored
+reviewer sees the report beside the claim and decides; the agent never approves or mints
 ```
 
 The contract is in `contracts/proofme-attestations`; its README lists every method and the

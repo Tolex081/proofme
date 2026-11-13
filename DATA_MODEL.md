@@ -167,3 +167,35 @@ Data Model 2.0, but it is not a conforming verifiable credential and is not desc
 `subject` is modelled as a typed reference (`subject_user_id` today). Adding an `agent` subject
 type with operator, model/version and oversight fields is a new schema version and new columns,
 not a rewrite. Nothing in the first release claims this exists.
+
+## Added for Track 10 and the Evidence Agent (migration 0005)
+
+| Table or column                                                     | Purpose                                                                                    |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `user_profiles.near_account_verified_at`, `near_account_public_key` | Set only by a NEP-413 proof; credentials go only to a proven account                       |
+| `organisations.near_issuer_verified_at`                             | Set only when an owner proves control of the issuer account                                |
+| `attestations.subject_consented_at`                                 | The contributor agreed to publish the credential                                           |
+| `attestations.credential_reference`, `credential_reference_hash`    | NEP-177 reference (`ipfs://` CID) and its Base64 SHA-256                                   |
+| `attestations.near_owner_account_id`                                | The NFT's owner as read back from the contract                                             |
+| `verification_requests.replaces_attestation_id`                     | A correction: approving it supersedes that attestation                                     |
+| `near_challenges`                                                   | Single-use NEP-413 challenges (purpose, account, user, nonce, expiry, used)                |
+| `github_identities`                                                 | GitHub numeric ID (unique) → ProofMe user. Never deleted; reserved on account deletion     |
+| `github_oauth_states`                                               | SHA-256 of the OAuth state, its user and PKCE verifier; single use, 10 minutes             |
+| `evidence_resources`                                                | A GitHub resource by provider, type, repository ID and number or SHA (unique)              |
+| `evidence_investigations`                                           | One versioned Evidence Agent run: report JSON, digest, source and AI status. Never updated |
+| `evidence_findings`                                                 | Claim-by-claim findings: status, explanation, origin (deterministic or ai), resources      |
+| `evidence_claims`                                                   | A person's relationship to a resource for a contribution (role, attribution, snapshot)     |
+
+### Attestation payload, schema version 2 (`proofme.attestation.v2`)
+
+The public credential. Same as v1 except: `subject` is `{ profileId }` only (no username);
+`evidence` holds only items the contributor marked public (0 to 20); there is no `reviewer`;
+and `evidenceInvestigation` is `{ id, version, reportDigest }` or null. Its canonical text is
+the document published to IPFS, so its SHA-256 is both the on-chain `digest` and, in Base64,
+the NFT's `reference_hash`. Version 1 records remain verifiable unchanged.
+
+### Finding statuses
+
+`source_confirmed` (a fact the source states directly; source checks only), `supports_claim`,
+`contradicts_claim`, `not_found`, `unavailable` (the source could not be checked; never an
+accusation) and `manual_review`. There is no score.
