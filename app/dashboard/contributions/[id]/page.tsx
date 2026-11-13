@@ -6,6 +6,7 @@ import { Suspense } from "react";
 
 import { DeleteDraftButton, PublishButton } from "@/components/contributions/record-actions";
 import { STATUS_INFO, StatusChip } from "@/components/contributions/status";
+import { PublishConsent } from "@/components/near/account-proof";
 import { PageSkeleton, Panel } from "@/components/workspace/parts";
 import { requireWorkspace } from "@/lib/auth/guards";
 import { isContributionEditable } from "@/lib/domain/status";
@@ -304,12 +305,26 @@ async function DetailContent({
                     <dd>
                       {history.attestation.nearAnchorStatus === "confirmed"
                         ? "Issued to your NEAR account as an NFT that cannot be transferred."
-                        : profile.nearAccountId
-                          ? `Not issued yet. The organisation issues it to ${profile.nearAccountId} from its NEAR account.`
-                          : "Not issued yet. Add your NEAR account under Identity so the organisation has somewhere to send it."}
+                        : profile.nearAccountId && profile.nearAccountVerifiedAt
+                          ? `Not issued yet. The organisation issues it to ${profile.nearAccountId}, which you proved with your wallet.`
+                          : "Not issued yet. Prove your NEAR account under Identity so the organisation has somewhere to send it."}
                     </dd>
                   </div>
                 </dl>
+                {history.attestation.status === "active" &&
+                history.attestation.nearAnchorStatus !== "confirmed" &&
+                contribution.visibility === "public" &&
+                history.attestation.schemaVersion === "proofme.attestation.v2" ? (
+                  <PublishConsent
+                    attestationId={history.attestation.id}
+                    contributionId={contribution.id}
+                    published={
+                      history.attestation.subjectConsentedAt
+                        ? history.attestation.credentialReference
+                        : null
+                    }
+                  />
+                ) : null}
                 {contribution.visibility === "public" ? (
                   <Link href={`/verify/${history.attestation.id}`} className="text-link">
                     Public verification page

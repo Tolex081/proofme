@@ -147,7 +147,10 @@ export async function updateProfile(
   }
 }
 
-/** Links and the optional NEAR account. All self-declared; none are verified. */
+/**
+ * Links. All self-declared; none are verified. The NEAR account is not set
+ * here: it is recorded only after a wallet signature (near-identity).
+ */
 export async function updateIdentity(
   db: Database,
   userId: string,
@@ -155,7 +158,7 @@ export async function updateIdentity(
 ): Promise<ServiceResult<Profile>> {
   const parsed = identitySchema.safeParse(input);
   if (!parsed.success) return { ok: false, errors: fieldErrors(parsed.error) };
-  const { nearAccountId, ...links } = parsed.data;
+  const links = parsed.data;
 
   const socialLinks: Record<string, string> = {};
   for (const [key, value] of Object.entries(links)) {
@@ -164,7 +167,7 @@ export async function updateIdentity(
 
   const [profile] = await db
     .update(userProfiles)
-    .set({ socialLinks, nearAccountId })
+    .set({ socialLinks })
     .where(eq(userProfiles.userId, userId))
     .returning();
   if (!profile) return { ok: false, errors: { form: "Set up your profile first." } };

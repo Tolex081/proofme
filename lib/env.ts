@@ -30,6 +30,20 @@ const envSchema = z
     // nothing, which is what the automated browser tests use.
     PGLITE_DATA_DIR: z.string().min(1).default(".pglite"),
     BETTER_AUTH_SECRET: z.string().min(32, "must be at least 32 characters"),
+    // IPFS pinning (Pinata) for public credential documents. Without it, a
+    // credential's NEP-177 reference points at this site's own copy instead.
+    PINATA_JWT: z.string().min(20).optional(),
+    PINATA_GATEWAY: z.url().default("https://gateway.pinata.cloud"),
+    // GitHub OAuth app for linking GitHub identities (scope: none, public data only).
+    GITHUB_CLIENT_ID: z.string().min(1).optional(),
+    GITHUB_CLIENT_SECRET: z.string().min(1).optional(),
+    // Optional server token that raises GitHub's API rate limit for public reads.
+    GITHUB_API_TOKEN: z.string().min(1).optional(),
+    // NEAR AI Cloud (OpenAI-compatible) for the Evidence Agent's analysis layer.
+    // Without a key, the agent runs its source checks only.
+    NEAR_AI_API_KEY: z.string().min(1).optional(),
+    NEAR_AI_BASE_URL: z.url().default("https://cloud-api.near.ai/v1"),
+    NEAR_AI_MODEL: z.string().min(1).default("deepseek-ai/DeepSeek-V3.1"),
   })
   .superRefine((value, context) => {
     if (value.APP_ENV === "local") return;
@@ -70,6 +84,14 @@ const KEYS = [
   "DATABASE_URL",
   "PGLITE_DATA_DIR",
   "BETTER_AUTH_SECRET",
+  "PINATA_JWT",
+  "PINATA_GATEWAY",
+  "GITHUB_CLIENT_ID",
+  "GITHUB_CLIENT_SECRET",
+  "GITHUB_API_TOKEN",
+  "NEAR_AI_API_KEY",
+  "NEAR_AI_BASE_URL",
+  "NEAR_AI_MODEL",
 ] as const;
 
 export function parseEnv(source: Record<string, string | undefined>): Env {

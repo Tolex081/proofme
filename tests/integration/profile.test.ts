@@ -253,10 +253,10 @@ describe("updating a profile", () => {
   });
 });
 
-describe("identity links and NEAR account", () => {
-  const blank = { github: "", x: "", linkedin: "", other: "", nearAccountId: "" };
+describe("identity links", () => {
+  const blank = { github: "", x: "", linkedin: "", other: "" };
 
-  it("saves links on their own sites and a testnet account", async () => {
+  it("saves links on their own sites, and ignores a typed NEAR account", async () => {
     const { userId } = await onboardedUser();
     const result = await updateIdentity(db, userId, {
       github: "https://github.com/daniel-okafor",
@@ -272,7 +272,8 @@ describe("identity links and NEAR account", () => {
       x: "https://x.com/danielokafor",
       other: "https://example.org/talks",
     });
-    expect(result.value.nearAccountId).toBe("daniel-okafor.testnet");
+    // A NEAR account is recorded only after a wallet signature (see near.test.ts).
+    expect(result.value.nearAccountId).toBeNull();
   });
 
   it("clears everything when the fields are emptied", async () => {
@@ -280,7 +281,6 @@ describe("identity links and NEAR account", () => {
     await updateIdentity(db, userId, { ...blank, github: "https://github.com/someone" });
     const cleared = await updateIdentity(db, userId, blank);
     expect(cleared.ok && cleared.value.socialLinks).toEqual({});
-    expect(cleared.ok && cleared.value.nearAccountId).toBeNull();
   });
 
   it("rejects a link that only pretends to be on the named site", async () => {
@@ -293,27 +293,6 @@ describe("identity links and NEAR account", () => {
       const result = await updateIdentity(db, userId, { ...blank, github });
       expect(result.ok, github).toBe(false);
     }
-  });
-
-  it.each([
-    ["daniel.near"],
-    ["daniel"],
-    ["Daniel Okafor.testnet"],
-    ["-daniel.testnet"],
-    ["daniel..testnet"],
-    ["a".repeat(70) + ".testnet"],
-    ["0x1234"],
-  ])("rejects the NEAR account %j", async (nearAccountId) => {
-    const { userId } = await onboardedUser();
-    const result = await updateIdentity(db, userId, { ...blank, nearAccountId });
-    expect(result.ok).toBe(false);
-  });
-
-  it("accepts a 64-character implicit account", async () => {
-    const { userId } = await onboardedUser();
-    const implicit = "ab".repeat(32);
-    const result = await updateIdentity(db, userId, { ...blank, nearAccountId: implicit });
-    expect(result.ok && result.value.nearAccountId).toBe(implicit);
   });
 });
 
@@ -334,8 +313,12 @@ describe("public visibility", () => {
       x: "",
       linkedin: "",
       other: "",
-      nearAccountId: "daniel-okafor.testnet",
     });
+    // As the wallet-signature flow would record it.
+    await db
+      .update(s.userProfiles)
+      .set({ nearAccountId: "daniel-okafor.testnet", nearAccountVerifiedAt: new Date() })
+      .where(eq(s.userProfiles.userId, created.userId));
     await updatePrivacy(db, created.userId, { visibility: "public", sections: ALL_SECTIONS });
     return created;
   }

@@ -1,10 +1,11 @@
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 
 import {
   checkSealedAttestation,
-  type AttestationPayloadV1,
+  type AttestationPayload,
   type SealedCheckFailure,
 } from "@/lib/attestations/payload";
+import { PublishError, referenceHashOf, type PublishedReference } from "@/lib/credentials/publish";
 import type { Database } from "@/lib/db/client";
 import {
   attestationStatusEvents,
@@ -21,13 +22,13 @@ import {
 } from "@/lib/domain/status";
 import {
   ChainUnavailableError,
-  isValidAccountId,
   isValidTransactionHash,
   type ChainAttestation,
   type ChainReader,
 } from "@/lib/near/chain";
 import { canAnchorAttestation, canInOrganisation } from "@/lib/permissions/organisation";
 import { notify } from "./account";
+import { issuerEligibility } from "./near-identity";
 import { getMembership } from "./organisations";
 
 /**
@@ -70,31 +71,6 @@ async function audit(
  * a claim until the contract confirms it: the account can mint only once
  * ProofMe has registered it on-chain, which `refreshIssuerStatus` checks.
  */
-export async function linkIssuerAccount(
-  db: Database,
-  userId: string,
-  organisationId: string,
-  accountId: unknown,
-): Promise<Result<{ accountId: string }>> {
-  const membership = await getMembership(db, userId, organisationId);
-  if (!canInOrganisation(membership, organisationId, "issuer.configure").allowed) {
-    return membership?.status === "active"
-      ? fail("Only an owner can choose the organisation's NEAR account.")
-      : NOT_FOUND;
-  }
-  const value = typeof accountId === "string" ? accountId.trim().toLowerCase() : "";
-  if (!isValidAccountId(value)) return fail("That is not a valid NEAR account.");
-
-  await db
-    .update(organisations)
-    .set({ nearIssuerAccountId: value, nearIssuerStatus: "linked" })
-    .where(eq(organisations.id, organisationId));
-  await audit(db, userId, organisationId, "issuer.linked", "organisation", organisationId, {
-    accountId: value,
-  });
-  return { ok: true, value: { accountId: value } };
-}
-
 /**
  * Asks the contract whether the organisation's account is a registered
  * issuer for this organisation, and stores the answer. Any member may ask.
@@ -153,9 +129,10 @@ export async function refreshIssuerStatus(
 async function loadForIssuer(db: Database, userId: string, attestationId: string) {
   if (!UUID.test(attestationId)) return null;
   const [row] = await db
-    .select({ attestation: attestations, organisation: organisations })
+    .select({ attestation: attestations, organisation: organisations, contribution: contributions })
     .from(attestations)
     .innerJoin(organisations, eq(organisations.id, attestations.issuerOrganisationId))
+    .innerJoin(contributions, eq(contributions.id, attestations.contributionId))
     .where(eq(attestations.id, attestationId));
   if (!row) return null;
   const membership = await getMembership(db, userId, row.organisation.id);
@@ -169,10 +146,45 @@ async function loadForIssuer(db: Database, userId: string, attestationId: string
 
 export interface MintRequest {
   contractId: string;
+  /** "issue" for a first credential, "supersede" for a correction of a minted one. */
+  method: "issue" | "supersede";
   tokenId: string;
+  /** The token being replaced, for "supersede". */
+  oldTokenId: string | null;
   receiverId: string;
   digest: string;
+  reference: { reference: string; reference_hash: string };
   issuerAccountId: string;
+}
+
+/** Why a credential cannot be minted yet, or null when everything is in place. */
+export function mintBlocker(input: {
+  organisation: Parameters<typeof issuerEligibility>[0];
+  attestation: Pick<
+    typeof attestations.$inferSelect,
+    "status" | "nearAnchorStatus" | "subjectConsentedAt" | "credentialReference"
+  >;
+  contributionVisibility: "public" | "private";
+  subject: Pick<typeof userProfiles.$inferSelect, "nearAccountId" | "nearAccountVerifiedAt"> | null;
+}): string | null {
+  const { organisation, attestation, contributionVisibility, subject } = input;
+  if (attestation.status !== "active") return "Only an active attestation can be minted.";
+  if (attestation.nearAnchorStatus === "confirmed") return "This is already on NEAR.";
+  const issuer = issuerEligibility(organisation);
+  if (!issuer.eligible) return issuer.reason;
+  if (contributionVisibility !== "public") {
+    return "The contributor keeps this contribution private, so it cannot become a public credential.";
+  }
+  if (!attestation.subjectConsentedAt || !attestation.credentialReference) {
+    return "The contributor has not agreed to publish this credential yet.";
+  }
+  if (!subject?.nearAccountId || !subject.nearAccountVerifiedAt) {
+    return "The contributor has not proved a NEAR account with their wallet yet, so there is nowhere to send it.";
+  }
+  if (subject.nearAccountId === organisation.nearIssuerAccountId) {
+    return "The contributor's NEAR account is the organisation's own. It must be their own.";
+  }
+  return null;
 }
 
 /**
@@ -187,33 +199,52 @@ export async function prepareMint(
 ): Promise<Result<MintRequest>> {
   const found = await loadForIssuer(db, userId, attestationId);
   if (!found) return NOT_FOUND;
-  const { attestation, organisation, membership, subject } = found;
+  const { attestation, organisation, membership, subject, contribution } = found;
   const allowed = canAnchorAttestation(membership, attestation);
   if (!allowed.allowed) return fail(allowed.reason);
-  if (attestation.status !== "active") return fail("Only an active attestation can be minted.");
-  if (attestation.nearAnchorStatus === "confirmed") return fail("This is already on NEAR.");
   if (!chain) return NOT_CONFIGURED;
-  if (organisation.nearIssuerStatus !== "registered" || !organisation.nearIssuerAccountId) {
-    return fail(
-      "The organisation's NEAR account is not a registered issuer yet. An owner sets this up under Attestations.",
-    );
+  const blocker = mintBlocker({
+    organisation,
+    attestation,
+    contributionVisibility: contribution.visibility,
+    subject,
+  });
+  if (blocker) return fail(blocker);
+
+  let method: MintRequest["method"] = "issue";
+  let oldTokenId: string | null = null;
+  if (attestation.supersedesAttestationId) {
+    const [old] = await db
+      .select()
+      .from(attestations)
+      .where(eq(attestations.id, attestation.supersedesAttestationId));
+    if (old && old.nearAnchorStatus === "confirmed" && old.status === "active") {
+      // The contract replaces the old token and mints the new one in one call,
+      // to the old token's owner.
+      if (old.nearOwnerAccountId && old.nearOwnerAccountId !== subject!.nearAccountId) {
+        return fail(
+          `The record being corrected is held by ${old.nearOwnerAccountId}; the contributor's proven account is now ${subject!.nearAccountId}. Revoke the old one and issue afresh instead.`,
+        );
+      }
+      method = "supersede";
+      oldTokenId = old.id;
+    }
   }
-  if (!subject?.nearAccountId || !isValidAccountId(subject.nearAccountId)) {
-    return fail(
-      "The contributor has not added a NEAR account to their profile yet, so there is nowhere to send it.",
-    );
-  }
-  if (subject.nearAccountId === organisation.nearIssuerAccountId) {
-    return fail("The contributor's NEAR account is the organisation's own. It must be their own.");
-  }
+
   return {
     ok: true,
     value: {
       contractId: chain.contractId,
+      method,
       tokenId: attestation.id,
-      receiverId: subject.nearAccountId,
+      oldTokenId,
+      receiverId: subject!.nearAccountId!,
       digest: attestation.payloadDigest,
-      issuerAccountId: organisation.nearIssuerAccountId,
+      reference: {
+        reference: attestation.credentialReference!,
+        reference_hash: attestation.credentialReferenceHash!,
+      },
+      issuerAccountId: organisation.nearIssuerAccountId!,
     },
   };
 }
@@ -222,7 +253,8 @@ type ChainCheck = { ok: true; onChain: ChainAttestation } | { ok: false; reason:
 
 /**
  * Confirms from the network that `transactionHash` is a successful call of one
- * of `methods` for this token, signed by the issuer, on our contract.
+ * of `methods`, signed by the issuer, on our contract, whose arguments match
+ * `expectedArgs` exactly, and returns the token as the contract now holds it.
  */
 async function checkOnChain(
   chain: ChainReader,
@@ -231,35 +263,49 @@ async function checkOnChain(
     issuerAccountId: string;
     transactionHash: string;
     methods: string[];
+    expectedArgs?: Record<string, unknown>;
   },
 ): Promise<ChainCheck> {
+  const transaction = await chain.getTransaction(input.transactionHash, input.issuerAccountId);
+  if (!transaction) return { ok: false, reason: "The network does not know that transaction." };
+  const call = transaction.calls.find(
+    (candidate) =>
+      input.methods.includes(candidate.methodName) &&
+      typeof candidate.args === "object" &&
+      candidate.args !== null &&
+      (candidate.args as Record<string, unknown>).token_id === input.tokenId,
+  );
+  if (
+    !transaction.succeeded ||
+    transaction.signerId !== input.issuerAccountId ||
+    transaction.receiverId !== chain.contractId ||
+    !call
+  ) {
+    return { ok: false, reason: "That transaction is not a successful call for this attestation." };
+  }
+  const args = call.args as Record<string, unknown>;
+  for (const [key, expected] of Object.entries(input.expectedArgs ?? {})) {
+    if (JSON.stringify(args[key] ?? null) !== JSON.stringify(expected)) {
+      return {
+        ok: false,
+        reason: `The transaction's ${key} does not match this record. Nothing was recorded.`,
+      };
+    }
+  }
   const onChain = await chain.getAttestation(input.tokenId);
   if (!onChain) {
     return { ok: false, reason: "The contract has no record of this attestation yet." };
-  }
-  const transaction = await chain.getTransaction(input.transactionHash, input.issuerAccountId);
-  if (!transaction) return { ok: false, reason: "The network does not know that transaction." };
-  const matches =
-    transaction.succeeded &&
-    transaction.signerId === input.issuerAccountId &&
-    transaction.receiverId === chain.contractId &&
-    transaction.calls.some(
-      (call) =>
-        input.methods.includes(call.methodName) &&
-        typeof call.args === "object" &&
-        call.args !== null &&
-        (call.args as Record<string, unknown>).token_id === input.tokenId,
-    );
-  if (!matches) {
-    return { ok: false, reason: "That transaction is not a successful call for this attestation." };
   }
   return { ok: true, onChain };
 }
 
 /**
- * Records a mint, but only after reading it back from the contract: the token
- * must exist with the same digest, issued by the organisation's registered
- * account, and the reported transaction must be the one that did it.
+ * Records a mint, but only after reading it back from the contract. The
+ * transaction must be the issuer's call with exactly this token ID, receiver,
+ * digest and reference; the token must now exist, be active, hold the same
+ * digest and reference, be owned by the contributor's proven account and be
+ * issued by this organisation's registered account. A correction ("supersede")
+ * also marks the replaced record as superseded.
  */
 export async function confirmMint(
   db: Database,
@@ -269,26 +315,32 @@ export async function confirmMint(
   attestationId: string,
   transactionHash: unknown,
 ): Promise<Result<{ ownerId: string }>> {
-  const found = await loadForIssuer(db, userId, attestationId);
-  if (!found) return NOT_FOUND;
-  const { attestation, organisation, membership } = found;
-  const allowed = canAnchorAttestation(membership, attestation);
-  if (!allowed.allowed) return fail(allowed.reason);
-  if (!chain) return NOT_CONFIGURED;
   if (typeof transactionHash !== "string" || !isValidTransactionHash(transactionHash)) {
     return fail("That is not a NEAR transaction hash.");
   }
-  if (!organisation.nearIssuerAccountId) return fail("The organisation has no NEAR account.");
+  const prepared = await prepareMint(db, chain, userId, attestationId);
+  if (!prepared.ok) return prepared;
+  if (!chain) return NOT_CONFIGURED;
+  const request = prepared.value;
+  const found = await loadForIssuer(db, userId, attestationId);
+  if (!found) return NOT_FOUND;
+  const { attestation, organisation } = found;
   const anchorStep = transitionAnchor(attestation.nearAnchorStatus, "confirm");
   if (!anchorStep.ok) return fail("This is already recorded as on NEAR.");
+
+  const expectedArgs: Record<string, unknown> =
+    request.method === "supersede"
+      ? { old_token_id: request.oldTokenId, digest: request.digest, reference: request.reference }
+      : { receiver_id: request.receiverId, digest: request.digest, reference: request.reference };
 
   let check: ChainCheck;
   try {
     check = await checkOnChain(chain, {
       tokenId: attestation.id,
-      issuerAccountId: organisation.nearIssuerAccountId,
+      issuerAccountId: request.issuerAccountId,
       transactionHash,
-      methods: ["issue", "supersede"],
+      methods: [request.method],
+      expectedArgs,
     });
   } catch (error) {
     if (error instanceof ChainUnavailableError) return UNREACHABLE;
@@ -296,15 +348,20 @@ export async function confirmMint(
   }
   if (!check.ok) return fail(check.reason);
   const { onChain } = check;
-  if (onChain.digest !== attestation.payloadDigest) {
-    return fail("The digest on NEAR does not match this record. Nothing was recorded.");
-  }
-  if (
-    onChain.issuerId !== organisation.nearIssuerAccountId ||
-    onChain.organisationId !== organisation.id
-  ) {
-    return fail("The token on NEAR was not issued by this organisation. Nothing was recorded.");
-  }
+  const problem =
+    onChain.digest !== attestation.payloadDigest
+      ? "The digest on NEAR does not match this record."
+      : onChain.issuerId !== request.issuerAccountId || onChain.organisationId !== organisation.id
+        ? "The token on NEAR was not issued by this organisation."
+        : onChain.ownerId !== request.receiverId
+          ? `The token on NEAR is owned by ${onChain.ownerId}, not the contributor's proven account ${request.receiverId}.`
+          : onChain.status !== "active"
+            ? `The token on NEAR is ${onChain.status}, not active.`
+            : onChain.reference !== request.reference.reference ||
+                onChain.referenceHash !== request.reference.reference_hash
+              ? "The token on NEAR does not point at this credential's published document."
+              : null;
+  if (problem) return fail(`${problem} Nothing was recorded.`);
 
   await db.transaction(async (tx) => {
     const t = tx as unknown as Database;
@@ -314,6 +371,7 @@ export async function confirmMint(
         nearNetwork: network,
         nearContractId: chain.contractId,
         nearIssuerAccountId: onChain.issuerId,
+        nearOwnerAccountId: onChain.ownerId,
         nearTransactionHash: transactionHash,
         nearAnchorStatus: anchorStep.status,
       })
@@ -333,23 +391,114 @@ export async function confirmMint(
       attestationId: attestation.id,
       previousStatus: attestation.status,
       newStatus: attestation.status,
-      reason: "Minted on NEAR as a non-transferable NFT.",
+      reason:
+        request.method === "supersede"
+          ? "Minted on NEAR as the corrected replacement of an earlier credential."
+          : "Minted on NEAR as a non-transferable NFT.",
       actorUserId: userId,
       nearTransactionHash: transactionHash,
     });
+    if (request.method === "supersede" && request.oldTokenId) {
+      await tx
+        .update(attestations)
+        .set({ status: "superseded", supersededByAttestationId: attestation.id })
+        .where(eq(attestations.id, request.oldTokenId));
+      await tx.insert(attestationStatusEvents).values({
+        attestationId: request.oldTokenId,
+        previousStatus: "active",
+        newStatus: "superseded",
+        reason: "Replaced by a corrected credential.",
+        actorUserId: userId,
+        nearTransactionHash: transactionHash,
+      });
+    }
     await audit(t, userId, organisation.id, "attestation.minted", "attestation", attestation.id, {
       transactionHash,
       ownerId: onChain.ownerId,
+      method: request.method,
     });
   });
   await notify(db, {
     userId: attestation.subjectUserId,
     type: "attestation.minted",
-    title: `${organisation.name} issued your attestation on NEAR`,
+    title: `${organisation.name} issued your credential on NEAR`,
     body: `It is in ${onChain.ownerId} as an NFT that cannot be transferred.`,
     href: `/dashboard/contributions/${attestation.contributionId}`,
   });
   return { ok: true, value: { ownerId: onChain.ownerId } };
+}
+
+// ── Publishing (contributor consent) ─────────────────────────────────────────
+
+/**
+ * The contributor agrees to publish an approved record as a public NFT
+ * credential. Only then is its document published (IPFS when configured) and
+ * only then can the organisation mint it. Refused for private contributions,
+ * for records that are no longer active, and for v1 records (which name the
+ * contributor's username and may include private evidence).
+ */
+export async function consentToPublish(
+  db: Database,
+  userId: string,
+  attestationId: string,
+  publish: (attestation: typeof attestations.$inferSelect) => Promise<PublishedReference>,
+): Promise<Result<{ reference: string; durable: boolean }>> {
+  if (!UUID.test(attestationId)) return NOT_FOUND;
+  const [row] = await db
+    .select({ attestation: attestations, contribution: contributions })
+    .from(attestations)
+    .innerJoin(contributions, eq(contributions.id, attestations.contributionId))
+    .where(eq(attestations.id, attestationId));
+  if (!row || row.attestation.subjectUserId !== userId) return NOT_FOUND;
+  const { attestation, contribution } = row;
+  if (attestation.status !== "active") return fail("Only an active record can be published.");
+  if (contribution.visibility !== "public") {
+    return fail(
+      "Make the contribution public first. A private record cannot become a public credential.",
+    );
+  }
+  if (attestation.schemaVersion !== "proofme.attestation.v2") {
+    return fail(
+      "This record was approved before public credentials existed. Ask the organisation to issue a corrected one.",
+    );
+  }
+  if (attestation.subjectConsentedAt && attestation.credentialReference) {
+    return {
+      ok: true,
+      value: {
+        reference: attestation.credentialReference,
+        durable: attestation.credentialReference.startsWith("ipfs://"),
+      },
+    };
+  }
+  let published: PublishedReference;
+  try {
+    published = await publish(attestation);
+  } catch (error) {
+    if (error instanceof PublishError) return fail(error.message);
+    throw error;
+  }
+  if (published.referenceHash !== referenceHashOf(attestation.canonicalPayload)) {
+    return fail("The published document does not match the record. Nothing was recorded.");
+  }
+  await db
+    .update(attestations)
+    .set({
+      subjectConsentedAt: new Date(),
+      credentialReference: published.reference,
+      credentialReferenceHash: published.referenceHash,
+    })
+    .where(eq(attestations.id, attestation.id));
+  await audit(
+    db,
+    userId,
+    attestation.issuerOrganisationId,
+    "attestation.publish_consented",
+    "attestation",
+    attestation.id,
+    { reference: published.reference },
+  );
+  return { ok: true, value: { reference: published.reference, durable: published.durable } };
 }
 
 // ── Revoking ─────────────────────────────────────────────────────────────────
@@ -499,7 +648,7 @@ export type ChainView =
 export interface PublicVerification {
   id: string;
   /** Null when the stored record fails its own integrity check. */
-  payload: AttestationPayloadV1 | null;
+  payload: AttestationPayload | null;
   recordFailure: SealedCheckFailure | null;
   digest: string;
   status: "active" | "revoked" | "superseded";
@@ -512,7 +661,15 @@ export interface PublicVerification {
     contractId: string | null;
     transactionHash: string | null;
     revocationTransactionHash: string | null;
+    ownerAccountId: string | null;
   };
+  /** The published public document (NEP-177 reference) and its Base64 SHA-256. */
+  credential: { reference: string; referenceHash: string } | null;
+  /** The record this one corrected, and the record that corrected this one. */
+  supersedes: string | null;
+  supersededBy: string | null;
+  /** Every status change, oldest first. Reasons for revocation are the issuer's own words. */
+  history: { at: Date; status: string; reason: string | null; transactionHash: string | null }[];
   chain: ChainView;
 }
 
@@ -549,6 +706,11 @@ export async function getPublicVerification(
     attestation.canonicalPayload,
     attestation.payloadDigest,
   );
+  const history = await db
+    .select()
+    .from(attestationStatusEvents)
+    .where(eq(attestationStatusEvents.attestationId, attestation.id))
+    .orderBy(asc(attestationStatusEvents.createdAt));
 
   let chainView: ChainView;
   if (!chain) {
@@ -586,6 +748,8 @@ export async function getPublicVerification(
       slug: organisation.slug,
       reviewedByProofMe: organisation.platformVerificationStatus === "verified",
     },
+    // A private profile stays private here too: no name and no username, from
+    // the record or anywhere else.
     subject: {
       displayName: profile.visibility === "public" ? profile.displayName : null,
       username: profile.visibility === "public" ? profile.username : null,
@@ -594,7 +758,23 @@ export async function getPublicVerification(
       contractId: attestation.nearContractId,
       transactionHash: attestation.nearTransactionHash,
       revocationTransactionHash: attestation.nearRevocationTransactionHash,
+      ownerAccountId: attestation.nearOwnerAccountId,
     },
+    credential:
+      attestation.credentialReference && attestation.credentialReferenceHash
+        ? {
+            reference: attestation.credentialReference,
+            referenceHash: attestation.credentialReferenceHash,
+          }
+        : null,
+    supersedes: attestation.supersedesAttestationId,
+    supersededBy: attestation.supersededByAttestationId,
+    history: history.map((event) => ({
+      at: event.createdAt,
+      status: event.newStatus,
+      reason: event.reason,
+      transactionHash: event.nearTransactionHash,
+    })),
     chain: chainView,
   };
 }

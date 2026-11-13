@@ -276,7 +276,6 @@ export interface IdentityFormValues {
   x: string;
   linkedin: string;
   other: string;
-  nearAccountId: string;
 }
 
 export function IdentityForm({ initial }: { initial: IdentityFormValues }) {
@@ -323,15 +322,6 @@ export function IdentityForm({ initial }: { initial: IdentityFormValues }) {
           error={errors.other}
         />
       </div>
-      <TextField
-        name="nearAccountId"
-        label="NEAR testnet account"
-        defaultValue={initial.nearAccountId}
-        spellCheck={false}
-        maxLength={64}
-        hint="For example yourname.testnet. Shown as you entered it; ProofMe has not checked that it is yours."
-        error={errors.nearAccountId}
-      />
       <div className="border-t border-line pt-6">
         <Submit pending={pending} label="Save links" pendingLabel="Saving…" />
       </div>

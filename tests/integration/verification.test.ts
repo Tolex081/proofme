@@ -421,7 +421,7 @@ describe("approval and the attestation record", () => {
       issuerOrganisationId: setup.org.id,
       subjectUserId: setup.contributor,
       reviewerUserId: setup.reviewer,
-      schemaVersion: "proofme.attestation.v1",
+      schemaVersion: "proofme.attestation.v2",
     });
     const check = await checkSealedAttestation(
       attestation.canonicalPayload,
@@ -435,8 +435,10 @@ describe("approval and the attestation record", () => {
       expect(check.payload.issuer.slug).toBe(setup.org.slug);
       expect(check.payload.issuedAt).toBe(attestation.issuedAt.toISOString());
     }
-    // No private data in what will be public.
+    // No private data in what will be public: no email, no username, no reviewer ID.
     expect(attestation.canonicalPayload).not.toContain("@example.test");
+    expect(attestation.canonicalPayload).not.toContain('"username"');
+    expect(attestation.canonicalPayload).not.toContain('"reviewer"');
 
     expect((await getOwnContribution(db, setup.contributor, setup.contribution.id))?.status).toBe(
       "approved_pending_anchor",

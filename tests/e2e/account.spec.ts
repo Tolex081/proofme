@@ -113,15 +113,15 @@ test.describe("accounts and profiles", () => {
 
     await page.goto("/dashboard/identity");
     await page.getByLabel("GitHub").fill("https://github.com.evil.example/me");
-    await page.getByLabel("NEAR testnet account").fill("not a near account");
     await page.getByRole("button", { name: "Save links" }).click();
     await expect(page.getByText("must be a link on github.com")).toBeVisible();
-    await expect(page.getByText("Enter a NEAR testnet account")).toBeVisible();
 
     await page.getByLabel("GitHub").fill("https://github.com/ada");
-    await page.getByLabel("NEAR testnet account").fill("ada.testnet");
     await page.getByRole("button", { name: "Save links" }).click();
     await expect(page.getByText("Links saved.")).toBeVisible();
+    // A NEAR account cannot be typed in: it is proven with a wallet signature.
+    await expect(page.getByLabel("NEAR testnet account")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Connect wallet and sign" })).toBeVisible();
   });
 
   test("a profile is private until its owner makes it public", async ({ page, browser }) => {

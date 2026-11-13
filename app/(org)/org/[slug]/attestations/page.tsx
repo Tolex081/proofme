@@ -3,10 +3,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { IssuerPanel, MintButton, RevokeControl } from "@/components/near/controls";
+import {
+  CorrectionControl,
+  IssuerPanel,
+  MintButton,
+  RevokeControl,
+} from "@/components/near/controls";
 import { PageHeading, PageSkeleton } from "@/components/workspace/parts";
 import { requireOrganisation } from "@/lib/auth/org-guard";
 import { getNearConfig } from "@/lib/near/server";
+import { mintBlocker } from "@/server/services/near";
+import { issuerEligibility } from "@/server/services/near-identity";
 import { listIssuedAttestations } from "@/server/services/verification";
 
 export const metadata: Metadata = { title: "Attestations" };
@@ -41,7 +48,8 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]/attestations">, "
   );
   const items = (await listIssuedAttestations(db, user.id, organisation.id)) ?? [];
   const near = getNearConfig();
-  const canMint = can("attestation.anchor") && organisation.nearIssuerStatus === "registered";
+  const issuer = issuerEligibility(organisation);
+  const canMint = can("attestation.anchor") && issuer.eligible;
   const canRevoke = can("attestation.revoke");
 
   return (
@@ -58,6 +66,14 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]/attestations">, "
         canConfigure={can("issuer.configure")}
         contractId={near?.contractId ?? null}
       />
+      {!issuer.eligible ? (
+        <p className="mb-6 rounded-2xl bg-wait p-4 text-wait-ink">
+          <span className="font-semibold">Not able to issue credentials yet.</span> {issuer.reason}{" "}
+          ProofMe&rsquo;s issuer policy: the organisation is verified by ProofMe, an owner has
+          proved control of the issuer account with a wallet signature, and the contract lists that
+          account as this organisation&rsquo;s active issuer.
+        </p>
+      ) : null}
       {items.length === 0 ? (
         <div className="card grid place-items-center px-6 py-16 text-center">
           <span className="grid size-14 place-items-center rounded-2xl bg-surface-2 text-muted">
@@ -74,7 +90,17 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]/attestations">, "
             const active = item.status === "active";
             const onNear = item.nearAnchorStatus === "confirmed";
             // Nobody issues an attestation about their own work.
-            const mintable = active && !onNear && canMint && item.subjectUserId !== user.id;
+            const blocker = mintBlocker({
+              organisation,
+              attestation: item,
+              contributionVisibility: item.visibility,
+              subject: {
+                nearAccountId: item.subjectNearAccountId,
+                nearAccountVerifiedAt: item.subjectNearAccountVerifiedAt,
+              },
+            });
+            const mintable =
+              active && !onNear && canMint && !blocker && item.subjectUserId !== user.id;
             return (
               <li key={item.id} className="card grid gap-4 p-5 sm:p-6">
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
@@ -102,6 +128,31 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]/attestations">, "
                 <div className="flex flex-wrap items-start gap-x-5 gap-y-3 border-t border-line pt-4">
                   {mintable ? (
                     <MintButton attestationId={item.id} slug={organisation.slug} />
+                  ) : active && !onNear && issuer.eligible && blocker ? (
+                    <p className="min-h-11 content-center text-[0.9rem] text-wait-ink">{blocker}</p>
+                  ) : null}
+                  {active && canRevoke && item.subjectUserId !== user.id ? (
+                    <CorrectionControl
+                      attestationId={item.id}
+                      slug={organisation.slug}
+                      onNear={onNear}
+                      initial={{
+                        title: item.title,
+                        summary: item.summary,
+                        description: item.description,
+                        role: item.role,
+                        startDate: item.startDate ?? "",
+                        endDate: item.endDate ?? "",
+                      }}
+                    />
+                  ) : null}
+                  {item.supersedesAttestationId ? (
+                    <Link
+                      href={`/verify/${item.supersedesAttestationId}`}
+                      className="text-link min-h-11 content-center text-[0.9rem]"
+                    >
+                      Corrects an earlier record
+                    </Link>
                   ) : null}
                   {active && canRevoke ? (
                     <RevokeControl

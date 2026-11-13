@@ -3,7 +3,7 @@ import { and, asc, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import {
-  buildAttestationPayload,
+  buildAttestationPayloadV2,
   generateNonce,
   sealAttestation,
 } from "@/lib/attestations/payload";
@@ -15,6 +15,7 @@ import {
   auditEvents,
   contributions,
   evidence,
+  evidenceInvestigations,
   organisationMembers,
   organisations,
   projects,
@@ -400,6 +401,9 @@ export async function contributorReviewHistory(
       payloadDigest: attestations.payloadDigest,
       issuedAt: attestations.issuedAt,
       nearAnchorStatus: attestations.nearAnchorStatus,
+      schemaVersion: attestations.schemaVersion,
+      credentialReference: attestations.credentialReference,
+      subjectConsentedAt: attestations.subjectConsentedAt,
     })
     .from(attestations)
     .where(eq(attestations.contributionId, contribution.id))
@@ -689,6 +693,13 @@ async function issueAttestation(
     request: typeof verificationRequests.$inferSelect;
     contribution: typeof contributions.$inferSelect;
     reviewerId: string;
+    /** A correction: the issuer's corrected wording replaces the contribution's. */
+    claimOverride?: Partial<Pick<CorrectionInput, "title" | "summary" | "description" | "role">> & {
+      startDate?: string | null;
+      endDate?: string | null;
+    };
+    supersedesAttestationId?: string | null;
+    approvalReason?: string;
   },
 ): Promise<string> {
   const { request, contribution, reviewerId } = input;
@@ -700,14 +711,7 @@ async function issueAttestation(
     .select()
     .from(userProfiles)
     .where(eq(userProfiles.userId, contribution.contributorUserId));
-  // The record names the reviewer by their public profile ID, never their account ID.
-  const [reviewerProfile] = await db
-    .select()
-    .from(userProfiles)
-    .where(eq(userProfiles.userId, reviewerId));
-  if (!profile || !reviewerProfile) {
-    throw new Error("Contributor and reviewer must both have a profile.");
-  }
+  if (!profile) throw new Error("The contributor must have a profile.");
   const [project] = contribution.projectId
     ? await db.select().from(projects).where(eq(projects.id, contribution.projectId))
     : [];
@@ -716,27 +720,50 @@ async function issueAttestation(
     .from(evidence)
     .where(eq(evidence.contributionId, contribution.id))
     .orderBy(asc(evidence.position));
+  // The report the reviewer saw, cited by ID and digest only.
+  const [investigation] = await db
+    .select()
+    .from(evidenceInvestigations)
+    .where(eq(evidenceInvestigations.contributionId, contribution.id))
+    .orderBy(desc(evidenceInvestigations.version))
+    .limit(1);
 
+  const override = input.claimOverride ?? {};
   const id = randomUUID();
   const issuedAt = new Date();
-  const payload = buildAttestationPayload({
+  // Version 2: the public credential. No username, no reviewer ID, and only
+  // evidence the contributor marked public.
+  const payload = buildAttestationPayloadV2({
     id,
     issuedAt,
     issuer: { organisationId: organisation.id, name: organisation.name, slug: organisation.slug },
-    subject: { profileId: profile.id, username: profile.username },
+    subject: { profileId: profile.id },
     project: project ? { id: project.id, name: project.name } : null,
     claim: {
-      title: contribution.title,
-      summary: contribution.summary,
-      description: contribution.description,
+      title: override.title ?? contribution.title,
+      summary: override.summary ?? contribution.summary,
+      description: override.description ?? contribution.description,
       category: contribution.category,
-      role: contribution.role,
+      role: override.role ?? contribution.role,
       skills: contribution.skills,
-      startDate: contribution.startDate,
-      endDate: contribution.endDate,
+      startDate: override.startDate !== undefined ? override.startDate : contribution.startDate,
+      endDate: override.endDate !== undefined ? override.endDate : contribution.endDate,
     },
-    evidence: links.map((link) => ({ type: link.type, url: link.url, label: link.label })),
-    reviewerId: reviewerProfile.id,
+    evidence: links
+      .filter((link) => link.visibility === "public")
+      .map((link) => ({
+        type: link.type,
+        url: link.url,
+        label: link.label,
+        visibility: link.visibility,
+      })),
+    evidenceInvestigation: investigation
+      ? {
+          id: investigation.id,
+          version: investigation.version,
+          reportDigest: investigation.reportDigest,
+        }
+      : null,
     nonce: generateNonce(),
   });
   const sealed = await sealAttestation(payload);
@@ -753,19 +780,159 @@ async function issueAttestation(
     payloadDigest: sealed.digest,
     issuedAt,
     status: "active",
+    supersedesAttestationId: input.supersedesAttestationId ?? null,
     nearAnchorStatus: "awaiting",
   });
   await db.insert(attestationStatusEvents).values({
     attestationId: id,
     previousStatus: null,
     newStatus: "active",
-    reason: "Approved by the organisation.",
+    reason: input.approvalReason ?? "Approved by the organisation.",
     actorUserId: reviewerId,
   });
   await audit(db, reviewerId, organisation.id, "attestation.issued", "attestation", id, {
     digest: sealed.digest,
+    supersedes: input.supersedesAttestationId ?? null,
   });
   return id;
+}
+
+// ── Corrections (supersession) ───────────────────────────────────────────────
+
+const correctionSchema = z.object({
+  title: z.string().trim().min(1, "Give it a title.").max(160),
+  summary: z.string().trim().min(1, "Give a one-line summary.").max(400),
+  description: z.string().trim().min(1, "Describe the work.").max(8000),
+  role: z.string().trim().min(1, "Give the contributor's role.").max(120),
+  startDate: z.iso.date().nullable().default(null),
+  endDate: z.iso.date().nullable().default(null),
+  reason: z
+    .string()
+    .trim()
+    .min(1, "Say what is being corrected. The contributor and the public history show this.")
+    .max(500),
+});
+
+export type CorrectionInput = z.infer<typeof correctionSchema>;
+
+/**
+ * Replaces an active attestation with a corrected one (an owner or admin of
+ * the issuing organisation). The old record is never edited: a new record is
+ * sealed and linked to it. If the old one was never minted it is marked
+ * superseded now; if it is on NEAR, it stays active until the organisation
+ * signs the contract's `supersede` call, which replaces both in one step.
+ * The contributor must consent again before the correction is published.
+ */
+export async function replaceAttestation(
+  db: Database,
+  userId: string,
+  attestationId: string,
+  input: unknown,
+): Promise<Result<{ attestationId: string; supersededNow: boolean }>> {
+  if (!UUID.test(attestationId)) return NOT_FOUND;
+  const parsed = correctionSchema.safeParse(input);
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    return { ok: false, errors: { [String(issue.path[0] ?? "form")]: issue.message } };
+  }
+  const correction = parsed.data;
+  const [old] = await db.select().from(attestations).where(eq(attestations.id, attestationId));
+  if (!old) return NOT_FOUND;
+  const membership = await getMembership(db, userId, old.issuerOrganisationId);
+  if (!canInOrganisation(membership, old.issuerOrganisationId, "attestation.revoke").allowed) {
+    return membership?.status === "active"
+      ? { ok: false, errors: { form: "Only an owner or admin can correct an attestation." } }
+      : NOT_FOUND;
+  }
+  if (old.status !== "active") {
+    return { ok: false, errors: { form: "Only an active attestation can be corrected." } };
+  }
+  if (old.subjectUserId === userId) {
+    return { ok: false, errors: { form: "Nobody corrects an attestation about their own work." } };
+  }
+  const [pendingCorrection] = await db
+    .select({ id: attestations.id })
+    .from(attestations)
+    .where(
+      and(eq(attestations.supersedesAttestationId, old.id), eq(attestations.status, "active")),
+    );
+  if (pendingCorrection) {
+    return { ok: false, errors: { form: "A correction of this record already exists." } };
+  }
+
+  const outcome = await db.transaction(async (tx) => {
+    const t = tx as unknown as Database;
+    const [contribution] = await tx
+      .select()
+      .from(contributions)
+      .where(eq(contributions.id, old.contributionId));
+    const [request] = await tx
+      .insert(verificationRequests)
+      .values({
+        contributionId: contribution.id,
+        organisationId: old.issuerOrganisationId,
+        submittedBy: userId,
+        status: "approved",
+        resolvedAt: new Date(),
+        assignedReviewerId: userId,
+        replacesAttestationId: old.id,
+      })
+      .returning();
+    await tx.insert(verificationReviews).values({
+      verificationRequestId: request.id,
+      authorUserId: userId,
+      kind: "approve",
+      message: correction.reason,
+      internalNote: null,
+    });
+    const newId = await issueAttestation(t, {
+      request,
+      contribution,
+      reviewerId: userId,
+      claimOverride: correction,
+      supersedesAttestationId: old.id,
+      approvalReason: `Correction: ${correction.reason}`,
+    });
+    const supersededNow = old.nearAnchorStatus !== "confirmed";
+    if (supersededNow) {
+      await tx
+        .update(attestations)
+        .set({ status: "superseded", supersededByAttestationId: newId })
+        .where(eq(attestations.id, old.id));
+      await tx.insert(attestationStatusEvents).values({
+        attestationId: old.id,
+        previousStatus: "active",
+        newStatus: "superseded",
+        reason: `Replaced by a corrected record: ${correction.reason}`,
+        actorUserId: userId,
+      });
+    }
+    await audit(
+      t,
+      userId,
+      old.issuerOrganisationId,
+      "attestation.corrected",
+      "attestation",
+      old.id,
+      {
+        replacement: newId,
+        supersededNow,
+      },
+    );
+    return { newId, supersededNow, contributionId: contribution.id };
+  });
+
+  await notify(db, {
+    userId: old.subjectUserId,
+    type: "attestation.corrected",
+    title: "An organisation corrected one of your records",
+    body: correction.reason,
+    href: `/dashboard/contributions/${outcome.contributionId}`,
+  });
+  return {
+    ok: true,
+    value: { attestationId: outcome.newId, supersededNow: outcome.supersededNow },
+  };
 }
 
 /** Attestations an organisation has issued, for any active member. */
@@ -784,12 +951,25 @@ export async function listIssuedAttestations(db: Database, userId: string, organ
       nearIssuerAccountId: attestations.nearIssuerAccountId,
       subjectUserId: attestations.subjectUserId,
       isPublic: sql<boolean>`${contributions.visibility} = 'public'`,
+      visibility: contributions.visibility,
       title: contributions.title,
+      summary: contributions.summary,
+      description: contributions.description,
+      role: contributions.role,
+      startDate: contributions.startDate,
+      endDate: contributions.endDate,
       contributorName: users.name,
+      subjectConsentedAt: attestations.subjectConsentedAt,
+      credentialReference: attestations.credentialReference,
+      supersedesAttestationId: attestations.supersedesAttestationId,
+      supersededByAttestationId: attestations.supersededByAttestationId,
+      subjectNearAccountId: userProfiles.nearAccountId,
+      subjectNearAccountVerifiedAt: userProfiles.nearAccountVerifiedAt,
     })
     .from(attestations)
     .innerJoin(contributions, eq(contributions.id, attestations.contributionId))
     .innerJoin(users, eq(users.id, attestations.subjectUserId))
+    .leftJoin(userProfiles, eq(userProfiles.userId, attestations.subjectUserId))
     .where(eq(attestations.issuerOrganisationId, organisationId))
     .orderBy(desc(attestations.issuedAt));
 }

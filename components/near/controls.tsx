@@ -7,13 +7,21 @@ import { FormMessage } from "@/components/forms/fields";
 import { useHydrated } from "@/components/forms/use-hydrated";
 import {
   confirmMintAction,
-  linkIssuerAction,
+  correctAttestationAction,
+  issuerChallengeAction,
   prepareMintAction,
+  proveIssuerAction,
   prepareRevokeAction,
   refreshIssuerAction,
   revokeAction,
 } from "@/server/actions/near";
-import { callContract, connectWallet, requireAccount, walletErrorMessage } from "./wallet";
+import {
+  callContract,
+  connectWallet,
+  requireAccount,
+  signChallenge,
+  walletErrorMessage,
+} from "./wallet";
 
 /** Covers storage for one token; the contract refunds what it does not use. */
 const MINT_DEPOSIT = "20000000000000000000000"; // 0.02 NEAR
@@ -74,10 +82,20 @@ export function IssuerPanel({
     setNotice(null);
     try {
       const chosen = await connectWallet();
-      const result = await linkIssuerAction(organisationId, slug, chosen);
+      // Proof of control: the wallet signs a one-time ProofMe challenge.
+      const challenge = await issuerChallengeAction(organisationId, slug, chosen);
+      if (!challenge.ok) {
+        setNotice({ tone: "error", text: challenge.message });
+        return;
+      }
+      const proof = await signChallenge(challenge.value);
+      const result = await proveIssuerAction(organisationId, slug, proof);
       setNotice(
         result.ok
-          ? { tone: "success", text: `${chosen} is now this organisation's NEAR account.` }
+          ? {
+              tone: "success",
+              text: `Signed. ${chosen} is proven to be this organisation's NEAR account.`,
+            }
           : { tone: "error", text: result.message },
       );
     } catch (error) {
@@ -192,12 +210,21 @@ export function MintButton({ attestationId, slug }: { attestationId: string; slu
       const transactionHash = await callContract({
         signerId: request.issuerAccountId,
         contractId: request.contractId,
-        methodName: "issue",
-        args: {
-          token_id: request.tokenId,
-          receiver_id: request.receiverId,
-          digest: request.digest,
-        },
+        methodName: request.method,
+        args:
+          request.method === "supersede"
+            ? {
+                old_token_id: request.oldTokenId,
+                token_id: request.tokenId,
+                digest: request.digest,
+                reference: request.reference,
+              }
+            : {
+                token_id: request.tokenId,
+                receiver_id: request.receiverId,
+                digest: request.digest,
+                reference: request.reference,
+              },
         deposit: MINT_DEPOSIT,
       });
       setStep("confirming");
@@ -341,5 +368,123 @@ export function RevokeControl({
         </button>
       </div>
     </form>
+  );
+}
+
+/**
+ * Replace an active record with a corrected one. The old record is never
+ * edited; the correction is linked to it and, once minted, the contract's
+ * `supersede` marks the old token superseded in the same transaction.
+ */
+export function CorrectionControl({
+  attestationId,
+  slug,
+  initial,
+  onNear,
+}: {
+  attestationId: string;
+  slug: string;
+  initial: {
+    title: string;
+    summary: string;
+    description: string;
+    role: string;
+    startDate: string;
+    endDate: string;
+  };
+  onNear: boolean;
+}) {
+  const hydrated = useHydrated();
+  const formId = useId();
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState<Notice>(null);
+  const [values, setValues] = useState({ ...initial, reason: "" });
+
+  function field(name: keyof typeof values, label: string, multiline = false) {
+    const id = `${formId}-${name}`;
+    const props = {
+      id,
+      value: values[name],
+      onChange: (event: { target: { value: string } }) =>
+        setValues((current) => ({ ...current, [name]: event.target.value })),
+      className: "field-input",
+    };
+    return (
+      <div className="grid gap-1.5">
+        <label htmlFor={id} className="field-label">
+          {label}
+        </label>
+        {multiline ? <textarea rows={3} {...props} /> : <input {...props} />}
+      </div>
+    );
+  }
+
+  async function submit() {
+    setBusy(true);
+    setNotice(null);
+    const result = await correctAttestationAction(attestationId, slug, values);
+    setNotice(
+      result.ok
+        ? {
+            tone: "success",
+            text: result.value.supersededNow
+              ? "Corrected. The old record is now marked superseded. The contributor must agree to publish the correction before it can be issued."
+              : "Corrected record created. The old NFT stays active until you issue the correction, which supersedes it on NEAR in the same transaction.",
+          }
+        : { tone: "error", text: result.message },
+    );
+    setBusy(false);
+    if (result.ok) setOpen(false);
+  }
+
+  if (!open) {
+    return (
+      <div className="grid gap-2">
+        <div>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            disabled={!hydrated}
+            className="action action-secondary"
+          >
+            Correct this record
+          </button>
+        </div>
+        <NoticeLine notice={notice} />
+      </div>
+    );
+  }
+  return (
+    <div className="grid w-full gap-3 rounded-2xl border border-line p-4">
+      <p className="text-[0.92rem] text-muted">
+        {onNear
+          ? "The NFT already on NEAR is not changed. A corrected record is created; issuing it calls the contract's supersede, which marks the old token superseded and links the two."
+          : "The old record is marked superseded straight away and linked to the corrected one."}
+      </p>
+      {field("title", "Title")}
+      {field("summary", "One-line summary")}
+      {field("description", "What they did", true)}
+      {field("role", "Their role")}
+      <div className="grid gap-3 sm:grid-cols-2">
+        {field("startDate", "Started (YYYY-MM-DD)")}
+        {field("endDate", "Finished (YYYY-MM-DD)")}
+      </div>
+      {field("reason", "What is being corrected (shown in the public history)", true)}
+      <NoticeLine notice={notice} />
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="button"
+          onClick={submit}
+          disabled={!hydrated || busy}
+          className="action action-primary"
+        >
+          {busy ? "Saving…" : "Create corrected record"}
+        </button>
+        <button type="button" onClick={() => setOpen(false)} className="action action-secondary">
+          Cancel
+        </button>
+      </div>
+    </div>
   );
 }

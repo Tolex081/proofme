@@ -138,6 +138,9 @@ export const userProfiles = pgTable(
     skills: text("skills").array().notNull().default([]),
     professionalCategories: text("professional_categories").array().notNull().default([]),
     nearAccountId: text("near_account_id"),
+    // Set only after a NEP-413 signature by a full-access key of nearAccountId.
+    nearAccountVerifiedAt: instant("near_account_verified_at"),
+    nearAccountPublicKey: text("near_account_public_key"),
     visibility: visibility("visibility").notNull().default("private"),
     sectionVisibility: jsonb("section_visibility")
       .$type<Record<string, boolean>>()
@@ -197,6 +200,8 @@ export const organisations = pgTable(
     platformVerificationReason: text("platform_verification_reason"),
     nearIssuerAccountId: text("near_issuer_account_id"),
     nearIssuerStatus: nearIssuerStatus("near_issuer_status").notNull().default("none"),
+    // Set only after a NEP-413 signature by a full-access key of nearIssuerAccountId.
+    nearIssuerVerifiedAt: instant("near_issuer_verified_at"),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -387,6 +392,8 @@ export const verificationRequests = pgTable(
     }),
     // Optimistic lock: a decision applies only if the version it read is still current.
     version: integer("version").notNull().default(0),
+    // A correction: approving this request replaces (supersedes) that attestation.
+    replacesAttestationId: uuid("replaces_attestation_id"),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -470,6 +477,13 @@ export const attestations = pgTable(
     nearTransactionHash: text("near_transaction_hash"),
     nearRevocationTransactionHash: text("near_revocation_transaction_hash"),
     nearAnchorStatus: anchorStatus("near_anchor_status").notNull().default("awaiting"),
+    // The account the NFT was minted to, read back from the contract.
+    nearOwnerAccountId: text("near_owner_account_id"),
+    // The contributor agreed to publish this record as a public NFT credential.
+    subjectConsentedAt: instant("subject_consented_at"),
+    // NEP-177 reference: the public credential document and its Base64 SHA-256.
+    credentialReference: text("credential_reference"),
+    credentialReferenceHash: text("credential_reference_hash"),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -512,6 +526,210 @@ export const attestationStatusEvents = pgTable(
     createdAt: createdAt(),
   },
   (table) => [index("attestation_status_events_attestation").on(table.attestationId)],
+);
+
+/**
+ * One-time challenges for NEP-413 signed messages. A challenge is bound to a
+ * purpose, an account and (for signed-in purposes) a user, expires quickly and
+ * can be used once.
+ */
+export const nearChallenges = pgTable(
+  "near_challenges",
+  {
+    id: id(),
+    userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+    organisationId: uuid("organisation_id").references(() => organisations.id, {
+      onDelete: "cascade",
+    }),
+    purpose: text("purpose").notNull(),
+    accountId: text("account_id").notNull(),
+    /** Base64 of 32 random bytes. */
+    nonce: text("nonce").notNull().unique(),
+    message: text("message").notNull(),
+    recipient: text("recipient").notNull(),
+    expiresAt: instant("expires_at").notNull(),
+    usedAt: instant("used_at"),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    check(
+      "near_challenges_purpose",
+      sql`${table.purpose} IN ('contributor_account', 'issuer_account', 'holder_access')`,
+    ),
+  ],
+);
+
+// ── GitHub identity and evidence investigations ──────────────────────────────
+
+/**
+ * A GitHub account linked to a ProofMe user, keyed by GitHub's numeric user
+ * ID. The unique index on github_user_id is the final authority that one
+ * GitHub account belongs to one ProofMe user. Rows are never deleted:
+ * disconnecting keeps the reservation, and deleting the ProofMe account keeps
+ * it too (user_id becomes null, status "reserved"), so the identity is never
+ * silently released to someone else.
+ */
+export const githubIdentities = pgTable(
+  "github_identities",
+  {
+    id: id(),
+    githubUserId: bigint("github_user_id", { mode: "number" }).notNull(),
+    userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
+    /** Display only. Usernames change; the numeric ID does not. */
+    login: text("login").notNull(),
+    status: text("status").notNull().default("connected"),
+    connectedAt: instant("connected_at").notNull().defaultNow(),
+    disconnectedAt: instant("disconnected_at"),
+    lastVerifiedAt: instant("last_verified_at").notNull().defaultNow(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    uniqueIndex("github_identities_github_user").on(table.githubUserId),
+    index("github_identities_user").on(table.userId),
+    check(
+      "github_identities_status",
+      sql`${table.status} IN ('connected', 'disconnected', 'reserved')`,
+    ),
+  ],
+);
+
+/** Single-use OAuth state, bound to the signed-in user, with its PKCE verifier. */
+export const githubOauthStates = pgTable("github_oauth_states", {
+  /** SHA-256 of the state value; the raw value only travels in the redirect. */
+  stateHash: text("state_hash").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  codeVerifier: text("code_verifier").notNull(),
+  expiresAt: instant("expires_at").notNull(),
+  usedAt: instant("used_at"),
+  createdAt: createdAt(),
+});
+
+/** An external resource (a GitHub PR, commit, issue or repository), by stable IDs. */
+export const evidenceResources = pgTable(
+  "evidence_resources",
+  {
+    id: id(),
+    provider: text("provider").notNull(),
+    resourceType: text("resource_type").notNull(),
+    repositoryId: bigint("repository_id", { mode: "number" }).notNull(),
+    /** PR or issue number, commit SHA, or the repository ID again. */
+    externalId: text("external_id").notNull(),
+    canonicalUrl: text("canonical_url").notNull(),
+    firstSeenAt: instant("first_seen_at").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("evidence_resources_identity").on(
+      table.provider,
+      table.resourceType,
+      table.repositoryId,
+      table.externalId,
+    ),
+    check(
+      "evidence_resources_type",
+      sql`${table.resourceType} IN ('repository', 'pull_request', 'commit', 'issue')`,
+    ),
+  ],
+);
+
+/** One run of the Evidence Agent for a contribution. Versioned, never overwritten. */
+export const evidenceInvestigations = pgTable(
+  "evidence_investigations",
+  {
+    id: id(),
+    contributionId: uuid("contribution_id")
+      .notNull()
+      .references(() => contributions.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    version: integer("version").notNull(),
+    githubUserId: bigint("github_user_id", { mode: "number" }),
+    githubLoginSnapshot: text("github_login_snapshot"),
+    /** completed: every source answered; partial: some could not be checked. */
+    sourceStatus: text("source_status").notNull(),
+    /** completed, not_configured, unavailable or rejected (output failed validation). */
+    aiStatus: text("ai_status").notNull(),
+    aiModel: text("ai_model"),
+    report: jsonb("report").notNull(),
+    /** SHA-256 of the canonical report, so a credential can cite it. */
+    reportDigest: text("report_digest").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    uniqueIndex("evidence_investigations_version").on(table.contributionId, table.version),
+    check("evidence_investigations_digest", sql`${table.reportDigest} ~ '^[0-9a-f]{64}$'`),
+  ],
+);
+
+/** One claim-by-claim finding in an investigation. */
+export const evidenceFindings = pgTable(
+  "evidence_findings",
+  {
+    id: id(),
+    investigationId: uuid("investigation_id")
+      .notNull()
+      .references(() => evidenceInvestigations.id, { onDelete: "cascade" }),
+    position: integer("position").notNull(),
+    claim: text("claim").notNull(),
+    status: text("status").notNull(),
+    explanation: text("explanation").notNull(),
+    /** deterministic (from source data) or ai (model interpretation). */
+    origin: text("origin").notNull(),
+    resourceIds: uuid("resource_ids").array().notNull().default([]),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    index("evidence_findings_investigation").on(table.investigationId, table.position),
+    check(
+      "evidence_findings_status",
+      sql`${table.status} IN ('source_confirmed', 'supports_claim', 'contradicts_claim', 'not_found', 'unavailable', 'manual_review')`,
+    ),
+    check("evidence_findings_origin", sql`${table.origin} IN ('deterministic', 'ai')`),
+  ],
+);
+
+/**
+ * How one person relates to one resource, as the source establishes it, for
+ * one contribution. Many people can relate to the same resource in different
+ * roles; nobody owns a resource by submitting it first.
+ */
+export const evidenceClaims = pgTable(
+  "evidence_claims",
+  {
+    id: id(),
+    resourceId: uuid("resource_id")
+      .notNull()
+      .references(() => evidenceResources.id, { onDelete: "restrict" }),
+    contributionId: uuid("contribution_id")
+      .notNull()
+      .references(() => contributions.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    investigationId: uuid("investigation_id")
+      .notNull()
+      .references(() => evidenceInvestigations.id, { onDelete: "cascade" }),
+    /** The contributor's relationship to the resource per the source. */
+    role: text("role").notNull(),
+    /** confirmed: the source names the linked account; contradicted: it names someone else. */
+    attribution: text("attribution").notNull(),
+    githubUserId: bigint("github_user_id", { mode: "number" }),
+    snapshot: jsonb("snapshot").notNull(),
+    snapshotDigest: text("snapshot_digest").notNull(),
+    retrievedAt: instant("retrieved_at").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    index("evidence_claims_resource").on(table.resourceId),
+    index("evidence_claims_contribution").on(table.contributionId),
+    check(
+      "evidence_claims_attribution",
+      sql`${table.attribution} IN ('confirmed', 'contradicted', 'unverified')`,
+    ),
+  ],
 );
 
 // ── Notifications, audit, reports ────────────────────────────────────────────

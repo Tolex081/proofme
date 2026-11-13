@@ -39,6 +39,9 @@ const chainAttestationSchema = z.object({
   status_changed_at: z.number(),
   supersedes: z.string().nullable(),
   superseded_by: z.string().nullable(),
+  // Absent on tokens minted before references existed.
+  reference: z.string().nullable().optional(),
+  reference_hash: z.string().nullable().optional(),
 });
 
 const chainIssuerSchema = z.object({
@@ -57,7 +60,12 @@ export interface ChainAttestation {
   issuedAt: Date;
   status: "active" | "revoked" | "superseded";
   statusChangedAt: Date;
+  supersedes: string | null;
   supersededBy: string | null;
+  /** NEP-177 `reference`: where the public credential document lives. */
+  reference: string | null;
+  /** Base64 SHA-256 of the document at `reference`. */
+  referenceHash: string | null;
 }
 
 export interface ChainIssuer {
@@ -85,6 +93,10 @@ export interface ChainReader {
   getIssuer(accountId: string): Promise<ChainIssuer | null>;
   /** Null when the network does not know the transaction. */
   getTransaction(hash: string, signerId: string): Promise<ChainTransaction | null>;
+  /** True only if `publicKey` is a full-access key of `accountId` right now. */
+  hasFullAccessKey(accountId: string, publicKey: string): Promise<boolean>;
+  /** Every attestation the account holds (at most 100), with its current status. */
+  getAttestationsForOwner(accountId: string): Promise<ChainAttestation[]>;
 }
 
 export class ChainUnavailableError extends Error {
@@ -92,6 +104,24 @@ export class ChainUnavailableError extends Error {
     super(message);
     this.name = "ChainUnavailableError";
   }
+}
+
+function toChainAttestation(value: z.infer<typeof chainAttestationSchema>): ChainAttestation {
+  return {
+    tokenId: value.token_id,
+    ownerId: value.owner_id,
+    issuerId: value.issuer_id,
+    organisationId: value.organisation_id,
+    issuerStatus: value.issuer_status,
+    digest: value.digest,
+    issuedAt: new Date(value.issued_at),
+    status: value.status,
+    statusChangedAt: new Date(value.status_changed_at),
+    supersedes: value.supersedes,
+    supersededBy: value.superseded_by,
+    reference: value.reference ?? null,
+    referenceHash: value.reference_hash ?? null,
+  };
 }
 
 type Fetch = typeof fetch;
@@ -183,19 +213,42 @@ export function createRpcChainReader(options: {
     async getAttestation(tokenId) {
       const raw = await view("get_attestation", { token_id: tokenId });
       if (raw === null) return null;
-      const value = chainAttestationSchema.parse(raw);
-      return {
-        tokenId: value.token_id,
-        ownerId: value.owner_id,
-        issuerId: value.issuer_id,
-        organisationId: value.organisation_id,
-        issuerStatus: value.issuer_status,
-        digest: value.digest,
-        issuedAt: new Date(value.issued_at),
-        status: value.status,
-        statusChangedAt: new Date(value.status_changed_at),
-        supersededBy: value.superseded_by,
-      };
+      return toChainAttestation(chainAttestationSchema.parse(raw));
+    },
+
+    async getAttestationsForOwner(accountId) {
+      const tokens = z
+        .array(z.object({ token_id: z.string() }))
+        .parse(await view("nft_tokens_for_owner", { account_id: accountId, limit: 100 }));
+      const found = await Promise.all(
+        tokens.map(async (token) => {
+          const raw = await view("get_attestation", { token_id: token.token_id });
+          return raw === null ? null : toChainAttestation(chainAttestationSchema.parse(raw));
+        }),
+      );
+      return found.filter((item): item is ChainAttestation => item !== null);
+    },
+
+    async hasFullAccessKey(accountId, publicKey) {
+      const answer = await rpc("query", {
+        request_type: "view_access_key",
+        finality: "final",
+        account_id: accountId,
+        public_key: publicKey,
+      });
+      if (answer.error) {
+        const text = JSON.stringify(answer.error);
+        if (/UNKNOWN_ACCESS_KEY|UNKNOWN_ACCOUNT|INVALID_ACCOUNT|does not exist/i.test(text)) {
+          return false;
+        }
+        throw new ChainUnavailableError("The NEAR network could not look up the key.");
+      }
+      const key = z.object({ permission: z.unknown() }).safeParse(answer.result);
+      if (!key.success) {
+        // Older nodes report a missing key as a result with an `error` field.
+        return false;
+      }
+      return key.data.permission === "FullAccess";
     },
 
     async getIssuer(accountId) {

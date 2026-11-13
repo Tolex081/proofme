@@ -196,7 +196,6 @@ export const identitySchema = z.object({
   x: optionalUrl("Your X link", ["x.com", "twitter.com"]),
   linkedin: optionalUrl("Your LinkedIn link", ["linkedin.com"]),
   other: optionalUrl("Your other link"),
-  nearAccountId: nearAccountIdSchema,
 });
 
 export type IdentityInput = z.infer<typeof identitySchema>;

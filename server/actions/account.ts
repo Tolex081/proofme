@@ -73,7 +73,6 @@ export async function saveIdentity(_previous: FormState, form: FormData): Promis
     x: text(form, "x"),
     linkedin: text(form, "linkedin"),
     other: text(form, "other"),
-    nearAccountId: text(form, "nearAccountId"),
   });
   if (!result.ok) return failed(result.errors);
   refresh();

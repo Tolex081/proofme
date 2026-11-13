@@ -4,7 +4,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { referenceUrl } from "@/lib/credentials/publish";
 import { getDb } from "@/lib/db/client";
+import { getEnv } from "@/lib/env";
 import { getChainReader, getNearConfig } from "@/lib/near/server";
 import { CATEGORY_LABELS, EVIDENCE_TYPE_LABELS } from "@/lib/validation/contribution";
 import { getPublicVerification, type PublicVerification } from "@/server/services/near";
@@ -138,9 +140,11 @@ async function Content({ params }: Pick<PageProps<"/verify/[id]">, "params">) {
   const answer = verdict(view);
   const tone = TONE[answer.tone];
   const claim = view.payload?.claim ?? null;
-  const subjectName = view.subject.displayName ?? view.payload?.subject.username ?? "A contributor";
+  // Never fall back to a username inside the record: a private profile stays private.
+  const subjectName = view.subject.displayName ?? "A contributor";
   const explorer = near?.explorerBaseUrl ?? null;
   const chain = view.chain.state === "found" ? view.chain : null;
+  const gateway = getEnv().PINATA_GATEWAY;
 
   return (
     <article className="grid gap-4">
@@ -309,6 +313,94 @@ async function Content({ params }: Pick<PageProps<"/verify/[id]">, "params">) {
             <span className="digest">{view.id}</span>
           </Fact>
         </dl>
+      </section>
+
+      {view.credential ? (
+        <section aria-labelledby="portable" className="card p-5 sm:p-7">
+          <h2 id="portable" className="text-[1.2rem]">
+            Check it without ProofMe
+          </h2>
+          <p className="mt-2 max-w-[65ch] text-muted">
+            The NFT points at the public credential document (NEP-177 <code>reference</code>) and
+            carries its Base64 SHA-256 (<code>reference_hash</code>). Fetch the document, hash its
+            exact bytes, and compare with both the reference hash and the digest stored on NEAR. No
+            ProofMe account or database is involved.
+          </p>
+          <dl className="mt-4 grid gap-3 text-[0.92rem]">
+            <Fact label="Document">
+              <a
+                href={referenceUrl(view.credential.reference, gateway)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link digest inline-flex items-center gap-1.5 break-all"
+              >
+                {view.credential.reference} <ExternalLink aria-hidden="true" size={14} />
+              </a>
+            </Fact>
+            <Fact label="reference_hash (Base64 SHA-256)">
+              <span className="digest">{view.credential.referenceHash}</span>
+            </Fact>
+            {view.near.ownerAccountId ? (
+              <Fact label="Ask the contract">
+                <span className="digest break-all">
+                  near contract call-function as-read-only {view.near.contractId} verify json-args
+                  &apos;{`{"token_id":"${view.id}","digest":"${view.digest}"}`}&apos; network-config
+                  testnet now
+                </span>
+              </Fact>
+            ) : null}
+          </dl>
+          {!view.credential.reference.startsWith("ipfs://") ? (
+            <p className="mt-3 text-[0.9rem] text-wait-ink">
+              This document is served by ProofMe rather than pinned to IPFS, so it is checkable but
+              only as durable as this site.
+            </p>
+          ) : null}
+        </section>
+      ) : null}
+
+      <section aria-labelledby="history" className="card p-5 sm:p-7">
+        <h2 id="history" className="text-[1.2rem]">
+          History
+        </h2>
+        {view.supersedes ? (
+          <p className="mt-2">
+            This record corrects{" "}
+            <Link href={`/verify/${view.supersedes}`} className="text-link">
+              an earlier record
+            </Link>
+            .
+          </p>
+        ) : null}
+        {view.supersededBy ? (
+          <p className="mt-2">
+            It was replaced by{" "}
+            <Link href={`/verify/${view.supersededBy}`} className="text-link">
+              a corrected record
+            </Link>
+            .
+          </p>
+        ) : null}
+        <ol className="mt-4 grid gap-3">
+          {view.history.map((event, index) => (
+            <li key={index} className="border-l-2 border-line pl-4 text-[0.95rem]">
+              <p className="font-semibold">
+                {MOMENT.format(event.at)} · {event.status}
+              </p>
+              {event.reason ? <p className="text-muted">{event.reason}</p> : null}
+              {event.transactionHash && explorer ? (
+                <a
+                  href={`${explorer}/txns/${event.transactionHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-link inline-flex items-center gap-1.5 text-[0.9rem]"
+                >
+                  Transaction <ExternalLink aria-hidden="true" size={14} />
+                </a>
+              ) : null}
+            </li>
+          ))}
+        </ol>
       </section>
 
       <section aria-labelledby="limits" className="well p-5 sm:p-6">

@@ -114,3 +114,33 @@ export function walletErrorMessage(error: unknown): string {
     ? text
     : "The wallet could not complete that. Nothing was recorded.";
 }
+
+/**
+ * Asks the connected wallet to sign a ProofMe challenge (NEP-413). This is not
+ * a transaction and moves nothing. The server checks the signature and that the
+ * key belongs to the account; nothing here is trusted on its own.
+ */
+export async function signChallenge(challenge: {
+  challengeId: string;
+  accountId: string;
+  message: string;
+  nonce: string;
+  recipient: string;
+}): Promise<{ challengeId: string; accountId: string; publicKey: string; signature: string }> {
+  const wallet = await (await getConnector()).wallet();
+  const nonce = Uint8Array.from(atob(challenge.nonce), (character) => character.charCodeAt(0));
+  const signed = await wallet.signMessage({
+    message: challenge.message,
+    recipient: challenge.recipient,
+    nonce,
+    network: "testnet",
+    signerId: challenge.accountId,
+  });
+  if (!signed?.signature || !signed.publicKey) throw new Error("The wallet did not sign.");
+  return {
+    challengeId: challenge.challengeId,
+    accountId: signed.accountId,
+    publicKey: signed.publicKey,
+    signature: signed.signature,
+  };
+}
