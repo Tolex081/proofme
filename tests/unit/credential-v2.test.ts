@@ -129,6 +129,41 @@ describe("publishing the credential document", () => {
         pinataJwt: "test-jwt-not-real-000000",
         send: async () => new Response("nope", { status: 401 }),
       }),
-    ).rejects.toThrow(/refused/);
+    ).rejects.toThrow(/rejected ProofMe/);
+  });
+});
+
+describe("Pinata key handling", () => {
+  it("falls back to the older pinning endpoint when the key is not allowed the current one", async () => {
+    const calls: string[] = [];
+    const published = await publishCredentialDocument({
+      attestationId: "5d7c1c0e-2f4a-4d53-8f43-0a6f3f1f9b01",
+      canonicalPayload: "{}",
+      appUrl: "https://proofme.example",
+      pinataJwt: "  eyJ-test-not-real-0000000\n",
+      send: async (url, init) => {
+        calls.push(`${url} ${(init?.headers as Record<string, string>).authorization}`);
+        return String(url).includes("uploads.pinata.cloud")
+          ? new Response("no", { status: 401 })
+          : new Response(JSON.stringify({ IpfsHash: "bafkreiabcdefghijklmnopqrstuvwxyz" }));
+      },
+    });
+    expect(published.reference).toBe("ipfs://bafkreiabcdefghijklmnopqrstuvwxyz");
+    expect(calls).toEqual([
+      "https://uploads.pinata.cloud/v3/files Bearer eyJ-test-not-real-0000000",
+      "https://api.pinata.cloud/pinning/pinFileToIPFS Bearer eyJ-test-not-real-0000000",
+    ]);
+  });
+
+  it("explains a rejected key instead of a bare status", async () => {
+    await expect(
+      publishCredentialDocument({
+        attestationId: "5d7c1c0e-2f4a-4d53-8f43-0a6f3f1f9b01",
+        canonicalPayload: "{}",
+        appUrl: "https://proofme.example",
+        pinataJwt: "wrong-key-value-000000",
+        send: async () => new Response("no", { status: 401 }),
+      }),
+    ).rejects.toThrow(/PINATA_JWT must be the JWT/);
   });
 });

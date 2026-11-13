@@ -54,30 +54,60 @@ export async function publishCredentialDocument(input: {
     };
   }
   const send = input.send ?? fetch;
-  const form = new FormData();
-  form.append("network", "public");
-  form.append("name", `proofme-credential-${input.attestationId}.json`);
-  form.append(
-    "file",
-    new Blob([input.canonicalPayload], { type: "application/json" }),
-    `${input.attestationId}.json`,
-  );
-  let response: Response;
-  try {
-    response = await send("https://uploads.pinata.cloud/v3/files", {
-      method: "POST",
-      headers: { authorization: `Bearer ${input.pinataJwt}` },
-      body: form,
-      signal: AbortSignal.timeout(20_000),
-    });
-  } catch {
-    throw new PublishError("IPFS pinning could not be reached. Nothing was published.");
+  // Pasted keys often carry a stray space or line break.
+  const token = input.pinataJwt.trim().replace(/^Bearer\s+/i, "");
+  const file = () =>
+    new Blob([input.canonicalPayload], { type: "application/json" });
+
+  async function post(url: string, form: FormData): Promise<Response> {
+    try {
+      return await send(url, {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}` },
+        body: form,
+        signal: AbortSignal.timeout(20_000),
+      });
+    } catch {
+      throw new PublishError("IPFS pinning could not be reached. Nothing was published.");
+    }
   }
-  if (!response.ok) {
-    throw new PublishError(`IPFS pinning refused the upload (status ${response.status}).`);
+
+  // Pinata's current upload API.
+  const current = new FormData();
+  current.append("network", "public");
+  current.append("name", `proofme-credential-${input.attestationId}.json`);
+  current.append("file", file(), `${input.attestationId}.json`);
+  const first = await post("https://uploads.pinata.cloud/v3/files", current);
+  if (first.ok) {
+    const json = (await first.json().catch(() => null)) as { data?: { cid?: unknown } } | null;
+    return pinned(json?.data?.cid, referenceHash);
   }
-  const body = (await response.json().catch(() => null)) as { data?: { cid?: unknown } } | null;
-  const cid = body?.data?.cid;
+
+  // Many Pinata keys are only allowed the older pinning endpoint. Same file, same bytes.
+  if (first.status === 401 || first.status === 403) {
+    const legacy = new FormData();
+    legacy.append("file", file(), `${input.attestationId}.json`);
+    legacy.append(
+      "pinataMetadata",
+      JSON.stringify({ name: `proofme-credential-${input.attestationId}.json` }),
+    );
+    legacy.append("pinataOptions", JSON.stringify({ cidVersion: 1 }));
+    const second = await post("https://api.pinata.cloud/pinning/pinFileToIPFS", legacy);
+    if (second.ok) {
+      const json = (await second.json().catch(() => null)) as { IpfsHash?: unknown } | null;
+      return pinned(json?.IpfsHash, referenceHash);
+    }
+    if (second.status === 401 || second.status === 403) {
+      throw new PublishError(
+        "IPFS pinning rejected ProofMe's Pinata key. Nothing was published. PINATA_JWT must be the JWT (the long value starting with eyJ), from a key allowed to upload files.",
+      );
+    }
+    throw new PublishError(`IPFS pinning refused the upload (status ${second.status}).`);
+  }
+  throw new PublishError(`IPFS pinning refused the upload (status ${first.status}).`);
+}
+
+function pinned(cid: unknown, referenceHash: string): PublishedReference {
   if (typeof cid !== "string" || !/^[a-z0-9]{20,100}$/i.test(cid)) {
     throw new PublishError("IPFS pinning gave no content address. Nothing was published.");
   }
