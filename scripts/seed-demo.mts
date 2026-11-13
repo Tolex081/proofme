@@ -84,12 +84,44 @@ async function person(
   return id;
 }
 
+/**
+ * Demo only: ProofMe's verification of the fictional Northstar Protocol, so
+ * the demo organisation can pass the issuer policy. On a real deployment this
+ * is a platform administrator's decision (/admin/organisations). Idempotent;
+ * leaves an audit entry saying it came from the demo seed.
+ */
+async function verifyDemoOrganisation(db: Database) {
+  const updated = await db
+    .update(s.organisations)
+    .set({ platformVerificationStatus: "verified" })
+    .where(eq(s.organisations.slug, "northstar-protocol"))
+    .returning({ id: s.organisations.id, before: s.organisations.platformVerificationStatus });
+  const [organisation] = updated;
+  if (!organisation) return;
+  await db.insert(s.auditEvents).values({
+    actorUserId: null,
+    organisationId: organisation.id,
+    action: "organisation.verified_by_demo_seed",
+    entityType: "organisation",
+    entityId: organisation.id,
+    metadata: { note: "Fictional demo organisation, verified by the demo seed." },
+  });
+}
+
 async function seed(db: Database) {
   const [existing] = await db
     .select({ id: s.users.id })
     .from(s.users)
     .where(eq(s.users.email, `daniel.okafor@${DOMAIN}`));
   if (existing) {
+    const [northstar] = await db
+      .select({ status: s.organisations.platformVerificationStatus })
+      .from(s.organisations)
+      .where(eq(s.organisations.slug, "northstar-protocol"));
+    if (northstar && northstar.status !== "verified") {
+      await verifyDemoOrganisation(db);
+      console.log("Marked the demo organisation Northstar Protocol as verified.");
+    }
     console.log("The demo data is already there. Run `npm run db:reset` first for a fresh copy.");
     return false;
   }
@@ -206,6 +238,7 @@ async function seed(db: Database) {
     }),
   );
   check(await publishSelfReported(db, daniel, selfReported.id));
+  await verifyDemoOrganisation(db);
   return true;
 }
 
@@ -218,14 +251,16 @@ try {
 Demo data loaded. Every account below is fictional; all use the same password.
 
   daniel.okafor@${DOMAIN}   contributor (one verified, one self-reported contribution)
-  sam.adeyemi@${DOMAIN}     owner of Northstar Protocol (platform review pending)
+  sam.adeyemi@${DOMAIN}     owner of Northstar Protocol (verified by the demo seed)
   priya.raman@${DOMAIN}     reviewer at Northstar Protocol${
     appEnv() === "local" ? `\n  admin@${DOMAIN}           platform administrator (local only)` : ""
   }
 
 Password: ${process.env.DEMO_PASSWORD ? "the DEMO_PASSWORD you set" : password}
 Public pages: /u/daniel-okafor and /org/northstar-protocol
-The attestation is not on NEAR yet: mint it from the organisation's Attestations page with a testnet wallet.`);
+To put the approved record on NEAR: Daniel proves his testnet account under Identity and agrees
+to publish it; Sam proves the issuer account under Attestations; the contract owner registers that
+account; then Sam issues it. No transaction hash is ever invented.`);
   }
 } finally {
   await close();
