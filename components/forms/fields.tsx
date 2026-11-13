@@ -3,6 +3,7 @@
 import { CircleAlert } from "lucide-react";
 import { useId } from "react";
 import { useFormStatus } from "react-dom";
+import { Spinner } from "@/components/ui/busy";
 
 /**
  * Form parts shared by every form in the product. Labels are always visible,
@@ -123,7 +124,14 @@ export function SubmitButton({
       disabled={pending}
       aria-disabled={pending}
     >
-      {pending ? pendingLabel : children}
+      {pending ? (
+        <>
+          <Spinner />
+          {pendingLabel}
+        </>
+      ) : (
+        children
+      )}
     </button>
   );
 }

@@ -25,6 +25,7 @@ import {
   transferOwnershipAction,
   type InviteState,
 } from "@/server/actions/organisations";
+import { Spinner } from "@/components/ui/busy";
 
 type Action = (previous: FormState, form: FormData) => Promise<FormState>;
 
@@ -46,7 +47,14 @@ function Submit({
       disabled={disabled}
       aria-disabled={disabled}
     >
-      {pending ? pendingLabel : label}
+      {pending ? (
+        <>
+          <Spinner />
+          {pendingLabel}
+        </>
+      ) : (
+        label
+      )}
     </button>
   );
 }

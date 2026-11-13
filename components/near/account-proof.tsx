@@ -12,6 +12,7 @@ import {
   removeContributorAccountAction,
 } from "@/server/actions/near";
 import { connectWallet, signChallenge, walletErrorMessage } from "./wallet";
+import { Spinner } from "@/components/ui/busy";
 
 type Notice = { tone: "error" | "success"; text: string } | null;
 
@@ -86,7 +87,7 @@ export function NearAccountProof({
           disabled={!hydrated || busy}
           className="action action-primary"
         >
-          <Wallet aria-hidden="true" size={17} />
+          {busy ? <Spinner /> : <Wallet aria-hidden="true" size={17} />}
           {busy
             ? "Waiting for the wallet…"
             : accountId
@@ -166,7 +167,7 @@ export function PublishConsent({
           disabled={!hydrated || busy}
           className="action action-primary"
         >
-          <PenLine aria-hidden="true" size={17} />
+          {busy ? <Spinner /> : <PenLine aria-hidden="true" size={17} />}
           {busy ? "Publishing…" : "I agree: publish as a credential"}
         </button>
       </div>

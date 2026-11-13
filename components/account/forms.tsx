@@ -20,6 +20,7 @@ import {
   PROFILE_SECTION_LABELS,
   type ProfileSection,
 } from "@/lib/validation/profile";
+import { Spinner } from "@/components/ui/busy";
 
 function Submit({
   pending,
@@ -39,7 +40,14 @@ function Submit({
       disabled={disabled}
       aria-disabled={disabled}
     >
-      {pending ? pendingLabel : label}
+      {pending ? (
+        <>
+          <Spinner />
+          {pendingLabel}
+        </>
+      ) : (
+        label
+      )}
     </button>
   );
 }

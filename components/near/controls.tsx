@@ -22,6 +22,7 @@ import {
   signChallenge,
   walletErrorMessage,
 } from "./wallet";
+import { Spinner } from "@/components/ui/busy";
 
 /** Covers storage for one token; the contract refunds what it does not use. */
 const MINT_DEPOSIT = "20000000000000000000000"; // 0.02 NEAR
@@ -163,7 +164,7 @@ export function IssuerPanel({
               disabled={!hydrated || busy !== null}
               className={`action ${accountId ? "action-secondary" : "action-primary"}`}
             >
-              <Link2 aria-hidden="true" size={17} />
+              {busy === "connect" ? <Spinner /> : <Link2 aria-hidden="true" size={17} />}
               {busy === "connect"
                 ? "Waiting for the wallet…"
                 : accountId
@@ -178,7 +179,7 @@ export function IssuerPanel({
               disabled={!hydrated || busy !== null}
               className="action action-secondary"
             >
-              <RefreshCw aria-hidden="true" size={16} />
+              {busy === "check" ? <Spinner /> : <RefreshCw aria-hidden="true" size={16} />}
               {busy === "check" ? "Asking the contract…" : "Check registration"}
             </button>
           ) : null}
@@ -250,7 +251,7 @@ export function MintButton({ attestationId, slug }: { attestationId: string; slu
           disabled={!hydrated || step !== "idle"}
           className="action action-primary"
         >
-          <Stamp aria-hidden="true" size={17} />
+          {step !== "idle" ? <Spinner /> : <Stamp aria-hidden="true" size={17} />}
           {step === "wallet"
             ? "Waiting for the wallet…"
             : step === "confirming"
@@ -479,6 +480,7 @@ export function CorrectionControl({
           disabled={!hydrated || busy}
           className="action action-primary"
         >
+          {busy ? <Spinner /> : null}
           {busy ? "Saving…" : "Create corrected record"}
         </button>
         <button type="button" onClick={() => setOpen(false)} className="action action-secondary">

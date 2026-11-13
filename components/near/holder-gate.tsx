@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useHydrated } from "@/components/forms/use-hydrated";
 import { holderAccessAction, holderChallengeAction, type HolderView } from "@/server/actions/near";
 import { connectWallet, signChallenge, walletErrorMessage } from "./wallet";
+import { Spinner } from "@/components/ui/busy";
 
 /**
  * Opens the gated page with a ProofMe credential held in the visitor's wallet.
@@ -54,7 +55,7 @@ export function HolderGate() {
               disabled={!hydrated || busy}
               className="action action-primary"
             >
-              <KeyRound aria-hidden="true" size={17} />
+              {busy ? <Spinner /> : <KeyRound aria-hidden="true" size={17} />}
               {busy ? "Checking…" : "Connect wallet and sign"}
             </button>
           </div>

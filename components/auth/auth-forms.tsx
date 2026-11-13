@@ -8,6 +8,7 @@ import { FormMessage, TextField } from "@/components/forms/fields";
 import { useHydrated } from "@/components/forms/use-hydrated";
 import { authClient } from "@/lib/auth/client";
 import { safeReturnPath } from "@/lib/auth/return-path";
+import { Spinner } from "@/components/ui/busy";
 
 const PASSWORD_MIN_LENGTH = 10;
 
@@ -48,7 +49,14 @@ function Submit({
       disabled={disabled}
       aria-disabled={disabled}
     >
-      {pending ? pendingLabel : label}
+      {pending ? (
+        <>
+          <Spinner />
+          {pendingLabel}
+        </>
+      ) : (
+        label
+      )}
     </button>
   );
 }

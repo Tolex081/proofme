@@ -576,3 +576,66 @@
     scale: 0.96;
   }
 }
+
+/*
+ * Busy states. A spinner inside a button while it works, and a thin bar at the
+ * top of the window from the moment a link is clicked until the next page
+ * arrives. Both keep moving (more slowly) under reduced motion, because they
+ * tell the visitor something is happening.
+ */
+.spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 9999px;
+  animation: spin 700ms linear infinite;
+}
+
+.nav-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  height: 3px;
+  pointer-events: none;
+  background: var(--brand);
+  transform-origin: left;
+  transform: scaleX(0);
+  opacity: 0;
+}
+
+.nav-progress[data-state="loading"] {
+  opacity: 1;
+  animation: nav-progress 8s cubic-bezier(0.1, 0.7, 0.2, 1) forwards;
+}
+
+.nav-progress[data-state="done"] {
+  opacity: 0;
+  transform: scaleX(1);
+  transition:
+    transform 160ms ease-out,
+    opacity 260ms ease-out 140ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1600ms;
+  }
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes nav-progress {
+  from {
+    transform: scaleX(0.05);
+  }
+  to {
+    transform: scaleX(0.9);
+  }
+}

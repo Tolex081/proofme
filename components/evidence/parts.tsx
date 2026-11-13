@@ -6,6 +6,7 @@ import { useState } from "react";
 import { FormMessage } from "@/components/forms/fields";
 import { useHydrated } from "@/components/forms/use-hydrated";
 import { disconnectGitHubAction, investigateAction } from "@/server/actions/evidence";
+import { Spinner } from "@/components/ui/busy";
 
 type Notice = { tone: "error" | "success"; text: string } | null;
 
@@ -138,7 +139,7 @@ export function InvestigateButton({ contributionId }: { contributionId: string }
           disabled={!hydrated || busy}
           className="action action-primary"
         >
-          <ScanSearch aria-hidden="true" size={17} />
+          {busy ? <Spinner /> : <ScanSearch aria-hidden="true" size={17} />}
           {busy ? "Investigating…" : "Investigate with ProofMe"}
         </button>
       </div>
