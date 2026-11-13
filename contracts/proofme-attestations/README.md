@@ -17,6 +17,8 @@ that behaves like a credential, not a collectible.
 | It points at its public record    | NEP-177 `reference` (an `ipfs://` CID) and `reference_hash` (Base64 SHA-256 of that document)        |
 | Wallets see status changes        | `revoke` and `supersede` emit the NEP-171 1.2.0 `nft_metadata_update` event for the changed token    |
 
+**Deployed on NEAR testnet:** [`proofme-attest-1113.testnet`](https://testnet.nearblocks.io/address/proofme-attest-1113.testnet), deployed 13 November 2026 from this source (wasm SHA-256 `b890f80a4aa4a7e2381745b1f274f4bda6ecec91e91d509085acc1a0570863d2`), initialised with itself as owner and `base_uri` `https://proofme-nine.vercel.app/verify`.
+
 Standards: NEP-171 (core), NEP-177 (metadata), NEP-181 (enumeration), NEP-297 (events).
 
 ## Methods
@@ -93,4 +95,4 @@ Run `cargo test` and see `test result: ok. 54 passed; 0 failed`.
 Known limits: the owner account is fixed at deployment (no handover method); there is no upgrade
 or migration path; `issuer_status` is reported but a suspended issuer's existing tokens still
 verify as valid, leaving that judgement to the reader. Tests are unit tests against the SDK's mock
-runtime; the contract has not yet been run on a sandbox or on testnet.
+runtime; it is deployed on testnet (above).
