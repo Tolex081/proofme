@@ -103,3 +103,22 @@ export function verificationEmail(to: string, url: string): EmailMessage {
     ),
   };
 }
+
+/** The 6-digit code that confirms a new account's email address. */
+export function verificationCodeEmail(to: string, code: string): EmailMessage {
+  const digits = code.replace(/\D/g, "").slice(0, 8);
+  const html = `<!doctype html><html><body style="margin:0;background:#fbf8f3;font-family:Segoe UI,Helvetica,Arial,sans-serif;color:#1d1d2b">
+<div style="max-width:520px;margin:0 auto;padding:32px 24px">
+<p style="font-weight:800;font-size:20px;margin:0 0 24px">ProofMe</p>
+<h1 style="font-size:24px;margin:0 0 12px">Confirm your email</h1>
+<p style="font-size:16px;line-height:1.5;margin:0 0 20px">Enter this code on ProofMe to finish creating your account. It expires in 10 minutes.</p>
+<p style="font-size:36px;font-weight:800;letter-spacing:10px;margin:0 0 24px;font-family:Consolas,Menlo,monospace">${digits}</p>
+<p style="font-size:14px;line-height:1.5;color:#5b5b6b;margin:0">If you did not create a ProofMe account, ignore this email. ProofMe will never ask for your password, seed phrase or keys.</p>
+</div></body></html>`;
+  return {
+    to,
+    subject: `${digits} is your ProofMe code`,
+    text: `Confirm your email\n\nYour ProofMe code is ${digits}. It expires in 10 minutes.\n\nIf you did not create a ProofMe account, ignore this email.\n`,
+    html,
+  };
+}

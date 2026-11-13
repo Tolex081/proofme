@@ -76,14 +76,21 @@ export function RegisterForm() {
     }
     setPending(true);
     setError(null);
-    const { error: failure } = await authClient.signUp.email({
+    const email = String(form.get("email") ?? "").trim();
+    const { data, error: failure } = await authClient.signUp.email({
       name: String(form.get("name") ?? "").trim(),
-      email: String(form.get("email") ?? "").trim(),
+      email,
       password,
     });
     if (failure) {
       setPending(false);
       setError(describeAuthError(failure.code, failure.status));
+      return;
+    }
+    if (!data?.token) {
+      // The account exists but its email must be confirmed with a code first.
+      rememberEmailToConfirm(email);
+      router.replace("/verify-email");
       return;
     }
     router.replace("/onboarding");
@@ -141,10 +148,17 @@ export function LoginForm() {
     const form = new FormData(event.currentTarget);
     setPending(true);
     setError(null);
+    const email = String(form.get("email") ?? "").trim();
     const { error: failure } = await authClient.signIn.email({
-      email: String(form.get("email") ?? "").trim(),
+      email,
       password: String(form.get("password") ?? ""),
     });
+    if (failure?.code === "EMAIL_NOT_VERIFIED") {
+      // A fresh code has just been emailed.
+      rememberEmailToConfirm(email);
+      router.replace("/verify-email");
+      return;
+    }
     if (failure) {
       setPending(false);
       setError(describeAuthError(failure.code, failure.status));
@@ -318,34 +332,128 @@ export function ResetPasswordForm() {
   );
 }
 
-/** Sends the confirmation email again. */
-export function ResendVerification({ email }: { email: string }) {
-  const [state, setState] = useState<"idle" | "sending" | "sent" | "failed">("idle");
-  async function resend() {
-    setState("sending");
-    const { error } = await authClient.sendVerificationEmail({
+// The address being confirmed is kept for this tab only, never in the URL.
+const CONFIRM_KEY = "proofme-confirm-email";
+
+function rememberEmailToConfirm(email: string) {
+  try {
+    sessionStorage.setItem(CONFIRM_KEY, email);
+  } catch {
+    // Private mode: the page asks for the address instead.
+  }
+}
+
+function emailToConfirm(): string {
+  try {
+    return sessionStorage.getItem(CONFIRM_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+/** Enter the 6-digit code from the confirmation email. */
+export function VerifyEmailForm() {
+  const router = useRouter();
+  const hydrated = useHydrated();
+  const remembered = hydrated ? emailToConfirm() : "";
+  const [pending, setPending] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const email = String(form.get("email") ?? "").trim();
+    const otp = String(form.get("code") ?? "").replace(/\D/g, "");
+    if (otp.length !== 6) {
+      setError("Enter the 6-digit code from the email.");
+      return;
+    }
+    setPending(true);
+    setError(null);
+    const { error: failure } = await authClient.emailOtp.verifyEmail({ email, otp });
+    if (failure) {
+      setPending(false);
+      setError(
+        failure.status === 429
+          ? "Too many attempts. Wait a few minutes, then ask for a new code."
+          : failure.code === "OTP_EXPIRED"
+            ? "That code has expired. Ask for a new one."
+            : failure.code === "TOO_MANY_ATTEMPTS"
+              ? "Too many wrong codes. Ask for a new one."
+              : "That code is not right. Check the latest email and try again.",
+      );
+      return;
+    }
+    try {
+      sessionStorage.removeItem(CONFIRM_KEY);
+    } catch {
+      // Nothing to clean up.
+    }
+    router.replace("/onboarding");
+    router.refresh();
+  }
+
+  async function resend(email: string) {
+    if (!email) {
+      setError("Enter your email address first.");
+      return;
+    }
+    setResending(true);
+    setError(null);
+    const { error: failure } = await authClient.emailOtp.sendVerificationOtp({
       email,
-      callbackURL: "/dashboard/settings",
+      type: "email-verification",
     });
-    setState(error ? "failed" : "sent");
+    setResending(false);
+    if (failure) {
+      setError(
+        failure.status === 429
+          ? "Too many codes requested. Wait a while, then try again."
+          : "Could not send a new code right now.",
+      );
+      return;
+    }
+    setNotice("A new code is on its way. Only the newest code works.");
   }
-  if (state === "sent") {
-    return <span className="text-note text-muted">Sent. Check your inbox and spam folder.</span>;
-  }
+
   return (
-    <span className="flex flex-wrap items-center gap-3">
-      <span className="chip chip-wait">Not confirmed</span>
-      <button
-        type="button"
-        onClick={resend}
-        disabled={state === "sending"}
-        className="text-link text-note"
-      >
-        {state === "sending" ? "Sending…" : "Send the confirmation email again"}
-      </button>
-      {state === "failed" ? (
-        <span className="text-note text-bad-ink">Could not send it right now.</span>
-      ) : null}
-    </span>
+    <form onSubmit={submit} method="post" className="form-stack" key={remembered}>
+      {notice && !error ? <FormMessage tone="success">{notice}</FormMessage> : null}
+      {error ? <FormMessage tone="error">{error}</FormMessage> : null}
+      <TextField
+        name="email"
+        label="Email"
+        type="email"
+        required
+        autoComplete="email"
+        defaultValue={remembered}
+      />
+      <TextField
+        name="code"
+        label="6-digit code"
+        required
+        autoComplete="one-time-code"
+        inputMode="text"
+        maxLength={7}
+        spellCheck={false}
+        hint="From the email we just sent. It expires in 10 minutes."
+      />
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+        <Submit pending={pending || !hydrated} label="Confirm email" pendingLabel="Checking…" />
+        <button
+          type="button"
+          className="text-link"
+          disabled={resending || !hydrated}
+          onClick={(event) => {
+            const field = event.currentTarget.form?.elements.namedItem("email");
+            void resend(field instanceof HTMLInputElement ? field.value.trim() : remembered);
+          }}
+        >
+          {resending ? "Sending…" : "Send a new code"}
+        </button>
+      </div>
+    </form>
   );
 }

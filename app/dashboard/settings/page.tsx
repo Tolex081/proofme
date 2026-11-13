@@ -6,7 +6,6 @@ import { DeleteAccountForm, PrivacyForm, ProfileForm } from "@/components/accoun
 import { PageHeading, PageSkeleton, Panel } from "@/components/workspace/parts";
 import { requireWorkspace } from "@/lib/auth/guards";
 import { sectionVisibilityOf } from "@/server/services/profile";
-import { ResendVerification } from "@/components/auth/auth-forms";
 
 export const metadata: Metadata = { title: "Settings" };
 
@@ -56,7 +55,7 @@ async function SettingsContent() {
                 {user.emailVerified ? (
                   <span className="chip chip-ok">Confirmed</span>
                 ) : (
-                  <ResendVerification email={user.email} />
+                  <span className="chip chip-wait">Not confirmed</span>
                 )}
               </dd>
             </div>

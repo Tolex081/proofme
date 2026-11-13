@@ -3,10 +3,16 @@ import "server-only";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
+import { emailOTP } from "better-auth/plugins";
 
 import { getDbHandle } from "../db/client";
 import * as schema from "../db/schema";
-import { passwordResetEmail, sendEmail, verificationEmail, type EmailConfig } from "../email/send";
+import {
+  passwordResetEmail,
+  sendEmail,
+  verificationCodeEmail,
+  type EmailConfig,
+} from "../email/send";
 import { getEnv } from "../env";
 
 export const PASSWORD_MIN_LENGTH = 10;
@@ -43,9 +49,10 @@ function createAuth() {
       enabled: true,
       minPasswordLength: PASSWORD_MIN_LENGTH,
       maxPasswordLength: PASSWORD_MAX_LENGTH,
-      // Verification is sent but never blocks sign-in (decided for the
-      // hackathon: a judge whose email lands in spam can still get in).
-      requireEmailVerification: false,
+      // Where email can be sent, a new account must confirm its address with
+      // a 6-digit code before it can be used. Locally and in automated tests
+      // nothing can be emailed, so nothing is required there.
+      requireEmailVerification: email !== null,
       resetPasswordTokenExpiresIn: 60 * 60,
       // A reset signs out every other session on the account.
       revokeSessionsOnPasswordReset: true,
@@ -56,10 +63,9 @@ function createAuth() {
 
     emailVerification: email
       ? {
-          sendOnSignUp: true,
+          // Signing in before confirming sends a fresh code.
+          sendOnSignIn: true,
           autoSignInAfterVerification: true,
-          sendVerificationEmail: async ({ user, url }) =>
-            deliver(verificationEmail(user.email, url)),
         }
       : undefined,
 
@@ -114,6 +120,8 @@ function createAuth() {
         "/request-password-reset": { window: 60 * 60, max: 5 },
         "/reset-password": { window: 60 * 60, max: 10 },
         "/send-verification-email": { window: 60 * 60, max: 5 },
+        "/email-otp/send-verification-otp": { window: 60 * 60, max: 6 },
+        "/email-otp/verify-email": { window: 60 * 15, max: 10 },
       },
     },
 
@@ -121,8 +129,26 @@ function createAuth() {
       useSecureCookies: env.APP_ENV !== "local",
     },
 
-    // Must stay last: it lets server actions set the session cookie.
-    plugins: [nextCookies()],
+    plugins: [
+      ...(email
+        ? [
+            emailOTP({
+              otpLength: 6,
+              expiresIn: 10 * 60,
+              allowedAttempts: 5,
+              storeOTP: "hashed",
+              sendVerificationOnSignUp: true,
+              // The confirmation email carries a code, not a link.
+              overrideDefaultEmailVerification: true,
+              sendVerificationOTP: async ({ email: to, otp, type }) => {
+                if (type === "email-verification") deliver(verificationCodeEmail(to, otp));
+              },
+            }),
+          ]
+        : []),
+      // Must stay last: it lets server actions set the session cookie.
+      nextCookies(),
+    ],
   });
 }
 
