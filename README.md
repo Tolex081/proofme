@@ -36,7 +36,7 @@ about who did the work. Organisations that could vouch have no portable, checkab
 ## Try it (do X, see Y)
 
 Demo accounts (fictional people and organisation, testnet only). All use the password
-**`Proome123456`**:
+**`Proofme123456`**:
 
 | Account                           | Role                                 | NEAR account (proven by wallet signature) |
 | --------------------------------- | ------------------------------------ | ----------------------------------------- |
