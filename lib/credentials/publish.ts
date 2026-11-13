@@ -56,8 +56,7 @@ export async function publishCredentialDocument(input: {
   const send = input.send ?? fetch;
   // Pasted keys often carry a stray space or line break.
   const token = input.pinataJwt.trim().replace(/^Bearer\s+/i, "");
-  const file = () =>
-    new Blob([input.canonicalPayload], { type: "application/json" });
+  const file = () => new Blob([input.canonicalPayload], { type: "application/json" });
 
   async function post(url: string, form: FormData): Promise<Response> {
     try {
