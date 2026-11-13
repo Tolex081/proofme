@@ -144,3 +144,45 @@ export async function signChallenge(challenge: {
     signature: signed.signature,
   };
 }
+
+/**
+ * Connects a wallet afresh and returns a signed proof for the account the
+ * wallet actually signs with. Wallets remember the last account and may sign
+ * with a different one than they first report, so: any remembered connection
+ * is dropped first, and if the signature comes back from another account, a
+ * new challenge for that account is signed instead. The server still checks
+ * every proof; this only avoids a confusing mismatch.
+ */
+export async function proveAccountWithWallet<
+  C extends {
+    challengeId: string;
+    accountId: string;
+    message: string;
+    nonce: string;
+    recipient: string;
+  },
+>(
+  makeChallenge: (
+    accountId: string,
+  ) => Promise<{ ok: true; value: C } | { ok: false; message: string }>,
+): Promise<
+  { ok: true; proof: Awaited<ReturnType<typeof signChallenge>> } | { ok: false; message: string }
+> {
+  await disconnectWallet();
+  const reported = await connectWallet();
+  let challenge = await makeChallenge(reported);
+  if (!challenge.ok) return challenge;
+  let proof = await signChallenge(challenge.value);
+  if (proof.accountId !== challenge.value.accountId) {
+    challenge = await makeChallenge(proof.accountId);
+    if (!challenge.ok) return challenge;
+    proof = await signChallenge(challenge.value);
+    if (proof.accountId !== challenge.value.accountId) {
+      return {
+        ok: false,
+        message: `The wallet keeps switching accounts (${proof.accountId}). Choose one account in the wallet and try again.`,
+      };
+    }
+  }
+  return { ok: true, proof };
+}

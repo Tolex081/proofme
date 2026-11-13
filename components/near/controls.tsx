@@ -17,9 +17,8 @@ import {
 } from "@/server/actions/near";
 import {
   callContract,
-  connectWallet,
   requireAccount,
-  signChallenge,
+  proveAccountWithWallet,
   walletErrorMessage,
 } from "./wallet";
 import { Spinner } from "@/components/ui/busy";
@@ -82,15 +81,16 @@ export function IssuerPanel({
     setBusy("connect");
     setNotice(null);
     try {
-      const chosen = await connectWallet();
       // Proof of control: the wallet signs a one-time ProofMe challenge.
-      const challenge = await issuerChallengeAction(organisationId, slug, chosen);
-      if (!challenge.ok) {
-        setNotice({ tone: "error", text: challenge.message });
+      const signed = await proveAccountWithWallet((account) =>
+        issuerChallengeAction(organisationId, slug, account),
+      );
+      if (!signed.ok) {
+        setNotice({ tone: "error", text: signed.message });
         return;
       }
-      const proof = await signChallenge(challenge.value);
-      const result = await proveIssuerAction(organisationId, slug, proof);
+      const chosen = signed.proof.accountId;
+      const result = await proveIssuerAction(organisationId, slug, signed.proof);
       setNotice(
         result.ok
           ? {

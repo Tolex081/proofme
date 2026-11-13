@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { useHydrated } from "@/components/forms/use-hydrated";
 import { holderAccessAction, holderChallengeAction, type HolderView } from "@/server/actions/near";
-import { connectWallet, signChallenge, walletErrorMessage } from "./wallet";
+import { proveAccountWithWallet, walletErrorMessage } from "./wallet";
 import { Spinner } from "@/components/ui/busy";
 
 /**
@@ -23,13 +23,12 @@ export function HolderGate() {
     setError(null);
     setView(null);
     try {
-      const accountId = await connectWallet();
-      const challenge = await holderChallengeAction(accountId);
-      if (!challenge.ok) {
-        setError(challenge.message);
+      const signed = await proveAccountWithWallet(holderChallengeAction);
+      if (!signed.ok) {
+        setError(signed.message);
         return;
       }
-      setView(await holderAccessAction(await signChallenge(challenge.value)));
+      setView(await holderAccessAction(signed.proof));
     } catch (failure) {
       setError(walletErrorMessage(failure));
     } finally {

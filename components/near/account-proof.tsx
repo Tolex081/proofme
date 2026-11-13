@@ -11,7 +11,7 @@ import {
   proveContributorAction,
   removeContributorAccountAction,
 } from "@/server/actions/near";
-import { connectWallet, signChallenge, walletErrorMessage } from "./wallet";
+import { proveAccountWithWallet, walletErrorMessage } from "./wallet";
 import { Spinner } from "@/components/ui/busy";
 
 type Notice = { tone: "error" | "success"; text: string } | null;
@@ -32,14 +32,12 @@ export function NearAccountProof({
     setBusy(true);
     setNotice(null);
     try {
-      const chosen = await connectWallet();
-      const challenge = await contributorChallengeAction(chosen);
-      if (!challenge.ok) {
-        setNotice({ tone: "error", text: challenge.message });
+      const signed = await proveAccountWithWallet(contributorChallengeAction);
+      if (!signed.ok) {
+        setNotice({ tone: "error", text: signed.message });
         return;
       }
-      const proof = await signChallenge(challenge.value);
-      const result = await proveContributorAction(proof);
+      const result = await proveContributorAction(signed.proof);
       setNotice(
         result.ok
           ? { tone: "success", text: `Signed. ${result.value.accountId} is proven to be yours.` }
