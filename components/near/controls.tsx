@@ -15,12 +15,7 @@ import {
   refreshIssuerAction,
   revokeAction,
 } from "@/server/actions/near";
-import {
-  callContract,
-  requireAccount,
-  proveAccountWithWallet,
-  walletErrorMessage,
-} from "./wallet";
+import { callContract, requireAccount, proveAccountWithWallet, walletErrorMessage } from "./wallet";
 import { Spinner } from "@/components/ui/busy";
 
 /** Covers storage for one token; the contract refunds what it does not use. */
