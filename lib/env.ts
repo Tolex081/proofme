@@ -43,7 +43,7 @@ const envSchema = z
     // Without a key, the agent runs its source checks only.
     NEAR_AI_API_KEY: z.string().min(1).optional(),
     NEAR_AI_BASE_URL: z.url().default("https://cloud-api.near.ai/v1"),
-    NEAR_AI_MODEL: z.string().min(1).default("deepseek-ai/DeepSeek-V3.1"),
+    NEAR_AI_MODEL: z.string().min(1).default("zai-org/GLM-5.1-FP8"),
   })
   .superRefine((value, context) => {
     if (value.APP_ENV === "local") return;

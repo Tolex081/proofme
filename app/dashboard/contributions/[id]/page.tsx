@@ -6,7 +6,10 @@ import { Suspense } from "react";
 
 import { DeleteDraftButton, PublishButton } from "@/components/contributions/record-actions";
 import { STATUS_INFO, StatusChip } from "@/components/contributions/status";
+import { InvestigateButton } from "@/components/evidence/parts";
+import { EvidenceReportView } from "@/components/evidence/report";
 import { PublishConsent } from "@/components/near/account-proof";
+import { latestReportForContributor } from "@/server/services/evidence-agent";
 import { PageSkeleton, Panel } from "@/components/workspace/parts";
 import { requireWorkspace } from "@/lib/auth/guards";
 import { isContributionEditable } from "@/lib/domain/status";
@@ -74,6 +77,7 @@ async function DetailContent({
 
   const editable = isContributionEditable(contribution.status);
   const history = await contributorReviewHistory(db, user.id, contribution.id);
+  const report = await latestReportForContributor(db, user.id, contribution.id);
   const requests = history?.requests ?? [];
   const current = requests.at(-1) ?? null;
   const lastMessage = (kind: string) =>
@@ -215,6 +219,15 @@ async function DetailContent({
                 ))}
               </ul>
             )}
+          </Panel>
+          <Panel
+            title="Evidence investigation"
+            intro="ProofMe's Evidence Agent checks your GitHub links against GitHub itself and against your linked GitHub account, then explains what they do and do not show. The organisation's reviewer sees the latest report. It never approves anything; the reviewer decides."
+          >
+            <div className="grid gap-5">
+              <InvestigateButton contributionId={contribution.id} />
+              {report ? <EvidenceReportView view={report} /> : null}
+            </div>
           </Panel>
         </div>
 

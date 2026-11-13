@@ -2,23 +2,30 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { IdentityForm } from "@/components/account/forms";
+import { GitHubIdentityPanel } from "@/components/evidence/parts";
 import { NearAccountProof } from "@/components/near/account-proof";
+import { isGitHubLinkingConfigured } from "@/lib/evidence/server";
+import { listGitHubIdentities } from "@/server/services/github-identity";
 import { PageHeading, PageSkeleton, Panel } from "@/components/workspace/parts";
 import { requireWorkspace } from "@/lib/auth/guards";
 
 export const metadata: Metadata = { title: "Identity" };
 
-export default function Identity() {
+export default function Identity({ searchParams }: PageProps<"/dashboard/identity">) {
   return (
     <Suspense fallback={<PageSkeleton />}>
-      <IdentityContent />
+      <IdentityContent searchParams={searchParams} />
     </Suspense>
   );
 }
 
-async function IdentityContent() {
-  const { profile } = await requireWorkspace("/dashboard/identity");
+async function IdentityContent({
+  searchParams,
+}: Pick<PageProps<"/dashboard/identity">, "searchParams">) {
+  const { github } = await searchParams;
+  const { profile, user, db } = await requireWorkspace("/dashboard/identity");
   const links = profile.socialLinks;
+  const identities = await listGitHubIdentities(db, user.id);
 
   return (
     <>
@@ -38,6 +45,16 @@ async function IdentityContent() {
               linkedin: links.linkedin ?? "",
               other: links.other ?? "",
             }}
+          />
+        </Panel>
+        <Panel
+          title="GitHub"
+          intro="Link the GitHub account your work is under. ProofMe signs you in with GitHub and keeps only GitHub's numeric account ID and username; it requests no access to your repositories. One GitHub account can belong to only one ProofMe account, and it stays reserved for you even if you disconnect it."
+        >
+          <GitHubIdentityPanel
+            identities={identities}
+            configured={isGitHubLinkingConfigured()}
+            outcome={typeof github === "string" ? github : null}
           />
         </Panel>
         <Panel

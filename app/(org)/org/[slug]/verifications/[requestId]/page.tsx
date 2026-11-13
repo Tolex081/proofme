@@ -9,6 +9,8 @@ import { PageSkeleton, Panel } from "@/components/workspace/parts";
 import { requireOrganisation } from "@/lib/auth/org-guard";
 import { CATEGORY_LABELS, EVIDENCE_TYPE_LABELS } from "@/lib/validation/contribution";
 import { getRequestForReviewer } from "@/server/services/verification";
+import { EvidenceReportView } from "@/components/evidence/report";
+import { latestReportForReviewer } from "@/server/services/evidence-agent";
 
 export const metadata: Metadata = { title: "Review a claim" };
 
@@ -53,6 +55,7 @@ async function Content({
     `/org/${slug}/verifications/${requestId}`,
   );
   const view = await getRequestForReviewer(db, user.id, organisation.id, requestId);
+  const report = await latestReportForReviewer(db, user.id, requestId);
   // Wrong organisation, no reviewing role, or no such request: all look the same.
   if (!view) notFound();
   const { contribution } = view;
@@ -146,6 +149,19 @@ async function Content({
                 </li>
               ))}
             </ul>
+          </Panel>
+
+          <Panel
+            title="Evidence investigation"
+            intro="What ProofMe's Evidence Agent found when it checked these links against GitHub and the contributor's linked GitHub account. Source checks are facts from GitHub; AI findings are interpretations. You decide."
+          >
+            {report ? (
+              <EvidenceReportView view={report} />
+            ) : (
+              <p className="text-muted">
+                The contributor has not run an investigation. Judge the links yourself.
+              </p>
+            )}
           </Panel>
 
           {view.history.length > 0 ? (
