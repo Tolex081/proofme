@@ -99,3 +99,18 @@ describe("NEP-413 signed messages", () => {
     );
   });
 });
+
+describe("keys whose first byte is zero", () => {
+  it("still verify (Base58 keeps leading zero bytes as '1')", () => {
+    // Search for a key starting with a zero byte; about 1 in 256 do.
+    for (let attempt = 0; attempt < 5000; attempt += 1) {
+      const key = wallet();
+      if (!key.publicKey.startsWith("ed25519:1")) continue;
+      expect(
+        verifyNep413Signature({ payload, publicKey: key.publicKey, signature: key.sign(payload) }),
+      ).toBe(true);
+      return;
+    }
+    throw new Error("no key with a leading zero byte found");
+  });
+});

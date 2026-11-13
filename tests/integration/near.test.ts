@@ -157,6 +157,11 @@ function base58(bytes: Buffer): string {
     out = ALPHABET[Number(number % BigInt(58))] + out;
     number /= BigInt(58);
   }
+  // Base58 writes each leading zero byte as "1".
+  for (const byte of bytes) {
+    if (byte !== 0) break;
+    out = "1" + out;
+  }
   return out;
 }
 
