@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { LoginForm } from "@/components/auth/auth-forms";
 import { AuthShell } from "@/components/auth/auth-shell";
@@ -11,7 +12,14 @@ export default function Login() {
   return (
     <AuthShell
       title="Welcome back."
-      footnote="Forgotten your password? Resetting it needs an email service, which this early build does not have yet."
+      footnote={
+        <>
+          Forgotten your password?{" "}
+          <Link href="/forgot-password" className="text-link">
+            Reset it by email
+          </Link>
+        </>
+      }
     >
       <LoginForm />
     </AuthShell>

@@ -6,13 +6,32 @@ import { nextCookies } from "better-auth/next-js";
 
 import { getDbHandle } from "../db/client";
 import * as schema from "../db/schema";
+import { passwordResetEmail, sendEmail, verificationEmail, type EmailConfig } from "../email/send";
 import { getEnv } from "../env";
 
 export const PASSWORD_MIN_LENGTH = 10;
 export const PASSWORD_MAX_LENGTH = 128;
 
+/** Whether password reset and verification emails can be sent on this deployment. */
+export function isEmailConfigured(): boolean {
+  const env = getEnv();
+  return Boolean(env.BREVO_API_KEY && env.EMAIL_FROM);
+}
+
 function createAuth() {
   const env = getEnv();
+  const email: EmailConfig | null =
+    env.BREVO_API_KEY && env.EMAIL_FROM
+      ? { apiKey: env.BREVO_API_KEY, from: env.EMAIL_FROM, fromName: "ProofMe" }
+      : null;
+  // Sent without waiting, so how long a request takes never reveals whether
+  // an account exists. Failures are logged without the address or link.
+  const deliver = (message: Parameters<typeof sendEmail>[1]) => {
+    if (!email) return;
+    void sendEmail(email, message).catch((error: unknown) => {
+      console.error("Account email not sent:", error instanceof Error ? error.message : "unknown");
+    });
+  };
 
   return betterAuth({
     appName: "ProofMe",
@@ -24,10 +43,25 @@ function createAuth() {
       enabled: true,
       minPasswordLength: PASSWORD_MIN_LENGTH,
       maxPasswordLength: PASSWORD_MAX_LENGTH,
-      // No email provider is configured yet, so verification and password
-      // reset emails cannot be sent. Both are enabled when one is.
+      // Verification is sent but never blocks sign-in (decided for the
+      // hackathon: a judge whose email lands in spam can still get in).
       requireEmailVerification: false,
+      resetPasswordTokenExpiresIn: 60 * 60,
+      // A reset signs out every other session on the account.
+      revokeSessionsOnPasswordReset: true,
+      sendResetPassword: email
+        ? async ({ user, url }) => deliver(passwordResetEmail(user.email, url))
+        : undefined,
     },
+
+    emailVerification: email
+      ? {
+          sendOnSignUp: true,
+          autoSignInAfterVerification: true,
+          sendVerificationEmail: async ({ user, url }) =>
+            deliver(verificationEmail(user.email, url)),
+        }
+      : undefined,
 
     user: {
       additionalFields: {
@@ -77,6 +111,9 @@ function createAuth() {
       customRules: {
         "/sign-in/email": { window: 60, max: 5 },
         "/sign-up/email": { window: 60 * 60, max: 10 },
+        "/request-password-reset": { window: 60 * 60, max: 5 },
+        "/reset-password": { window: 60 * 60, max: 10 },
+        "/send-verification-email": { window: 60 * 60, max: 5 },
       },
     },
 

@@ -13,7 +13,7 @@ export default function Register() {
     <AuthShell
       title="Start your record."
       intro="It takes a minute. You can add the details later."
-      footnote="Email verification and password reset need an email service, which this early build does not have yet. Keep your password somewhere safe."
+      footnote="We send one email to confirm your address, so you can reset your password if you forget it. Your email is never shown on your profile or put on NEAR."
     >
       <RegisterForm />
     </AuthShell>

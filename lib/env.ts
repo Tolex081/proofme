@@ -44,6 +44,10 @@ const envSchema = z
     NEAR_AI_API_KEY: z.string().min(1).optional(),
     NEAR_AI_BASE_URL: z.url().default("https://cloud-api.near.ai/v1"),
     NEAR_AI_MODEL: z.string().min(1).default("zai-org/GLM-5.1-FP8"),
+    // Brevo transactional email for password reset and email verification.
+    // EMAIL_FROM must be a sender address verified in Brevo.
+    BREVO_API_KEY: z.string().min(10).optional(),
+    EMAIL_FROM: z.email().optional(),
   })
   .superRefine((value, context) => {
     if (value.APP_ENV === "local") return;
@@ -92,6 +96,8 @@ const KEYS = [
   "NEAR_AI_API_KEY",
   "NEAR_AI_BASE_URL",
   "NEAR_AI_MODEL",
+  "BREVO_API_KEY",
+  "EMAIL_FROM",
 ] as const;
 
 export function parseEnv(source: Record<string, string | undefined>): Env {

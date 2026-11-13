@@ -6,6 +6,7 @@ import { DeleteAccountForm, PrivacyForm, ProfileForm } from "@/components/accoun
 import { PageHeading, PageSkeleton, Panel } from "@/components/workspace/parts";
 import { requireWorkspace } from "@/lib/auth/guards";
 import { sectionVisibilityOf } from "@/server/services/profile";
+import { ResendVerification } from "@/components/auth/auth-forms";
 
 export const metadata: Metadata = { title: "Settings" };
 
@@ -51,11 +52,22 @@ async function SettingsContent() {
             <div>
               <dt className="text-meta font-semibold text-muted">Email</dt>
               <dd className="mt-0.5 font-semibold break-all">{user.email}</dd>
+              <dd className="mt-2">
+                {user.emailVerified ? (
+                  <span className="chip chip-ok">Confirmed</span>
+                ) : (
+                  <ResendVerification email={user.email} />
+                )}
+              </dd>
             </div>
             <div>
               <dt className="text-meta font-semibold text-muted">Password</dt>
               <dd className="mt-0.5 text-muted">
-                Changing or resetting it needs an email service, which this build does not have yet.
+                Forgotten it? Sign out and use{" "}
+                <a href="/forgot-password" className="text-link">
+                  Reset it by email
+                </a>{" "}
+                on the sign-in page.
               </dd>
             </div>
           </dl>
