@@ -180,6 +180,19 @@ chooses with the theme switch, and the choice is remembered on that device.
 - Pill-shaped buttons and status chips.
 - Status is always a symbol plus words in a reserved colour.
 
+## Landing page photography
+
+The homepage adds an editorial, documentary layer without changing the signed-in workspace or
+the rest of the product UI. A monochrome craft photograph grounds the hero in the real act of
+making; a three-part strip connects the issuer's mark and a handwritten approval to Atesta's
+checkable contribution record. The final panel is actual product language and sample UI, not a
+claim that the first two photos document Atesta's history.
+
+Use people doing real work, and physical records where the copy refers to approval. Avoid generic
+technology imagery, abstract blockchain art, and implying that Atesta is an old institution.
+Images are local, compressed WebP assets in `public/images`; their Unsplash photographer credits
+and license are listed in the README.
+
 ## Colors
 
 ### Primary

@@ -9,6 +9,7 @@ import {
   UserRoundCheck,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 import { SampleCredit } from "@/components/marketing/sample-credit";
@@ -58,43 +59,131 @@ const DOES_NOT_PROVE = [
 
 export default function Home() {
   return (
-    <>
+    <div className="site-home">
       {/* Hero: the promise, and a sample of what a Atesta record looks like. */}
-      <section className="column grid items-center gap-12 pt-6 pb-20 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pt-12 lg:pb-28">
-        <div className="rise">
-          <h1 className="text-display leading-[0.98] font-extrabold tracking-[-0.045em]">
-            Your work, <span className="marker">confirmed</span> by the people who saw it.
-          </h1>
-          <p className="mt-6 max-w-[34rem] text-lead text-muted">
-            One portable record of what you built across every DAO, protocol and project. Each piece
-            is confirmed by the team behind it, so anyone can trust it, and check it.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/register" className="action action-primary">
-              Start your record
-            </Link>
-            <a href="#check" className="action action-secondary">
-              Check a sample record
-            </a>
+      <section className="site-hero">
+        <Image
+          className="site-hero-image"
+          src="/images/atesta-workbench.webp"
+          alt="A craftsperson concentrating on work at a bench"
+          fill
+          priority
+          sizes="100vw"
+        />
+        <div className="site-hero-inner column grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+          <div className="site-hero-copy rise">
+            <h1 className="text-display leading-[0.98] font-extrabold tracking-[-0.045em]">
+              Your work, <span className="marker">confirmed</span> by the people who saw it.
+            </h1>
+            <p className="mt-6 text-lead">
+              Atesta helps contributors carry credible records of what they built, and lets anyone
+              check who approved the work.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/register" className="action action-primary">
+                Start your record
+              </Link>
+              <a href="#check" className="action action-secondary">
+                Check a sample record
+              </a>
+            </div>
+            <ul className="promise-list mt-8 flex flex-wrap gap-x-6 gap-y-2 text-note">
+              {PROMISES.map((promise) => (
+                <li key={promise} className="inline-flex items-center gap-2">
+                  <CircleCheck
+                    aria-hidden="true"
+                    size={17}
+                    strokeWidth={2.25}
+                    className="text-ok-ink"
+                  />
+                  {promise}
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-note text-muted">
-            {PROMISES.map((promise) => (
-              <li key={promise} className="inline-flex items-center gap-2">
-                <CircleCheck
-                  aria-hidden="true"
-                  size={17}
-                  strokeWidth={2.25}
-                  className="text-ok-ink"
-                />
-                {promise}
-              </li>
-            ))}
-          </ul>
+          <div className="site-hero-preview rise">
+            <SampleTimeline />
+          </div>
         </div>
+      </section>
 
-        <div className="rise lg:pl-4">
-          <SampleTimeline />
-        </div>
+      <section className="history-strip column" aria-labelledby="history-title">
+        <header className="mb-10 lg:mb-12">
+          <h2 id="history-title" className="text-heading leading-[1.04]">
+            The tools change. Accountability travels.
+          </h2>
+          <p className="mt-5 max-w-[42rem] text-lead text-muted">
+            A mark once showed who stood behind a piece of work. A signature carried that approval
+            forward. Atesta gives approved contributions a portable record that anyone can check.
+          </p>
+        </header>
+        <ol className="grid gap-4 lg:grid-cols-3">
+          <li className="history-item card history-item--mark">
+            <div className="history-photo">
+              <Image
+                src="/images/atesta-makers-mark.webp"
+                alt="Travel document bearing official entry stamps"
+                width={1600}
+                height={1067}
+                sizes="(min-width: 1024px) 33vw, 100vw"
+              />
+            </div>
+            <div className="history-copy">
+              <h3 className="text-title">A mark made its issuer visible.</h3>
+              <p className="mt-2 text-note text-muted">
+                A visible sign could tell the next person that someone had reviewed and approved.
+              </p>
+            </div>
+          </li>
+          <li className="history-item card history-item--signature">
+            <div className="history-photo">
+              <Image
+                src="/images/atesta-signature.webp"
+                alt="A person signing a document by hand"
+                width={1600}
+                height={1067}
+                sizes="(min-width: 1024px) 33vw, 100vw"
+              />
+            </div>
+            <div className="history-copy">
+              <h3 className="text-title">A signature made it portable.</h3>
+              <p className="mt-2 text-note text-muted">
+                Approval could travel with the work, attributed to the person who gave it.
+              </p>
+            </div>
+          </li>
+          <li className="history-item card">
+            <div className="history-product">
+              <div className="history-product-card">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-label uppercase tracking-[0.14em]">Atesta · sample</p>
+                    <h3 className="mt-2 font-display text-title font-bold text-white">
+                      Contribution record
+                    </h3>
+                  </div>
+                  <span className="status">Organisation approved</span>
+                </div>
+                <p className="mt-5 text-note">
+                  Open the record. Recompute its fingerprint. Check the NEAR testnet entry.
+                </p>
+                <a
+                  href="#check"
+                  className="mt-5 inline-flex items-center gap-2 font-semibold text-[#d8f37d] underline underline-offset-4"
+                >
+                  Try the sample check <ArrowRight aria-hidden="true" size={16} />
+                </a>
+              </div>
+            </div>
+            <div className="history-copy">
+              <h3 className="text-title">Now anyone can check the record.</h3>
+              <p className="mt-2 text-note text-muted">
+                Atesta links the approved description to an organisation and a public NEAR testnet
+                anchor.
+              </p>
+            </div>
+          </li>
+        </ol>
       </section>
 
       {/* The working check. */}
@@ -231,6 +320,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

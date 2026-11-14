@@ -196,6 +196,16 @@ near-sdk (Rust), Pinata (IPFS), NEAR AI Cloud, Brevo (email), Vercel. Code was w
 assistance (Claude Code). The whole repository was created during the hackathon window: the first
 commit is 9 November 2026.
 
+## Photography credits
+
+The homepage uses documentary-style photographs to connect contribution, endorsement and
+checkable records. Photos are used under the [Unsplash License](https://unsplash.com/license);
+attribution is included here in appreciation.
+
+- Hero, craftsperson at a workbench — [GN Group on Unsplash](https://unsplash.com/photos/a-woman-working-with-tools-at-a-workbench-rYLgVzL8G24)
+- Issuer's mark, stamped travel document — [Global Residence Index on Unsplash](https://unsplash.com/photos/a-close-up-of-a-piece-of-paper-with-stamps-on-it-yMhTgr2zdVM)
+- Signature, hand signing a document — [Shutter Speed on Unsplash](https://unsplash.com/photos/hand-writing-with-a-fountain-pen-on-paper-rz_0EzMAmis)
+
 ## Documents
 
 [PRODUCT.md](PRODUCT.md) (what and why, issuer policy) ·

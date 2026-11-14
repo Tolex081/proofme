@@ -521,6 +521,86 @@
   }
 }
 
+/* Landing page atmosphere: documentary photography, with product UI kept clear. */
+@layer components {
+  .site-home { overflow: clip; }
+
+  .site-hero {
+    position: relative;
+    isolation: isolate;
+    min-height: min(780px, calc(100svh - 5rem));
+    display: grid;
+    align-items: center;
+    overflow: hidden;
+    color: #fff;
+    background: #141516;
+  }
+
+  .site-hero-image {
+    position: absolute;
+    z-index: -2;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 78%;
+    filter: grayscale(1) contrast(1.08);
+  }
+
+  .site-hero::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background: linear-gradient(90deg, rgb(7 9 12 / 0.9) 0%, rgb(7 9 12 / 0.66) 46%, rgb(7 9 12 / 0.26) 100%), linear-gradient(0deg, rgb(7 9 12 / 0.48), transparent 50%);
+  }
+
+  .site-hero-inner { width: 100%; padding-block: clamp(4.5rem, 9vw, 8rem); }
+  .site-hero-copy { max-width: 42rem; }
+  .site-hero h1 { max-width: 10ch; color: #fff; }
+  .site-hero .marker { background: #d8f37d; color: #17212b; border-radius: 0.2em; }
+  .site-hero-copy > p { max-width: 35rem; color: rgb(255 255 255 / 0.82); }
+  .site-hero .promise-list { color: rgb(255 255 255 / 0.82); }
+  .site-hero .promise-list svg { color: #d8f37d; }
+  .site-hero .action-primary { background: #d8f37d; color: #17212b; }
+  .site-hero .action-primary:hover:not([disabled]) { background: #efffb5; color: #17212b; }
+  .site-hero .action-secondary { border-color: rgb(255 255 255 / 0.55); background: rgb(255 255 255 / 0.08); color: #fff; }
+  .site-hero .action-secondary:hover:not([disabled]) { background: rgb(255 255 255 / 0.18); }
+  .site-hero-preview { max-width: 34rem; justify-self: end; }
+  .site-hero-preview .card { color: var(--ink); }
+
+  .site-home section:not(.site-hero) { scroll-margin-top: 1.5rem; }
+  .site-home section > div > h2 { max-width: 18ch; }
+  .history-strip { padding-block: clamp(4rem, 7vw, 6rem); }
+  .history-strip > header { max-width: 46rem; }
+  .history-item { overflow: hidden; }
+  .history-photo { position: relative; overflow: hidden; height: 16rem; background: #242424; }
+  .history-photo img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.08); transition: transform 360ms var(--ease-out); }
+  .history-item:hover .history-photo img { transform: scale(1.025); }
+  .history-copy { padding: 1.25rem 1.5rem 1.5rem; }
+  .history-item:nth-child(1) .history-photo img { object-position: 55% 60%; }
+  .history-item:nth-child(2) .history-photo img { object-position: 50% 46%; }
+  .history-item:nth-child(3) .history-photo img { object-position: 50% 50%; }
+  .history-product { min-height: 16rem; display: grid; place-items: center; padding: 1.25rem; background: #141516; }
+  .history-product-card { width: 100%; max-width: 22rem; border: 1px solid rgb(255 255 255 / 0.18); border-radius: 1.2rem; background: #202126; padding: 1.25rem; color: #fff; box-shadow: 0 20px 34px rgb(0 0 0 / 0.25); }
+  .history-product-card .status { display: inline-flex; align-items: center; gap: .45rem; border-radius: 999px; background: #d8f37d; padding: .35rem .65rem; color: #17212b; font-size: .75rem; font-weight: 700; }
+  .history-product-card p { color: rgb(255 255 255 / .72); }
+
+  .site-header {
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+    background: color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter: blur(14px);
+  }
+
+  @media (max-width: 640px) {
+    .site-hero { min-height: calc(100svh - 5rem); }
+    .site-hero::after { background: linear-gradient(180deg, rgb(7 9 12 / 0.48), rgb(7 9 12 / 0.86)); }
+    .site-hero-inner { padding-block: 4rem 3.5rem; }
+    .site-hero-preview { justify-self: stretch; }
+    .history-photo { min-height: 13rem; height: 13rem; }
+  }
+}
+
 /*
  * Motion. Content is visible by default; these only move things, and only
  * when the visitor has not asked for reduced motion.

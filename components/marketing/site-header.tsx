@@ -73,7 +73,7 @@ export function SiteHeader() {
   }, [open]);
 
   return (
-    <header className="relative z-20">
+    <header className="site-header relative z-20">
       <a
         href="#main"
         className="action action-primary absolute top-2 left-2 -translate-y-24 focus-visible:translate-y-0"
