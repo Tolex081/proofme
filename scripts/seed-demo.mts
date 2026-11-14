@@ -37,7 +37,7 @@ if (appEnv() === "production") {
 }
 
 const DOMAIN = "demo.proofme.test";
-const SAMPLE = "Sample account for the ProofMe demo. This person is fictional.";
+const SAMPLE = "Sample account for the Atesta demo. This person is fictional.";
 const password = process.env.DEMO_PASSWORD || `demo-${randomBytes(9).toString("base64url")}`;
 if (password.length < 10) {
   console.error("DEMO_PASSWORD must be at least 10 characters.");
@@ -85,7 +85,7 @@ async function person(
 }
 
 /**
- * Demo only: ProofMe's verification of the fictional Northstar Protocol, so
+ * Demo only: Atesta's verification of the fictional Northstar Protocol, so
  * the demo organisation can pass the issuer policy. On a real deployment this
  * is a platform administrator's decision (/admin/organisations). Idempotent;
  * leaves an audit entry saying it came from the demo seed.
@@ -160,7 +160,7 @@ async function seed(db: Database) {
       slug: "northstar-protocol",
       category: "web3_protocol",
       description:
-        "Demo organisation. Northstar Protocol is fictional and is not a ProofMe partner; it exists to show how review works.",
+        "Demo organisation. Northstar Protocol is fictional and is not a Atesta partner; it exists to show how review works.",
       websiteUrl: "https://example.org/northstar-demo",
     }),
   );

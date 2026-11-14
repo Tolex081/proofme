@@ -1,5 +1,5 @@
 /**
- * Sending ProofMe's account emails (password reset, email verification)
+ * Sending Atesta's account emails (password reset, email verification)
  * through Brevo's transactional email API.
  *
  * Only these two kinds of email exist. Nothing marketing, nothing tracked.
@@ -65,7 +65,7 @@ function escape(value: string): string {
 function layout(heading: string, intro: string, button: string, url: string, after: string) {
   const html = `<!doctype html><html><body style="margin:0;background:#fbf8f3;font-family:Segoe UI,Helvetica,Arial,sans-serif;color:#1d1d2b">
 <div style="max-width:520px;margin:0 auto;padding:32px 24px">
-<p style="font-weight:800;font-size:20px;margin:0 0 24px">ProofMe</p>
+<p style="font-weight:800;font-size:20px;margin:0 0 24px">Atesta</p>
 <h1 style="font-size:24px;margin:0 0 12px">${escape(heading)}</h1>
 <p style="font-size:16px;line-height:1.5;margin:0 0 24px">${escape(intro)}</p>
 <p style="margin:0 0 24px"><a href="${escape(url)}" style="display:inline-block;background:#2f54eb;color:#fff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:999px">${escape(button)}</a></p>
@@ -79,13 +79,13 @@ function layout(heading: string, intro: string, button: string, url: string, aft
 export function passwordResetEmail(to: string, url: string): EmailMessage {
   return {
     to,
-    subject: "Reset your ProofMe password",
+    subject: "Reset your Atesta password",
     ...layout(
       "Reset your password",
-      "Someone asked to reset the password for this ProofMe account. If it was you, choose a new one with the link below. It works once and expires in one hour.",
+      "Someone asked to reset the password for this Atesta account. If it was you, choose a new one with the link below. It works once and expires in one hour.",
       "Choose a new password",
       url,
-      "If you did not ask for this, ignore this email; your password stays the same. ProofMe will never ask for your password, seed phrase or keys by email.",
+      "If you did not ask for this, ignore this email; your password stays the same. Atesta will never ask for your password, seed phrase or keys by email.",
     ),
   };
 }
@@ -93,13 +93,13 @@ export function passwordResetEmail(to: string, url: string): EmailMessage {
 export function verificationEmail(to: string, url: string): EmailMessage {
   return {
     to,
-    subject: "Confirm your email for ProofMe",
+    subject: "Confirm your email for Atesta",
     ...layout(
       "Confirm your email",
       "Confirm that this address belongs to you, so you can reset your password if you ever need to.",
       "Confirm my email",
       url,
-      "If you did not create a ProofMe account, ignore this email.",
+      "If you did not create a Atesta account, ignore this email.",
     ),
   };
 }
@@ -109,16 +109,16 @@ export function verificationCodeEmail(to: string, code: string): EmailMessage {
   const digits = code.replace(/\D/g, "").slice(0, 8);
   const html = `<!doctype html><html><body style="margin:0;background:#fbf8f3;font-family:Segoe UI,Helvetica,Arial,sans-serif;color:#1d1d2b">
 <div style="max-width:520px;margin:0 auto;padding:32px 24px">
-<p style="font-weight:800;font-size:20px;margin:0 0 24px">ProofMe</p>
+<p style="font-weight:800;font-size:20px;margin:0 0 24px">Atesta</p>
 <h1 style="font-size:24px;margin:0 0 12px">Confirm your email</h1>
-<p style="font-size:16px;line-height:1.5;margin:0 0 20px">Enter this code on ProofMe to finish creating your account. It expires in 10 minutes.</p>
+<p style="font-size:16px;line-height:1.5;margin:0 0 20px">Enter this code on Atesta to finish creating your account. It expires in 10 minutes.</p>
 <p style="font-size:36px;font-weight:800;letter-spacing:10px;margin:0 0 24px;font-family:Consolas,Menlo,monospace">${digits}</p>
-<p style="font-size:14px;line-height:1.5;color:#5b5b6b;margin:0">If you did not create a ProofMe account, ignore this email. ProofMe will never ask for your password, seed phrase or keys.</p>
+<p style="font-size:14px;line-height:1.5;color:#5b5b6b;margin:0">If you did not create a Atesta account, ignore this email. Atesta will never ask for your password, seed phrase or keys.</p>
 </div></body></html>`;
   return {
     to,
-    subject: `${digits} is your ProofMe code`,
-    text: `Confirm your email\n\nYour ProofMe code is ${digits}. It expires in 10 minutes.\n\nIf you did not create a ProofMe account, ignore this email.\n`,
+    subject: `${digits} is your Atesta code`,
+    text: `Confirm your email\n\nYour Atesta code is ${digits}. It expires in 10 minutes.\n\nIf you did not create a Atesta account, ignore this email.\n`,
     html,
   };
 }

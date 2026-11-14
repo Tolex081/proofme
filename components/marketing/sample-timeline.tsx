@@ -36,7 +36,7 @@ const ENTRIES = [
 
 export function SampleTimeline() {
   return (
-    <figure className="card relative p-6 sm:p-8" aria-label="A sample ProofMe profile">
+    <figure className="card relative p-6 sm:p-8" aria-label="A sample Atesta profile">
       <figcaption className="absolute -top-3.5 right-6 rounded-full bg-ink px-3.5 py-1.5 text-label font-semibold text-canvas">
         Sample profile
       </figcaption>

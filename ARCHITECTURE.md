@@ -1,4 +1,4 @@
-# ProofMe — Architecture
+# Atesta — Architecture
 
 Status: 13 November 2026. Describes the code as built.
 
@@ -107,7 +107,7 @@ issuer signs `supersede(old_token_id, token_id, digest, reference)` and the serv
 
 ```text
 contributor links GitHub (OAuth, no scopes, state + PKCE) → identity = GitHub numeric ID (unique)
-contributor presses "Investigate with ProofMe"
+contributor presses "Investigate with Atesta"
   → each evidence link parsed (github.com only) → read-only calls to api.github.com
   → layer A: existence, author / committer / reviewer / merger / assignee, attribution against the
      linked numeric ID, signature, duplicate and conflicting use of the same resource

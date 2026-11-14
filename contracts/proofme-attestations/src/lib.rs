@@ -1,4 +1,4 @@
-//! ProofMe attestations.
+//! Atesta attestations.
 //!
 //! Each approved contribution is issued as an NFT (NEP-171, with NEP-177
 //! metadata and NEP-181 enumeration) that behaves like a credential:
@@ -15,7 +15,7 @@
 //! - **It points at its own public record.** NEP-177 `reference` holds the
 //!   address of the public credential document (an `ipfs://` CID) and
 //!   `reference_hash` its Base64 SHA-256, so anyone can fetch and check the
-//!   credential without ProofMe.
+//!   credential without Atesta.
 //!
 //! Privacy: the chain holds the attestation ID, the SHA-256 digest of the
 //! canonical record, the two accounts, the status and the address of the
@@ -67,7 +67,7 @@ pub enum IssuerStatus {
 #[near(serializers = [borsh, json])]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Issuer {
-    /// ProofMe's identifier for the organisation this account speaks for.
+    /// Atesta's identifier for the organisation this account speaks for.
     pub organisation_id: String,
     pub status: IssuerStatus,
     /// Milliseconds since the Unix epoch.
@@ -422,7 +422,7 @@ impl Contract {
         approval_id: Option<u64>,
         memo: Option<String>,
     ) {
-        env::panic_str("ProofMe attestations cannot be transferred");
+        env::panic_str("Atesta attestations cannot be transferred");
     }
 
     /// Always fails: an attestation belongs to the account that earned it.
@@ -436,7 +436,7 @@ impl Contract {
         memo: Option<String>,
         msg: String,
     ) -> bool {
-        env::panic_str("ProofMe attestations cannot be transferred");
+        env::panic_str("Atesta attestations cannot be transferred");
     }
 
     pub fn nft_token(&self, token_id: TokenId) -> Option<Token> {
@@ -448,7 +448,7 @@ impl Contract {
     pub fn nft_metadata(&self) -> NftContractMetadata {
         NftContractMetadata {
             spec: NFT_METADATA_SPEC.to_string(),
-            name: "ProofMe attestations".to_string(),
+            name: "Atesta attestations".to_string(),
             symbol: "PROOF".to_string(),
             icon: Some(ICON.to_string()),
             base_uri: self.base_uri.clone(),
@@ -667,8 +667,8 @@ impl Contract {
             owner_id: view.owner_id,
             metadata: TokenMetadata {
                 title: Some(match view.status {
-                    AttestationStatus::Active => "ProofMe attestation".to_string(),
-                    _ => format!("ProofMe attestation ({status})"),
+                    AttestationStatus::Active => "Atesta attestation".to_string(),
+                    _ => format!("Atesta attestation ({status})"),
                 }),
                 description: Some(format!(
                     "A work record issued by {}. Status: {}. It cannot be transferred.",
@@ -793,7 +793,7 @@ fn badge_hash(status: AttestationStatus) -> &'static str {
     }
 }
 
-/// The ProofMe mark: a white check on a blue rounded square.
+/// The Atesta mark: a white check on a blue rounded square.
 const ICON: &str = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%232F54EB'/%3E%3Cpath d='M9.5 16.5l4.2 4.2 8.8-9.4' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
 
 #[cfg(test)]

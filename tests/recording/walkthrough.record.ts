@@ -35,7 +35,7 @@ test("record the full walkthrough", async ({ page }) => {
       await expect(page).toHaveURL(/\/onboarding$/);
       await r.type(page.getByLabel("Name on your profile"), "Grace Mensah", 20);
       await r.type(page.getByLabel("Username"), "grace-mensah", 20);
-      await r.type(page.getByLabel("Short bio"), "Sample account for the ProofMe demo.", 14);
+      await r.type(page.getByLabel("Short bio"), "Sample account for the Atesta demo.", 14);
       await r.click(page.getByRole("button", { name: "Finish setting up" }));
       await expect(page).toHaveURL(/\/dashboard\?welcome=1$/);
       await page.goto("/dashboard/settings#privacy");

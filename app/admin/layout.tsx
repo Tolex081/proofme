@@ -7,7 +7,7 @@ import { AccountMenu } from "@/components/workspace/shell";
 import { requireAdmin } from "@/lib/auth/admin-guard";
 
 export const metadata: Metadata = {
-  title: { template: "%s · ProofMe admin", default: "ProofMe admin" },
+  title: { template: "%s · Atesta admin", default: "Atesta admin" },
   robots: { index: false, follow: false },
 };
 

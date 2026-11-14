@@ -11,7 +11,7 @@ import {
 } from "@/server/services/github-identity";
 
 /**
- * GitHub sends the user back here. The ProofMe user comes from the session,
+ * GitHub sends the user back here. The Atesta user comes from the session,
  * the state must be this user's unused one, the code is exchanged on the
  * server with the PKCE verifier, and the account linked is whatever GitHub
  * reports for that token. Nothing in the query string names an account.

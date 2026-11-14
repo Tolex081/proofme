@@ -51,14 +51,14 @@ test.describe("organisations, projects and teams", () => {
     const slug = `north-${randomUUID().slice(0, 6)}`;
     await createOrganisation(page, "Northstar Test", slug);
 
-    await expect(page.getByText("Not reviewed by ProofMe").first()).toBeVisible();
+    await expect(page.getByText("Not reviewed by Atesta").first()).toBeVisible();
     await expect(page.getByText("No NEAR issuer yet").first()).toBeVisible();
 
-    await page.getByRole("button", { name: "Ask ProofMe to review us" }).click();
+    await page.getByRole("button", { name: "Ask Atesta to review us" }).click();
     // The page refreshes and the request button gives way to the pending badge.
-    await expect(page.getByText("ProofMe review pending").first()).toBeVisible();
+    await expect(page.getByText("Atesta review pending").first()).toBeVisible();
     await page.reload();
-    await expect(page.getByText("ProofMe review pending").first()).toBeVisible();
+    await expect(page.getByText("Atesta review pending").first()).toBeVisible();
 
     await page.goto(`/org/${slug}/projects/new`);
     await page.getByRole("textbox", { name: "Project name" }).fill("Open Grants Portal");
@@ -72,7 +72,7 @@ test.describe("organisations, projects and teams", () => {
     const visitor = await (await page.context().browser()!.newContext()).newPage();
     await visitor.goto(`/org/${slug}`);
     await expect(visitor.getByRole("heading", { level: 1, name: "Northstar Test" })).toBeVisible();
-    await expect(visitor.getByText("ProofMe review pending").first()).toBeVisible();
+    await expect(visitor.getByText("Atesta review pending").first()).toBeVisible();
     await expect(visitor.getByText("No NEAR issuer yet").first()).toBeVisible();
     await expect(visitor.getByRole("link", { name: /Open Grants Portal/ })).toBeVisible();
     await visitor.getByRole("link", { name: /Open Grants Portal/ }).click();

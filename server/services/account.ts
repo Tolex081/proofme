@@ -22,7 +22,7 @@ import {
 export const EXPORT_FORMAT = "proofme.account-export.v1";
 
 /**
- * Everything ProofMe holds about the person, in one JSON document. Secrets
+ * Everything Atesta holds about the person, in one JSON document. Secrets
  * (password hashes, session tokens) are never included.
  */
 export async function exportAccountData(db: Database, userId: string) {

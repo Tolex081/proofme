@@ -24,12 +24,12 @@ export function GitHubIdentityPanel({
     const messages: Record<string, Notice> = {
       linked: {
         tone: "success",
-        text: "GitHub account linked. It now belongs to this ProofMe account.",
+        text: "GitHub account linked. It now belongs to this Atesta account.",
       },
       reconnected: { tone: "success", text: "GitHub account reconnected." },
       taken: {
         tone: "error",
-        text: "That GitHub account is already linked to another ProofMe account, so it cannot be linked here.",
+        text: "That GitHub account is already linked to another Atesta account, so it cannot be linked here.",
       },
       invalid_state: {
         tone: "error",
@@ -140,7 +140,7 @@ export function InvestigateButton({ contributionId }: { contributionId: string }
           className="action action-primary"
         >
           {busy ? <Spinner /> : <ScanSearch aria-hidden="true" size={17} />}
-          {busy ? "Investigating…" : "Investigate with ProofMe"}
+          {busy ? "Investigating…" : "Investigate with Atesta"}
         </button>
       </div>
       {notice ? <FormMessage tone={notice.tone}>{notice.text}</FormMessage> : null}

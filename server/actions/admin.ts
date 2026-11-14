@@ -96,6 +96,6 @@ export async function createReportAction(
   return {
     status: "success",
     message:
-      "Thank you. A ProofMe administrator will look at this. The person you reported is not told who sent it.",
+      "Thank you. A Atesta administrator will look at this. The person you reported is not told who sent it.",
   };
 }

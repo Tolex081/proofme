@@ -183,7 +183,7 @@ export function createGitHubReader(options: { token?: string; send?: Fetch } = {
         headers: {
           accept: "application/vnd.github+json",
           "x-github-api-version": "2022-11-28",
-          "user-agent": "ProofMe-Evidence-Agent",
+          "user-agent": "Atesta-Evidence-Agent",
           ...(options.token ? { authorization: `Bearer ${options.token}` } : {}),
         },
         cache: "no-store",
@@ -313,7 +313,7 @@ export async function fetchAuthenticatedAccount(
       headers: {
         accept: "application/vnd.github+json",
         "x-github-api-version": "2022-11-28",
-        "user-agent": "ProofMe-Evidence-Agent",
+        "user-agent": "Atesta-Evidence-Agent",
         authorization: `Bearer ${token}`,
       },
       cache: "no-store",

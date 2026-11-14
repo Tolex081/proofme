@@ -128,7 +128,7 @@ async function Content({
 
         <Panel
           title="Decision"
-          intro="This changes only ProofMe's review of the organisation. Its attestations and NEAR issuer registration are not touched."
+          intro="This changes only Atesta's review of the organisation. Its attestations and NEAR issuer registration are not touched."
         >
           {allowed.length === 0 ? (
             <p className="text-muted">No decision is possible in this state.</p>

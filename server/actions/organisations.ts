@@ -90,7 +90,7 @@ export async function requestReviewAction(organisationId: string): Promise<FormS
   refresh();
   return {
     status: "success",
-    message: "Sent for review. A ProofMe administrator will look at it.",
+    message: "Sent for review. A Atesta administrator will look at it.",
   };
 }
 

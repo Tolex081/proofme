@@ -23,13 +23,13 @@ function Feedback({ state }: { state: FormState }) {
 const DECISION_TEXT: Record<string, { label: string; body: string }> = {
   approve: {
     label: "Approve",
-    body: "You checked who runs it. Its pages show “Reviewed by ProofMe”.",
+    body: "You checked who runs it. Its pages show “Reviewed by Atesta”.",
   },
   request_information: {
     label: "Ask for more",
     body: "Something is missing. The owners see your reason and can ask again.",
   },
-  reject: { label: "Decline", body: "ProofMe will not mark it as reviewed. Say why." },
+  reject: { label: "Decline", body: "Atesta will not mark it as reviewed. Say why." },
   suspend: {
     label: "Suspend",
     body: "Hides it from explore and marks its pages as suspended. Attestations already issued stay as they are.",

@@ -15,7 +15,7 @@ const AI_STATUS = {
   completed: "AI analysis ran",
   not_configured: "AI analysis is not set up on this site; only source checks ran",
   unavailable: "The AI service was unavailable; only source checks ran",
-  rejected: "The AI answer broke ProofMe's rules and was discarded; only source checks are shown",
+  rejected: "The AI answer broke Atesta's rules and was discarded; only source checks are shown",
 } as const;
 
 const MOMENT = new Intl.DateTimeFormat("en-GB", {

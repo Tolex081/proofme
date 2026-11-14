@@ -190,7 +190,7 @@ export function OrganisationForm({
         multiline
         maxLength={1000}
         defaultValue={initial.description}
-        hint="What it does and who runs it. Contributors and ProofMe reviewers read this."
+        hint="What it does and who runs it. Contributors and Atesta reviewers read this."
         error={errors.description}
       />
       <TextField
@@ -199,7 +199,7 @@ export function OrganisationForm({
         type="url"
         inputMode="url"
         defaultValue={initial.websiteUrl}
-        hint="A full https:// link. Needed before asking ProofMe to review the organisation."
+        hint="A full https:// link. Needed before asking Atesta to review the organisation."
         error={errors.websiteUrl}
       />
       <div className="flex flex-wrap items-center gap-3 border-t border-line pt-6">
@@ -339,7 +339,7 @@ export function RequestReviewButton({ organisationId }: { organisationId: string
       {state.status !== "success" ? (
         <div>
           <button type="submit" className="action action-primary" disabled={pending || !hydrated}>
-            {pending ? "Sending…" : "Ask ProofMe to review us"}
+            {pending ? "Sending…" : "Ask Atesta to review us"}
           </button>
         </div>
       ) : null}

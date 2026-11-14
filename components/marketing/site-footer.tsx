@@ -35,7 +35,7 @@ export function SiteFooter() {
         <div className="max-w-[34ch]">
           <Logo />
           <p className="mt-4 text-note text-muted">
-            An early build running on NEAR testnet only. ProofMe is independent and has no
+            An early build running on NEAR testnet only. Atesta is independent and has no
             partnership with NEAR or with any organisation in its sample records, all of which are
             fictional.
           </p>

@@ -82,7 +82,7 @@ fn starts_empty_with_its_owner_and_metadata() {
     assert_eq!(contract.nft_total_supply(), U128(0));
     let metadata = contract.nft_metadata();
     assert_eq!(metadata.spec, "nft-1.0.0");
-    assert_eq!(metadata.name, "ProofMe attestations");
+    assert_eq!(metadata.name, "Atesta attestations");
     assert_eq!(metadata.symbol, "PROOF");
     assert_eq!(
         metadata.base_uri.as_deref(),
@@ -241,7 +241,7 @@ fn the_token_is_a_standard_nft_carrying_its_status() {
     let token = contract.nft_token(TOKEN.into()).unwrap();
     assert_eq!(token.token_id, TOKEN);
     assert_eq!(token.owner_id, alice());
-    assert_eq!(token.metadata.title.as_deref(), Some("ProofMe attestation"));
+    assert_eq!(token.metadata.title.as_deref(), Some("Atesta attestation"));
     assert_eq!(token.metadata.issued_at, Some(T0));
     assert_eq!(token.metadata.copies, Some(1));
 
@@ -338,7 +338,7 @@ fn minting_must_pay_for_its_storage() {
 // ── Transfers ────────────────────────────────────────────────────────────────
 
 #[test]
-#[should_panic(expected = "ProofMe attestations cannot be transferred")]
+#[should_panic(expected = "Atesta attestations cannot be transferred")]
 fn the_holder_cannot_transfer_it() {
     let mut contract = setup();
     issue(&mut contract, TOKEN, &alice(), T0);
@@ -347,7 +347,7 @@ fn the_holder_cannot_transfer_it() {
 }
 
 #[test]
-#[should_panic(expected = "ProofMe attestations cannot be transferred")]
+#[should_panic(expected = "Atesta attestations cannot be transferred")]
 fn the_issuer_cannot_transfer_it() {
     let mut contract = setup();
     issue(&mut contract, TOKEN, &alice(), T0);
@@ -356,7 +356,7 @@ fn the_issuer_cannot_transfer_it() {
 }
 
 #[test]
-#[should_panic(expected = "ProofMe attestations cannot be transferred")]
+#[should_panic(expected = "Atesta attestations cannot be transferred")]
 fn it_cannot_be_transferred_through_a_contract_call() {
     let mut contract = setup();
     issue(&mut contract, TOKEN, &alice(), T0);
@@ -388,7 +388,7 @@ fn the_issuer_revokes_and_the_token_shows_it() {
     assert_eq!(token.owner_id, alice());
     assert_eq!(
         token.metadata.title.as_deref(),
-        Some("ProofMe attestation (revoked)")
+        Some("Atesta attestation (revoked)")
     );
     assert_eq!(token.metadata.updated_at, Some(T0 + 60_000));
     let extra: Value = serde_json::from_str(&token.metadata.extra.unwrap()).unwrap();

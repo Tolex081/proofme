@@ -195,7 +195,7 @@ export function LoginForm() {
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
         <Submit pending={pending} label="Sign in" pendingLabel="Signing in…" />
         <p className="text-muted">
-          New to ProofMe?{" "}
+          New to Atesta?{" "}
           <Link href="/register" className="text-link">
             Create an account
           </Link>

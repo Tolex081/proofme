@@ -6,13 +6,13 @@ import { auditEvents, githubIdentities, githubOauthStates } from "@/lib/db/schem
 import type { GitHubAccount } from "@/lib/github/client";
 
 /**
- * Linking GitHub accounts to ProofMe users.
+ * Linking GitHub accounts to Atesta users.
  *
  * The identity key is GitHub's immutable numeric user ID, taken from GitHub's
  * own answer to the OAuth access token. Logins are display only; emails,
  * profile URLs and anything the browser sends are never used to identify an
  * account. The unique index on github_identities.github_user_id makes the
- * database the final authority: one GitHub account belongs to one ProofMe
+ * database the final authority: one GitHub account belongs to one Atesta
  * user, even when two link attempts race. Database triggers stop an identity
  * being deleted, moved to another user, or claimed after its owner's account
  * was deleted.
@@ -23,7 +23,7 @@ const fail = (form: string) => ({ ok: false as const, errors: { form } });
 
 const STATE_TTL_MS = 10 * 60 * 1000;
 export const ALREADY_LINKED =
-  "That GitHub account is already linked to another ProofMe account. It cannot be linked twice.";
+  "That GitHub account is already linked to another Atesta account. It cannot be linked twice.";
 
 async function audit(
   db: Database,
@@ -56,7 +56,7 @@ function isUniqueViolation(error: unknown): boolean {
 /**
  * Starts linking: a single-use state bound to this user, and a PKCE verifier
  * kept on the server. Returns the GitHub authorisation URL. No scopes are
- * requested: the public profile is all ProofMe reads.
+ * requested: the public profile is all Atesta reads.
  */
 export async function startGitHubLink(
   db: Database,

@@ -1,4 +1,4 @@
-# ProofMe — product demo: narration and scene plan
+# Atesta — product demo: narration and scene plan
 
 Target length: 90–150 seconds. Generated from `tests/recording/narration.ts`, which also
 drives the recording, the voice track and the captions, so all four always match.
@@ -13,13 +13,13 @@ token has been minted; until then they are left out of the video and its caption
 
 ### Scene 1: problem
 
-**On screen:** The ProofMe home page.
+**On screen:** The Atesta home page.
 
 > Work on open projects is scattered across repositories, chats and forums.
 >
 > Anyone can claim anything, and checking a claim means chasing people down.
 >
-> ProofMe turns a contribution into a record, confirmed by the organisation that saw the work.
+> Atesta turns a contribution into a record, confirmed by the organisation that saw the work.
 
 ## A contributor's record
 
@@ -79,7 +79,7 @@ token has been minted; until then they are left out of the video and its caption
 
 > Northstar then issues it on NEAR testnet as a non-transferable NFT.
 >
-> ProofMe never holds a key. The organisation signs in its own wallet.
+> Atesta never holds a key. The organisation signs in its own wallet.
 
 ## Public verification
 

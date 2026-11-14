@@ -140,9 +140,9 @@ async function Content({
         </section>
       ) : null}
 
-      <Panel title="ProofMe review" intro={platformMeaning(status)}>
+      <Panel title="Atesta review" intro={platformMeaning(status)}>
         <p className="max-w-[62ch] text-muted">
-          Being reviewed by ProofMe is separate from registering a NEAR issuer account. Contributors
+          Being reviewed by Atesta is separate from registering a NEAR issuer account. Contributors
           and visitors see both, side by side, and neither implies the other.
         </p>
         {canManage && (status === "unverified" || status === "rejected") ? (

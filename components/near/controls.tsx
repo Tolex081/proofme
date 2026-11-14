@@ -38,7 +38,7 @@ const STATUS_COPY = {
     chip: "chip-wait",
     label: "Waiting for registration",
     meaning:
-      "The account is chosen, but the contract does not list it as an issuer yet. ProofMe registers issuers; send them the two values below.",
+      "The account is chosen, but the contract does not list it as an issuer yet. Atesta registers issuers; send them the two values below.",
   },
   registered: {
     chip: "chip-ok",
@@ -76,7 +76,7 @@ export function IssuerPanel({
     setBusy("connect");
     setNotice(null);
     try {
-      // Proof of control: the wallet signs a one-time ProofMe challenge.
+      // Proof of control: the wallet signs a one-time Atesta challenge.
       const signed = await proveAccountWithWallet((account) =>
         issuerChallengeAction(organisationId, slug, account),
       );
@@ -342,7 +342,7 @@ export function RevokeControl({
           className="field-input"
         />
         <p className="field-hint">
-          The contributor sees this. It is kept on ProofMe, not written to NEAR. Revoking cannot be
+          The contributor sees this. It is kept on Atesta, not written to NEAR. Revoking cannot be
           undone.
         </p>
       </div>

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "generatedAt": "2026-11-10T14:37:46.418Z",
-  "title": "Design System: ProofMe",
+  "title": "Design System: Atesta",
   "extensions": {
     "colorMeta": {
       "ink": {
@@ -170,7 +170,7 @@
   ],
   "narrative": {
     "northStar": "People first",
-    "overview": "ProofMe leads with people and the work they did, shown as real product cards. Warm, friendly and modern, in light and dark themes.",
+    "overview": "Atesta leads with people and the work they did, shown as real product cards. Warm, friendly and modern, in light and dark themes.",
     "keyCharacteristics": [
       "Show the product: every major section contains a working or realistic piece of the product.",
       "Soft white cards with large radii and a gentle shadow on a warm canvas.",

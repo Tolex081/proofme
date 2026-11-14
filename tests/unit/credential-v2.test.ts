@@ -129,7 +129,7 @@ describe("publishing the credential document", () => {
         pinataJwt: "test-jwt-not-real-000000",
         send: async () => new Response("nope", { status: 401 }),
       }),
-    ).rejects.toThrow(/rejected ProofMe/);
+    ).rejects.toThrow(/rejected Atesta/);
   });
 });
 

@@ -134,7 +134,7 @@ export function PublishConsent({
             tone: "success",
             text: result.value.durable
               ? `Published to IPFS at ${result.value.reference}. The organisation can now issue it on NEAR.`
-              : "Published on ProofMe. The organisation can now issue it on NEAR.",
+              : "Published on Atesta. The organisation can now issue it on NEAR.",
           }
         : { tone: "error", text: result.message },
     );

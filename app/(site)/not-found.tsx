@@ -19,7 +19,7 @@ export default function NotFound() {
           Go to the home page
         </Link>
         <Link href="/how-it-works" className="action action-secondary">
-          How ProofMe works
+          How Atesta works
         </Link>
       </div>
     </section>

@@ -7,7 +7,7 @@ import type { NearConnector } from "@hot-labs/near-connect";
  * NEAR Connect. Loaded only when someone presses a wallet button: nothing
  * here runs on the server or on pages that do not use a wallet.
  *
- * ProofMe never sees a key or seed phrase. The wallet shows each transaction
+ * Atesta never sees a key or seed phrase. The wallet shows each transaction
  * to its owner and signs it there.
  */
 
@@ -116,7 +116,7 @@ export function walletErrorMessage(error: unknown): string {
 }
 
 /**
- * Asks the connected wallet to sign a ProofMe challenge (NEP-413). This is not
+ * Asks the connected wallet to sign a Atesta challenge (NEP-413). This is not
  * a transaction and moves nothing. The server checks the signature and that the
  * key belongs to the account; nothing here is trusted on its own.
  */

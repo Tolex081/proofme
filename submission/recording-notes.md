@@ -2,6 +2,10 @@
 
 How the two submission videos were made, and what they do and do not show.
 
+**Current status (14 November 2026):** both MP4s below are pre-mint recordings with ProofMe
+branding. The contract has since been deployed and a credential minted. Re-record with the current
+Atesta branding and `WITH_NEAR=1` before attaching either video to the hackathon post.
+
 ## Files
 
 | File                            | What it is                                             |

@@ -49,7 +49,7 @@ export function ReportForm({
             <Link href={`/login?next=${encodeURIComponent(returnTo)}`} className="text-link">
               Sign in
             </Link>{" "}
-            to send a report. Reports go to ProofMe administrators, never to the person or
+            to send a report. Reports go to Atesta administrators, never to the person or
             organisation reported.
           </p>
         )}
@@ -118,7 +118,7 @@ function Form({
           aria-describedby={`${id}-details-hint`}
         />
         <p id={`${id}-details-hint`} className="field-hint">
-          Links or context help. Only ProofMe administrators read this.
+          Links or context help. Only Atesta administrators read this.
         </p>
       </div>
       <div>

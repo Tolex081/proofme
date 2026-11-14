@@ -82,7 +82,7 @@ export function SiteHeader() {
       </a>
 
       <div className="column flex min-h-20 items-center gap-8">
-        <Link href="/" aria-label="ProofMe home" className="no-underline">
+        <Link href="/" aria-label="Atesta home" className="no-underline">
           <Logo />
         </Link>
 

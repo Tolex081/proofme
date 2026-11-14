@@ -42,7 +42,7 @@ async function Content({
           Saved.
         </p>
       ) : null}
-      <PageHeading title="Settings" intro="How the organisation appears on ProofMe." />
+      <PageHeading title="Settings" intro="How the organisation appears on Atesta." />
       <Panel title="Organisation details">
         <OrganisationForm
           initial={{

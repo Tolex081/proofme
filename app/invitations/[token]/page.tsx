@@ -21,7 +21,7 @@ export default function Invitation({ params }: PageProps<"/invitations/[token]">
   return (
     <main id="main" className="column grid flex-1 place-items-center py-12">
       <div className="w-full max-w-[34rem]">
-        <Link href="/" aria-label="ProofMe home" className="mb-8 inline-block no-underline">
+        <Link href="/" aria-label="Atesta home" className="mb-8 inline-block no-underline">
           <Logo />
         </Link>
         <Suspense fallback={<div className="h-72 animate-pulse rounded-[1.75rem] bg-surface-2" />}>

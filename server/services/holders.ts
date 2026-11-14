@@ -6,18 +6,18 @@ import { ChainUnavailableError, type ChainAttestation, type ChainReader } from "
 import { consumeChallenge, type SignedProof } from "./near-identity";
 
 /**
- * Credential-gated access: what a ProofMe NFT lets its holder open elsewhere.
+ * Credential-gated access: what a Atesta NFT lets its holder open elsewhere.
  *
- * The visitor does not need a ProofMe account. Their wallet signs a one-time
+ * The visitor does not need a Atesta account. Their wallet signs a one-time
  * challenge (NEP-413), which proves they control the account right now; an
  * account typed into the browser is never trusted. The server then asks the
  * contract which credentials that account holds and grants access only for a
  * credential that is:
  *   - active on-chain (not revoked, not superseded);
  *   - issued by an account the contract lists as an active issuer;
- *   - issued by an organisation ProofMe has verified, through its proven,
+ *   - issued by an organisation Atesta has verified, through its proven,
  *     registered issuer account;
- *   - the same record ProofMe sealed (the on-chain digest matches).
+ *   - the same record Atesta sealed (the on-chain digest matches).
  * The NFT is the key: holding it in the wallet is what opens the page.
  */
 
@@ -51,12 +51,12 @@ function judge(
     return { accepted: false, reason: "Its issuer is suspended on the contract." };
   }
   if (!organisation || !record) {
-    return { accepted: false, reason: "ProofMe has no record of this credential's issuer." };
+    return { accepted: false, reason: "Atesta has no record of this credential's issuer." };
   }
   if (organisation.platformVerificationStatus !== "verified") {
     return {
       accepted: false,
-      reason: `ProofMe does not currently recognise ${organisation.name} as verified.`,
+      reason: `Atesta does not currently recognise ${organisation.name} as verified.`,
     };
   }
   if (organisation.nearIssuerAccountId !== token.issuerId || !organisation.nearIssuerVerifiedAt) {
@@ -140,8 +140,8 @@ export async function checkHolderAccess(
     accountId,
     reason:
       tokens.length === 0
-        ? `${accountId} holds no ProofMe credentials.`
-        : `None of the ProofMe credentials in ${accountId} is currently valid.`,
+        ? `${accountId} holds no Atesta credentials.`
+        : `None of the Atesta credentials in ${accountId} is currently valid.`,
     credentials,
   };
 }

@@ -76,7 +76,7 @@ async function SettingsContent() {
               Download my data
             </a>
             <p className="text-note text-muted">
-              A JSON file of everything ProofMe holds about you.
+              A JSON file of everything Atesta holds about you.
             </p>
           </div>
         </Panel>

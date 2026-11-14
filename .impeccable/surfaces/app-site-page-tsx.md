@@ -11,7 +11,7 @@ related_targets: []
 **Mode:** Persuade for `/`, `/for-contributors`, `/for-organisations`; Read for the rest.
 
 **Audience:** hackathon judges and ecosystem reviewers first; contributors and organisations second.
-**Job:** understand in seconds what ProofMe does and who stands behind a record, then check one.
+**Job:** understand in seconds what Atesta does and who stands behind a record, then check one.
 **Action:** start a record, or run the digest check on the sample record.
 **Proof:** a working in-browser check on a clearly labelled sample record. No partners, statistics, testimonials or real attestations are shown.
 **Constraints:** British spelling; must not feel cold or institutional; light and dark themes; logo is a white check on a blue rounded square; no status by colour alone.

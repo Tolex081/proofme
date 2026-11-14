@@ -1,4 +1,4 @@
-# ProofMe — full walkthrough: narration and scene plan
+# Atesta — full walkthrough: narration and scene plan
 
 Target length: 5–8 minutes. Generated from `tests/recording/narration.ts`, which also
 drives the recording, the voice track and the captions, so all four always match.
@@ -15,7 +15,7 @@ token has been minted; until then they are left out of the video and its caption
 
 **On screen:** The home page, then How it works.
 
-> ProofMe is a record of contributions to open projects, confirmed by the organisations that saw the work.
+> Atesta is a record of contributions to open projects, confirmed by the organisations that saw the work.
 >
 > There are three roles.
 >
@@ -27,7 +27,7 @@ token has been minted; until then they are left out of the video and its caption
 >
 > Each claim moves through clear states: self-reported, awaiting review, verified, or not approved.
 >
-> Everyone you will see in this video is fictional sample data, and ProofMe runs on NEAR testnet only.
+> Everyone you will see in this video is fictional sample data, and Atesta runs on NEAR testnet only.
 
 ## 2. Contributor registration and profile
 
@@ -51,7 +51,7 @@ token has been minted; until then they are left out of the video and its caption
 >
 > Self-reported work is shown separately, and clearly labelled as not confirmed by anyone.
 >
-> Links on the profile are marked as added by Daniel and not checked by ProofMe.
+> Links on the profile are marked as added by Daniel and not checked by Atesta.
 
 ## 3. Contribution and evidence
 
@@ -93,7 +93,7 @@ token has been minted; until then they are left out of the video and its caption
 >
 > Only owners and admins invite people, and an invitation link works once, for the invited email, for seven days.
 >
-> Northstar has asked ProofMe to review who runs it. That platform review is separate from being a NEAR issuer, and the public page shows both.
+> Northstar has asked Atesta to review who runs it. That platform review is separate from being a NEAR issuer, and the public page shows both.
 
 ## 5. Verification queue and decision
 
@@ -129,11 +129,11 @@ token has been minted; until then they are left out of the video and its caption
 
 > On the Attestations page, an owner connects the NEAR account that will issue for the organisation.
 >
-> That account is registered as an issuer on the ProofMe contract on NEAR testnet.
+> That account is registered as an issuer on the Atesta contract on NEAR testnet.
 >
 > Issuing an attestation mints a non-transferable NFT to the contributor, carrying only the attestation ID, the digest and the issuer. No names, emails or links go on-chain.
 >
-> ProofMe never sees a key or a seed phrase. Each transaction is shown and signed in the organisation's own wallet, and the server then confirms it from the contract before recording anything.
+> Atesta never sees a key or a seed phrase. Each transaction is shown and signed in the organisation's own wallet, and the server then confirms it from the contract before recording anything.
 
 ### Scene 10: mint **[NEAR]**
 
@@ -179,7 +179,7 @@ token has been minted; until then they are left out of the video and its caption
 
 **On screen:** The platform admin area: organisation review, reports and the audit log.
 
-> ProofMe administrators review organisations, handle reports and read the audit log.
+> Atesta administrators review organisations, handle reports and read the audit log.
 >
 > By design they cannot issue, edit or revoke an organisation's attestations.
 >
@@ -193,7 +193,7 @@ token has been minted; until then they are left out of the video and its caption
 
 > Private profiles, drafts and pending claims never appear in public search or on public pages.
 >
-> Current limitations: ProofMe runs on NEAR testnet only, email verification is not switched on yet, and there is no upload of files: evidence is links.
+> Current limitations: Atesta runs on NEAR testnet only, email verification is not switched on yet, and there is no upload of files: evidence is links.
 
 ## 10. Future direction
 
@@ -207,7 +207,7 @@ token has been minted; until then they are left out of the video and its caption
 >
 > And attestations about work done by AI agents, confirmed by the people responsible for them.
 >
-> ProofMe: your work, confirmed by the people who saw it.
+> Atesta: your work, confirmed by the people who saw it.
 
 ---
 

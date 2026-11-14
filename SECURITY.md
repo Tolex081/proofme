@@ -1,4 +1,4 @@
-# ProofMe — Security and privacy
+# Atesta — Security and privacy
 
 Status: 13 November 2026 (Track 10 and Evidence Agent work). Each control is marked done only when it is implemented
 and tested; the table is updated every milestone.
@@ -23,7 +23,7 @@ and tested; the table is updated every milestone.
 | Secrets in the repo                                | `.env*` ignored (except `.env.example`); no keys in code; CI has read-only permissions                          | done      |
 | Server-held wallet keys                            | None exist. All NEAR writes are signed in the user's wallet                                                     | by design |
 | Naming someone else's NEAR account                 | NEP-413 signed challenge (single-use, 10 min, bound to user and purpose); key checked as full-access on-chain   | done      |
-| Unverified organisation issuing credentials        | Issuer policy: ProofMe-verified + wallet-proven issuer account + registered on contract, checked at mint        | done      |
+| Unverified organisation issuing credentials        | Issuer policy: Atesta-verified + wallet-proven issuer account + registered on contract, checked at mint         | done      |
 | Credential minted to the wrong account or digest   | Mint confirmation compares transaction args and the token read back: receiver, owner, digest, reference, status | done      |
 | Private data in a public credential                | v2 credential: no username or reviewer, public evidence only, private evidence refused; consent required        | done      |
 | Linking another person's GitHub account            | OAuth with session-bound single-use state and PKCE; identity = GitHub numeric ID from GitHub; unique index      | done      |

@@ -5,7 +5,7 @@ import { getDb } from "@/lib/db/client";
 import { getEnv } from "@/lib/env";
 import { startGitHubLink } from "@/server/services/github-identity";
 
-/** Starts linking a GitHub account to the signed-in ProofMe user. */
+/** Starts linking a GitHub account to the signed-in Atesta user. */
 export async function GET() {
   // Runs per request: never prerendered at build time.
   await connection();

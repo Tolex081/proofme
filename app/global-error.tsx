@@ -20,10 +20,10 @@ export default function GlobalError({ retry }: { error: unknown; retry: () => vo
           padding: "1.5rem",
         }}
       >
-        <title>Something went wrong · ProofMe</title>
+        <title>Something went wrong · Atesta</title>
         <main>
           <h1 style={{ fontSize: "2rem", margin: 0 }}>Something went wrong.</h1>
-          <p style={{ marginTop: "0.75rem" }}>ProofMe could not load. Try again in a moment.</p>
+          <p style={{ marginTop: "0.75rem" }}>Atesta could not load. Try again in a moment.</p>
           <button
             type="button"
             onClick={() => retry()}

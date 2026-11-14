@@ -4,14 +4,14 @@ import { NoteSection, Notes, TitleCard } from "@/components/marketing/page-parts
 
 export const metadata: Metadata = {
   title: "Privacy",
-  description: "How ProofMe is designed to handle personal information.",
+  description: "How Atesta is designed to handle personal information.",
 };
 
 export default function Privacy() {
   return (
     <>
       <TitleCard title="Privacy.">
-        This page describes how ProofMe is designed to handle information. It is a working draft
+        This page describes how Atesta is designed to handle information. It is a working draft
         written by the project, not by a lawyer, and it must be reviewed before any public launch.
         It does not claim compliance with any law or certification.
       </TitleCard>

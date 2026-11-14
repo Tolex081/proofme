@@ -28,7 +28,7 @@ function createAuth() {
   const env = getEnv();
   const email: EmailConfig | null =
     env.BREVO_API_KEY && env.EMAIL_FROM
-      ? { apiKey: env.BREVO_API_KEY, from: env.EMAIL_FROM, fromName: "ProofMe" }
+      ? { apiKey: env.BREVO_API_KEY, from: env.EMAIL_FROM, fromName: "Atesta" }
       : null;
   // Sent without waiting, so how long a request takes never reveals whether
   // an account exists. Failures are logged without the address or link.
@@ -40,7 +40,7 @@ function createAuth() {
   };
 
   return betterAuth({
-    appName: "ProofMe",
+    appName: "Atesta",
     baseURL: env.NEXT_PUBLIC_APP_URL,
     secret: env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(getDbHandle(), { provider: "pg", usePlural: true, schema }),

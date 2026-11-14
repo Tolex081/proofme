@@ -37,7 +37,7 @@ function wallet() {
 }
 
 const payload: Nep413Payload = {
-  message: "Prove that daniel.testnet belongs to you on ProofMe.",
+  message: "Prove that daniel.testnet belongs to you on Atesta.",
   nonce: new Uint8Array(32).fill(7),
   recipient: "proofme-nine.vercel.app",
 };

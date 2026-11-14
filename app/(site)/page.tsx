@@ -59,7 +59,7 @@ const DOES_NOT_PROVE = [
 export default function Home() {
   return (
     <>
-      {/* Hero: the promise, and a sample of what a ProofMe record looks like. */}
+      {/* Hero: the promise, and a sample of what a Atesta record looks like. */}
       <section className="column grid items-center gap-12 pt-6 pb-20 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pt-12 lg:pb-28">
         <div className="rise">
           <h1 className="text-display leading-[0.98] font-extrabold tracking-[-0.045em]">
@@ -110,7 +110,7 @@ export default function Home() {
             </p>
             <p className="mt-4 max-w-[30rem] text-lead text-muted">
               On a real record, the digest you compare against is read from the NEAR testnet
-              registry, not from ProofMe. This one is a sample, so it lives on this page.
+              registry, not from Atesta. This one is a sample, so it lives on this page.
             </p>
           </div>
           <SampleCredit />
@@ -124,7 +124,7 @@ export default function Home() {
             Four steps, each taken by someone different.
           </h2>
           <p className="mt-5 text-lead text-muted">
-            Nobody verifies their own work, and ProofMe never verifies it for them.
+            Nobody verifies their own work, and Atesta never verifies it for them.
           </p>
         </div>
         <ol className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

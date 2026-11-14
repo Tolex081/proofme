@@ -1,7 +1,7 @@
 /**
  * Parsing GitHub evidence links into stable references.
  *
- * ProofMe never fetches a URL a contributor typed. It parses the link, accepts
+ * Atesta never fetches a URL a contributor typed. It parses the link, accepts
  * only github.com repository, pull request, commit and issue paths with
  * well-formed owner, repository, number and SHA parts, and then builds its
  * own request to api.github.com from those parts.

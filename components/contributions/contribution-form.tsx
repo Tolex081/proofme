@@ -119,7 +119,7 @@ function EvidenceEditor({
       <legend className="field-label">Evidence</legend>
       <p className="field-hint">
         Links a reviewer can open: a pull request, an issue, a document, a demo. Only https links to
-        public websites are accepted. ProofMe does not open them; the reviewer judges them.
+        public websites are accepted. Atesta does not open them; the reviewer judges them.
       </p>
       {errors.evidence ? <FieldError id={`${baseId}-all`} message={errors.evidence} /> : null}
 

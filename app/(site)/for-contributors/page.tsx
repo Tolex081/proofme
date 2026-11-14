@@ -19,7 +19,7 @@ export default function ForContributors() {
     <>
       <TitleCard title="Your work, credited by the people who saw it.">
         A CV says what you claim. A repository shows what was merged. Neither says that the project
-        itself recognises what you did. ProofMe is where the organisation says so, in a form that
+        itself recognises what you did. Atesta is where the organisation says so, in a form that
         someone else can check.
       </TitleCard>
 
@@ -94,8 +94,8 @@ export default function ForContributors() {
       <NoteSection heading="What this cannot do for you.">
         <Notes>
           <p>
-            ProofMe cannot make an organisation confirm your work, and it will not confirm it in the
-            organisation&rsquo;s place. If the project you contributed to is not on ProofMe, your
+            Atesta cannot make an organisation confirm your work, and it will not confirm it in the
+            organisation&rsquo;s place. If the project you contributed to is not on Atesta, your
             claim stays self-reported until it is.
           </p>
           <p>

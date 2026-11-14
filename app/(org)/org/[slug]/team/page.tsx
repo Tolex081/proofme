@@ -94,7 +94,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]/team">, "params">
         {canManage ? (
           <Panel
             title="Invite someone"
-            intro="They join with their existing ProofMe account, or create one with the invited email address."
+            intro="They join with their existing Atesta account, or create one with the invited email address."
           >
             <InviteForm
               organisationId={organisation.id}

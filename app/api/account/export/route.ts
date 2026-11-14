@@ -2,7 +2,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/client";
 import { exportAccountData } from "@/server/services/account";
 
-/** Downloads everything ProofMe holds about the signed-in person, as JSON. */
+/** Downloads everything Atesta holds about the signed-in person, as JSON. */
 export async function GET() {
   const user = await getCurrentUser();
   if (!user) {

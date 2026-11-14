@@ -287,7 +287,7 @@ async function approved(options: { visibility?: "public" | "private"; consent?: 
       .values({ organisationId: org.value.id, userId, role, status: "active" });
   }
 
-  // ProofMe has verified the organisation (admin decision, tested elsewhere).
+  // Atesta has verified the organisation (admin decision, tested elsewhere).
   await db
     .update(s.organisations)
     .set({ platformVerificationStatus: "verified" })
@@ -583,7 +583,7 @@ describe("preparing a mint", () => {
     expect(result.ok).toBe(false);
   });
 
-  it("refuses an organisation ProofMe has not verified, or has suspended, even with a registered account", async () => {
+  it("refuses an organisation Atesta has not verified, or has suspended, even with a registered account", async () => {
     for (const status of ["pending", "unverified", "suspended", "rejected"] as const) {
       const scene = await approved();
       await db
@@ -1162,7 +1162,7 @@ describe("credential-gated access", () => {
     }
   });
 
-  it("stays shut when the issuer is suspended on the contract or ProofMe no longer recognises the organisation", async () => {
+  it("stays shut when the issuer is suspended on the contract or Atesta no longer recognises the organisation", async () => {
     const suspendedOnChain = await minted();
     const token = suspendedOnChain.chain.tokens.get(suspendedOnChain.attestation.id)!;
     suspendedOnChain.chain.tokens.set(token.tokenId, { ...token, issuerStatus: "suspended" });
@@ -1176,17 +1176,17 @@ describe("credential-gated access", () => {
       ).granted,
     ).toBe(false);
 
-    const suspendedByProofMe = await minted();
+    const suspendedByAtesta = await minted();
     await db
       .update(s.organisations)
       .set({ platformVerificationStatus: "suspended" })
-      .where(eq(s.organisations.id, suspendedByProofMe.org.id));
+      .where(eq(s.organisations.id, suspendedByAtesta.org.id));
     expect(
       (
         await checkHolderAccess(
           db,
-          suspendedByProofMe.chain,
-          await holderProof(suspendedByProofMe.chain, suspendedByProofMe.contributorAccount),
+          suspendedByAtesta.chain,
+          await holderProof(suspendedByAtesta.chain, suspendedByAtesta.contributorAccount),
         )
       ).granted,
     ).toBe(false);

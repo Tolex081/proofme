@@ -1,5 +1,5 @@
 ---
-name: ProofMe
+name: Atesta
 description: Your work, confirmed by the people who saw it.
 colors:
   canvas: "#fbf8f3"
@@ -152,7 +152,7 @@ components:
     height: "2.875rem"
 ---
 
-# Design System: ProofMe
+# Design System: Atesta
 
 Written from the built public site. `app/globals.css` is the source of truth for values. This
 replaces the first design ("The Credits"), which the user rejected; the replacement was chosen
@@ -162,7 +162,7 @@ by the user after Dribbble research, from three full-colour options.
 
 **Creative North Star: "People first"**
 
-ProofMe is about people and the work they did, so the interface leads with people and work:
+Atesta is about people and the work they did, so the interface leads with people and work:
 names, organisation marks, timelines and records, shown as real product cards rather than
 described in paragraphs. It should feel warm, friendly and modern, closer to a well-made
 portfolio product than to a registry or a crypto dashboard.
@@ -260,7 +260,7 @@ fully round.
 
 ### Logo
 
-A white check on a blue (`#2f54eb`) rounded square, followed by the wordmark "ProofMe" in
+A white check on a blue (`#2f54eb`) rounded square, followed by the wordmark "Atesta" in
 Bricolage Grotesque 800. The mark alone is the favicon (`app/icon.svg`).
 
 ### Buttons
@@ -315,14 +315,14 @@ nothing is ever hidden while it animates.
 
 ## Status vocabulary (product truth the design must carry)
 
-| Fact                           | Meaning                                                                                |
-| ------------------------------ | -------------------------------------------------------------------------------------- |
-| Organisation approved          | A reviewer of the issuer approved the claim (off-chain).                               |
-| Awaiting NEAR anchor           | Approved; no confirmed transaction yet.                                                |
-| NEAR anchor confirmed          | A confirmed transaction stores the matching digest.                                    |
-| NEAR anchor failed             | The transaction failed or was rejected; approval still stands.                         |
-| Revoked / superseded           | No longer valid; history stays visible.                                                |
-| Platform-verified organisation | A ProofMe admin reviewed the organisation. Separate from its NEAR issuer registration. |
+| Fact                           | Meaning                                                                               |
+| ------------------------------ | ------------------------------------------------------------------------------------- |
+| Organisation approved          | A reviewer of the issuer approved the claim (off-chain).                              |
+| Awaiting NEAR anchor           | Approved; no confirmed transaction yet.                                               |
+| NEAR anchor confirmed          | A confirmed transaction stores the matching digest.                                   |
+| NEAR anchor failed             | The transaction failed or was rejected; approval still stands.                        |
+| Revoked / superseded           | No longer valid; history stays visible.                                               |
+| Platform-verified organisation | A Atesta admin reviewed the organisation. Separate from its NEAR issuer registration. |
 
 ## Not yet designed
 

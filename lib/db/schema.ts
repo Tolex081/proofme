@@ -1,12 +1,12 @@
 /**
- * ProofMe database schema (PostgreSQL, Drizzle).
+ * Atesta database schema (PostgreSQL, Drizzle).
  *
  * Immutability and append-only guarantees are not left to application code
  * alone: the triggers in the `*_integrity_triggers.sql` migration enforce
  * them in the database as well.
  *
  * The `users` table holds the columns the authentication library needs plus
- * ProofMe's own flags. Session, account and verification-token tables are
+ * Atesta's own flags. Session, account and verification-token tables are
  * added with authentication in Milestone 2.
  */
 import { sql } from "drizzle-orm";
@@ -562,10 +562,10 @@ export const nearChallenges = pgTable(
 // ── GitHub identity and evidence investigations ──────────────────────────────
 
 /**
- * A GitHub account linked to a ProofMe user, keyed by GitHub's numeric user
+ * A GitHub account linked to a Atesta user, keyed by GitHub's numeric user
  * ID. The unique index on github_user_id is the final authority that one
- * GitHub account belongs to one ProofMe user. Rows are never deleted:
- * disconnecting keeps the reservation, and deleting the ProofMe account keeps
+ * GitHub account belongs to one Atesta user. Rows are never deleted:
+ * disconnecting keeps the reservation, and deleting the Atesta account keeps
  * it too (user_id becomes null, status "reserved"), so the identity is never
  * silently released to someone else.
  */

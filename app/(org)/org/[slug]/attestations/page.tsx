@@ -49,7 +49,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]/attestations">, "
     can,
   } = await requireOrganisation(slug, `/org/${slug}/attestations`);
   const near = getNearConfig();
-  // A proven issuer account that ProofMe has not yet seen registered: ask the
+  // A proven issuer account that Atesta has not yet seen registered: ask the
   // contract now, so nobody has to press "Check registration" first.
   let organisation = loaded;
   if (
@@ -83,9 +83,9 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]/attestations">, "
       {!issuer.eligible ? (
         <p className="mb-6 rounded-2xl bg-wait p-4 text-wait-ink">
           <span className="font-semibold">Not able to issue credentials yet.</span> {issuer.reason}{" "}
-          ProofMe&rsquo;s issuer policy: the organisation is verified by ProofMe, an owner has
-          proved control of the issuer account with a wallet signature, and the contract lists that
-          account as this organisation&rsquo;s active issuer.
+          Atesta&rsquo;s issuer policy: the organisation is verified by Atesta, an owner has proved
+          control of the issuer account with a wallet signature, and the contract lists that account
+          as this organisation&rsquo;s active issuer.
         </p>
       ) : null}
       {items.length === 0 ? (

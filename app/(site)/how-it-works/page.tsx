@@ -12,7 +12,7 @@ import {
 export const metadata: Metadata = {
   title: "How it works",
   description:
-    "How a contribution becomes a ProofMe attestation: the claim, the review, the NEAR testnet anchor, and how anyone can check it.",
+    "How a contribution becomes a Atesta attestation: the claim, the review, the NEAR testnet anchor, and how anyone can check it.",
 };
 
 const STATES = [
@@ -92,7 +92,7 @@ export default function HowItWorks() {
               role: "Attach",
               name: "One or more links to evidence.",
               detail:
-                "A pull request, an issue, a document, a demo, a video. Only https links are accepted. ProofMe does not open or scan them; a reviewer judges them in context.",
+                "A pull request, an issue, a document, a demo, a video. Only https links are accepted. Atesta does not open or scan them; a reviewer judges them in context.",
             },
             {
               role: "Submit",
@@ -115,7 +115,7 @@ export default function HowItWorks() {
               role: "Approve",
               name: "The organisation stands behind the claim as written.",
               detail:
-                "The approved text and evidence links are frozen at that moment. Nobody, including ProofMe, can edit them afterwards.",
+                "The approved text and evidence links are frozen at that moment. Nobody, including Atesta, can edit them afterwards.",
             },
             {
               role: "Ask",
@@ -135,11 +135,11 @@ export default function HowItWorks() {
 
       <NoteSection
         heading="The organisation anchors it on NEAR."
-        intro="Approval and anchoring are two separate facts, and ProofMe shows them separately."
+        intro="Approval and anchoring are two separate facts, and Atesta shows them separately."
       >
         <Notes>
           <p>
-            When a claim is approved, ProofMe builds a fixed record of it: the claim, the evidence
+            When a claim is approved, Atesta builds a fixed record of it: the claim, the evidence
             links, who issued it, who it is about and when. That record is put into a standard
             canonical form and hashed with SHA-256. The result is the digest, a fingerprint of the
             whole record. A random value inside the record stops anyone reconstructing the digest by
@@ -147,8 +147,8 @@ export default function HowItWorks() {
           </p>
           <p>
             The organisation then signs a transaction from its own NEAR account, in its own wallet,
-            writing the digest to the ProofMe registry contract. ProofMe never holds a wallet key
-            and cannot sign for an organisation. The record is shown as anchored only after the
+            writing the digest to the Atesta registry contract. Atesta never holds a wallet key and
+            cannot sign for an organisation. The record is shown as anchored only after the
             transaction is confirmed and the digest on NEAR matches.
           </p>
           <h3>What goes on NEAR, and what does not</h3>
@@ -172,7 +172,7 @@ export default function HowItWorks() {
       <NoteSection
         deep
         heading="Anyone can check it."
-        intro="Checking a record needs no account and no trust in ProofMe."
+        intro="Checking a record needs no account and no trust in Atesta."
       >
         <CreditList
           ordered
@@ -198,7 +198,7 @@ export default function HowItWorks() {
               role: "Decide",
               name: "How much weight to give the issuer.",
               detail:
-                "ProofMe shows who the organisation is and whether ProofMe has reviewed it. Whether to trust its judgement is yours to decide.",
+                "Atesta shows who the organisation is and whether Atesta has reviewed it. Whether to trust its judgement is yours to decide.",
             },
           ]}
         />
@@ -243,7 +243,7 @@ export default function HowItWorks() {
             Revoking an attestation does not erase its history on NEAR, and it is not meant to.
           </p>
           <p>
-            ProofMe&rsquo;s own administrators can review and suspend organisations. They cannot
+            Atesta&rsquo;s own administrators can review and suspend organisations. They cannot
             issue, change or revoke an organisation&rsquo;s attestations.
           </p>
         </Notes>

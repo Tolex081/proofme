@@ -44,7 +44,7 @@ async function Content() {
       </h1>
       <p className="mt-3 max-w-[42rem] text-muted">
         You will be its owner, using the account you already have. It starts as not reviewed by
-        ProofMe; you can ask for a review once it is described.
+        Atesta; you can ask for a review once it is described.
       </p>
       <div className="card mt-8 p-6 sm:p-9">
         <OrganisationForm

@@ -222,7 +222,7 @@ async function DetailContent({
           </Panel>
           <Panel
             title="Evidence investigation"
-            intro="ProofMe's Evidence Agent checks your GitHub links against GitHub itself and against your linked GitHub account, then explains what they do and do not show. The organisation's reviewer sees the latest report. It never approves anything; the reviewer decides."
+            intro="Atesta's Evidence Agent checks your GitHub links against GitHub itself and against your linked GitHub account, then explains what they do and do not show. The organisation's reviewer sees the latest report. It never approves anything; the reviewer decides."
           >
             <div className="grid gap-5">
               <InvestigateButton contributionId={contribution.id} />

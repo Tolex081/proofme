@@ -14,7 +14,7 @@ export function WorkspaceTopBar({ account }: { account: React.ReactNode }) {
         Skip to content
       </a>
       <div className="column flex min-h-16 items-center gap-4">
-        <Link href="/dashboard" aria-label="ProofMe workspace" className="no-underline">
+        <Link href="/dashboard" aria-label="Atesta workspace" className="no-underline">
           <Logo size={28} />
         </Link>
         <span className="chip chip-neutral hidden sm:inline-flex">Testnet build</span>

@@ -153,7 +153,7 @@ async function Content({
 
           <Panel
             title="Evidence investigation"
-            intro="What ProofMe's Evidence Agent found when it checked these links against GitHub and the contributor's linked GitHub account. Source checks are facts from GitHub; AI findings are interpretations. You decide."
+            intro="What Atesta's Evidence Agent found when it checked these links against GitHub and the contributor's linked GitHub account. Source checks are facts from GitHub; AI findings are interpretations. You decide."
           >
             {report ? (
               <EvidenceReportView view={report} />

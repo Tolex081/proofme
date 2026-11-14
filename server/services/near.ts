@@ -69,7 +69,7 @@ async function audit(
 /**
  * Records which NEAR account speaks for the organisation. Owner only. This is
  * a claim until the contract confirms it: the account can mint only once
- * ProofMe has registered it on-chain, which `refreshIssuerStatus` checks.
+ * Atesta has registered it on-chain, which `refreshIssuerStatus` checks.
  */
 /**
  * Asks the contract whether the organisation's account is a registered
@@ -654,7 +654,7 @@ export interface PublicVerification {
   status: "active" | "revoked" | "superseded";
   issuedAt: Date;
   revokedAt: Date | null;
-  issuer: { name: string; slug: string; reviewedByProofMe: boolean };
+  issuer: { name: string; slug: string; reviewedByAtesta: boolean };
   /** Null when the contributor keeps their profile private. */
   subject: { displayName: string | null; username: string | null };
   near: {
@@ -746,7 +746,7 @@ export async function getPublicVerification(
     issuer: {
       name: organisation.name,
       slug: organisation.slug,
-      reviewedByProofMe: organisation.platformVerificationStatus === "verified",
+      reviewedByAtesta: organisation.platformVerificationStatus === "verified",
     },
     // A private profile stays private here too: no name and no username, from
     // the record or anywhere else.

@@ -235,7 +235,7 @@ export async function correctAttestationAction(
   return result;
 }
 
-// ── Credential-gated access (no ProofMe account needed) ─────────────────────
+// ── Credential-gated access (no Atesta account needed) ─────────────────────
 
 export async function holderChallengeAction(
   accountId: string,

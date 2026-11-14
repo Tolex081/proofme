@@ -1,19 +1,31 @@
-# ProofMe — Build status
+# Atesta — Build status
 
-Last updated: 12 November 2026
+Last updated: 14 November 2026
+
+## Current release status
+
+The README is the current judge-facing guide. Since the earlier milestone notes below were
+written, the contract has been deployed and upgraded on NEAR testnet, a credential has been
+minted, and the public verification page confirms its on-chain record. The current README lists
+the live app, contract, token and transaction. The older Milestone 6 and Milestone 9 notes below
+are a historical snapshot from 12 November and should not be used as the current deployment
+status.
 
 ## Where things stand
 
 - **Milestones 0, 2, 3, 4 and 5** are complete.
 - **Milestone 1** is complete except Impeccable's finish review, which has not run.
-- **Milestone 6** is started: the NFT contract is written and unit-tested. It is not deployed and
-  the app does not call it yet; approved records still show "awaiting NEAR anchor".
+- **Milestone 6** is complete for the deployed testnet path: the contract was deployed and upgraded
+  in place, and a credential was minted and verified. The README links to the live token and mint
+  transaction. Remaining items are listed in the milestone table below.
 - **Milestone 7** (non-NEAR parts) is complete: admin area, reports, explore, and verified work on
   public pages. The NEAR-side parts of Milestone 7 depend on Milestone 6.
 - **Milestone 8** (hardening) is complete for this session's parts; open items are listed in its
   section. Nothing found in the review is critical or high severity and unresolved.
-- **Milestone 9** is in progress: repository public, both videos recorded, and the site live at
-  https://proofme-nine.vercel.app with the demo data (public pages verified 12 Nov 2026).
+- **Milestone 9** is in progress: the repository is public as Atesta, the renamed Vercel project
+  has the production domain https://atesta-near.vercel.app, and two recordings exist locally.
+  Those recordings predate the mint and still show ProofMe; re-record them before using one in the
+  public hackathon post. See the current README for the live app and contract links.
 - **Deadline:** NEAR Hackathon submissions close 14 November 2026, 23:59 UTC (track 10, NFTs).
 
 ## Milestone 6 — NFT contract and NEAR wiring (in progress)
@@ -191,7 +203,7 @@ version check rather than true database-level concurrency. The request row is al
 | Task                                                 | State                                                                                                                                                                                                                                                                                                                   |
 | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Create an organisation, public profile `/org/[slug]` | Done. Created from the existing account; the creator becomes owner                                                                                                                                                                                                                                                      |
-| Platform verification request state                  | Done. Starts "Not reviewed by ProofMe"; owners and admins can ask for review once it has a description and website, which moves it to pending. Only an administrator can approve (Milestone 7). Request fields that try to set verified or issuer status are ignored                                                    |
+| Platform verification request state                  | Done. Starts "Not reviewed by Atesta"; owners and admins can ask for review once it has a description and website, which moves it to pending. Only an administrator can approve (Milestone 7). Request fields that try to set verified or issuer status are ignored                                                     |
 | Membership and invitations                           | Done. Invitations by secure single-use link (only a SHA-256 hash is stored), valid 7 days, usable only by the invited email address. Accept, decline, cancel, and a new invitation replaces an open one. The invitee gets an in-app notification if they already have an account; the inviter is notified of the answer |
 | Roles owner, admin, reviewer, viewer                 | Done, from the permission matrix: owners and admins manage; reviewers and viewers see a "your role cannot" page instead of forms                                                                                                                                                                                        |
 | Projects                                             | Done: create, edit, status (draft, active, completed, archived); public `/project/[slug]` for active and completed only                                                                                                                                                                                                 |

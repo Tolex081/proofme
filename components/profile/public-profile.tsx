@@ -69,7 +69,7 @@ export function PublicProfileView({
               {profile.displayName}
             </Name>
             <p className="text-muted">
-              @{profile.username} · on ProofMe since{" "}
+              @{profile.username} · on Atesta since{" "}
               {MEMBER_SINCE.format(new Date(profile.memberSince))}
             </p>
           </div>
@@ -173,7 +173,7 @@ export function PublicProfileView({
       {links.length > 0 || profile.websiteUrl || profile.nearAccountId ? (
         <p className="px-2 text-meta text-muted">
           Links and accounts on this profile were added by {profile.displayName} and have not been
-          verified by ProofMe.
+          verified by Atesta.
         </p>
       ) : null}
     </div>

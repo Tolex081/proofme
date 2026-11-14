@@ -1,4 +1,4 @@
-# ProofMe — Test plan
+# Atesta — Test plan
 
 Status: Milestone 0. No dedicated testing skill is installed in this environment, so this plan
 follows the brief's strategy and current framework documentation.

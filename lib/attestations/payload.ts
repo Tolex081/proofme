@@ -4,7 +4,7 @@ import { EVIDENCE_TYPES, validateEvidenceUrl } from "../urls/evidence";
 import { canonicalize, DIGEST_PATTERN, sha256Hex, type JsonValue } from "./canonical";
 
 /**
- * The ProofMe attestation payload, schema version 1.
+ * The Atesta attestation payload, schema version 1.
  *
  * This is the frozen record of what an issuer approved. It is built once at
  * approval, canonicalised, hashed, stored as text and never changed. Only its
@@ -14,7 +14,7 @@ import { canonicalize, DIGEST_PATTERN, sha256Hex, type JsonValue } from "./canon
  * private evidence. The random nonce stops anyone confirming a guess about a
  * person by reconstructing the digest from public fields.
  *
- * This is a ProofMe attestation with a NEAR anchor. It is not a W3C
+ * This is a Atesta attestation with a NEAR anchor. It is not a W3C
  * Verifiable Credential and must not be described as one.
  */
 export const ATTESTATION_SCHEMA_V1 = "proofme.attestation.v1";
@@ -90,7 +90,7 @@ export type AttestationPayloadV1 = z.infer<typeof attestationPayloadV1Schema>;
  *
  * Built for publication: the canonical text is pinned to content-addressed
  * storage and referenced from the NFT (NEP-177 `reference`), so anyone can
- * fetch and check it without ProofMe. Compared with v1 it therefore carries
+ * fetch and check it without Atesta. Compared with v1 it therefore carries
  * less: the contributor appears only as an opaque profile ID (no username),
  * only evidence the contributor marked public is included, and the reviewer's
  * user ID is left out (the issuing organisation is the accountable party). It

@@ -149,7 +149,7 @@ async function Content({ params }: Pick<PageProps<"/verify/[id]">, "params">) {
   return (
     <article className="grid gap-4">
       <header>
-        <p className="text-[0.9rem] font-semibold text-muted">ProofMe attestation</p>
+        <p className="text-[0.9rem] font-semibold text-muted">Atesta attestation</p>
         <h1 className="mt-1 text-[clamp(1.9rem,4vw,2.8rem)] leading-[1.05] font-extrabold tracking-[-0.04em]">
           {claim?.title ?? "Attestation"}
         </h1>
@@ -318,13 +318,13 @@ async function Content({ params }: Pick<PageProps<"/verify/[id]">, "params">) {
       {view.credential ? (
         <section aria-labelledby="portable" className="card p-5 sm:p-7">
           <h2 id="portable" className="text-[1.2rem]">
-            Check it without ProofMe
+            Check it without Atesta
           </h2>
           <p className="mt-2 max-w-[65ch] text-muted">
             The NFT points at the public credential document (NEP-177 <code>reference</code>) and
             carries its Base64 SHA-256 (<code>reference_hash</code>). Fetch the document, hash its
             exact bytes, and compare with both the reference hash and the digest stored on NEAR. No
-            ProofMe account or database is involved.
+            Atesta account or database is involved.
           </p>
           <dl className="mt-4 grid gap-3 text-[0.92rem]">
             <Fact label="Document">
@@ -352,7 +352,7 @@ async function Content({ params }: Pick<PageProps<"/verify/[id]">, "params">) {
           </dl>
           {!view.credential.reference.startsWith("ipfs://") ? (
             <p className="mt-3 text-[0.9rem] text-wait-ink">
-              This document is served by ProofMe rather than pinned to IPFS, so it is checkable but
+              This document is served by Atesta rather than pinned to IPFS, so it is checkable but
               only as durable as this site.
             </p>
           ) : null}
@@ -411,9 +411,9 @@ async function Content({ params }: Pick<PageProps<"/verify/[id]">, "params">) {
           It proves that {view.issuer.name} approved this exact claim on {DAY.format(view.issuedAt)}{" "}
           and that the record has not been altered since. It does not prove that every detail is
           true, or that you should trust {view.issuer.name}
-          {view.issuer.reviewedByProofMe
-            ? "; ProofMe has reviewed the organisation, which is not the same as vouching for each claim."
-            : "; ProofMe has not reviewed this organisation."}
+          {view.issuer.reviewedByAtesta
+            ? "; Atesta has reviewed the organisation, which is not the same as vouching for each claim."
+            : "; Atesta has not reviewed this organisation."}
         </p>
       </section>
     </article>

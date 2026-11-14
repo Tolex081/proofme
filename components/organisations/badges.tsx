@@ -11,34 +11,34 @@ const PLATFORM: Record<
   { label: string; tone: string; icon: typeof BadgeCheck; meaning: string }
 > = {
   unverified: {
-    label: "Not reviewed by ProofMe",
+    label: "Not reviewed by Atesta",
     tone: "chip-neutral",
     icon: ShieldOff,
-    meaning: "ProofMe has not checked who runs this organisation.",
+    meaning: "Atesta has not checked who runs this organisation.",
   },
   pending: {
-    label: "ProofMe review pending",
+    label: "Atesta review pending",
     tone: "chip-wait",
     icon: Clock,
-    meaning: "The organisation has asked ProofMe to review it. No decision yet.",
+    meaning: "The organisation has asked Atesta to review it. No decision yet.",
   },
   verified: {
-    label: "Reviewed by ProofMe",
+    label: "Reviewed by Atesta",
     tone: "chip-ok",
     icon: BadgeCheck,
-    meaning: "A ProofMe administrator reviewed who runs this organisation.",
+    meaning: "A Atesta administrator reviewed who runs this organisation.",
   },
   rejected: {
-    label: "ProofMe review declined",
+    label: "Atesta review declined",
     tone: "chip-bad",
     icon: X,
-    meaning: "A ProofMe administrator reviewed this organisation and declined it.",
+    meaning: "A Atesta administrator reviewed this organisation and declined it.",
   },
   suspended: {
     label: "Suspended",
     tone: "chip-bad",
     icon: Ban,
-    meaning: "ProofMe has suspended this organisation.",
+    meaning: "Atesta has suspended this organisation.",
   },
 };
 

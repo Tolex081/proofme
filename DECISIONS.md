@@ -1,4 +1,4 @@
-# ProofMe — Decisions
+# Atesta — Decisions
 
 Newest last. "Planned" means chosen but not yet exercised by code; it is confirmed or revised
 when implemented.
@@ -50,7 +50,7 @@ server cannot issue or revoke attestations on-chain.
 **Why:** a published, unambiguous canonicalisation instead of ad-hoc concatenation; the nonce
 prevents confirming a guess about a person from public fields.
 
-## D8 — Called a "ProofMe attestation with a NEAR anchor", not a W3C Verifiable Credential
+## D8 — Called a "Atesta attestation with a NEAR anchor", not a W3C Verifiable Credential
 
 **Why:** VC 2.0 conformance needs a real securing mechanism and verification process. Field names
 alone do not make one. The payload is shaped to migrate later.
@@ -136,7 +136,7 @@ view is told to reload.
 
 ## D26 — Each attestation is a non-transferable NFT, not only an anchored digest
 
-**Why:** ProofMe is entered in the NEAR Hackathon's track 10, "NFTs That Do Something", which asks
+**Why:** Atesta is entered in the NEAR Hackathon's track 10, "NFTs That Do Something", which asks
 for NFTs that carry credentials and have behaviour. A plain digest registry would not be an NFT
 project. The contract (`contracts/proofme-attestations`) implements NEP-171, NEP-177 and NEP-181
 by hand rather than through `near-contract-standards`, because the standard implementation is
@@ -180,7 +180,7 @@ The organisation and contributor accounts stay in their own wallets.
 
 ## D32 — Administrators cannot touch attestations
 
-**Why:** an attestation is the organisation's word, not ProofMe's. The admin service
+**Why:** an attestation is the organisation's word, not Atesta's. The admin service
 (`server/services/admin.ts`) has no function that writes to an attestation, a claim or a
 verification decision. Administrators can review and suspend organisations and accounts; that
 changes standing and visibility, never what an organisation confirmed. Suspending an organisation

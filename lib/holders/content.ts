@@ -1,6 +1,6 @@
 /**
  * What the credential-gated page unlocks. Fictional demo content: a board of
- * paid opportunities that only people holding a valid ProofMe credential can
+ * paid opportunities that only people holding a valid Atesta credential can
  * see. It is sent to the browser only after the server has checked the
  * holder's wallet and credentials (see server/services/holders.ts).
  */
@@ -12,7 +12,7 @@ export interface HolderContent {
 
 export const HOLDER_CONTENT: HolderContent = {
   title: "Verified contributor opportunities",
-  note: "Sample content for the ProofMe demo. These organisations and roles are fictional.",
+  note: "Sample content for the Atesta demo. These organisations and roles are fictional.",
   opportunities: [
     {
       organisation: "Northstar Protocol",

@@ -5,7 +5,7 @@ import { HolderGate } from "@/components/near/holder-gate";
 export const metadata: Metadata = {
   title: "For credential holders",
   description:
-    "A page only holders of a valid ProofMe credential NFT can open: an example of a credential granting access in another application.",
+    "A page only holders of a valid Atesta credential NFT can open: an example of a credential granting access in another application.",
 };
 
 export default function Holders() {
@@ -17,9 +17,9 @@ export default function Holders() {
           Opportunities for verified contributors
         </h1>
         <p className="mt-3 max-w-[62ch] text-muted">
-          Holding a ProofMe credential NFT opens this page. ProofMe checks, live on NEAR, that your
+          Holding a Atesta credential NFT opens this page. Atesta checks, live on NEAR, that your
           wallet holds an active credential from an organisation it has verified. A revoked or
-          replaced credential does not count, and no ProofMe account is needed.
+          replaced credential does not count, and no Atesta account is needed.
         </p>
       </header>
       <HolderGate />

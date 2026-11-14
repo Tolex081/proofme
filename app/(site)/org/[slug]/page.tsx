@@ -58,7 +58,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]">, "params">) {
               {organisation.name}
             </h1>
             <p className="text-muted">
-              {ORGANISATION_CATEGORY_LABELS[organisation.category]} · on ProofMe since{" "}
+              {ORGANISATION_CATEGORY_LABELS[organisation.category]} · on Atesta since{" "}
               {SINCE.format(organisation.createdAt)}
             </p>
           </div>
@@ -85,7 +85,7 @@ async function Content({ params }: Pick<PageProps<"/org/[slug]">, "params">) {
         </p>
         <dl className="mt-5 grid gap-5 sm:grid-cols-2">
           <div>
-            <dt className="text-meta font-semibold text-muted">ProofMe review</dt>
+            <dt className="text-meta font-semibold text-muted">Atesta review</dt>
             <dd className="mt-2">
               <PlatformBadge status={organisation.platformVerificationStatus} />
               <p className="mt-2 text-note text-muted">

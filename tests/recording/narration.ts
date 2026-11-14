@@ -31,17 +31,17 @@ export type VideoName = "demo" | "walkthrough";
 
 export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: Scene[] }> = {
   demo: {
-    title: "ProofMe — product demo",
+    title: "Atesta — product demo",
     target: "90–150 seconds",
     scenes: [
       {
         id: "problem",
         chapter: "The problem",
-        shows: "The ProofMe home page.",
+        shows: "The Atesta home page.",
         narration: [
           "Work on open projects is scattered across repositories, chats and forums.",
           "Anyone can claim anything, and checking a claim means chasing people down.",
-          "ProofMe turns a contribution into a record, confirmed by the organisation that saw the work.",
+          "Atesta turns a contribution into a record, confirmed by the organisation that saw the work.",
         ],
       },
       {
@@ -96,7 +96,7 @@ export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: 
         near: true,
         narration: [
           "Northstar then issues it on NEAR testnet as a non-transferable NFT.",
-          "ProofMe never holds a key. The organisation signs in its own wallet.",
+          "Atesta never holds a key. The organisation signs in its own wallet.",
         ],
       },
       {
@@ -125,7 +125,7 @@ export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: 
   },
 
   walkthrough: {
-    title: "ProofMe — full walkthrough",
+    title: "Atesta — full walkthrough",
     target: "5–8 minutes",
     scenes: [
       {
@@ -133,13 +133,13 @@ export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: 
         chapter: "1. Product overview and roles",
         shows: "The home page, then How it works.",
         narration: [
-          "ProofMe is a record of contributions to open projects, confirmed by the organisations that saw the work.",
+          "Atesta is a record of contributions to open projects, confirmed by the organisations that saw the work.",
           "There are three roles.",
           "Contributors describe their work and attach evidence.",
           "Organisations review those claims, and approve, question or decline them.",
           "And anyone can check a confirmed record, without an account.",
           "Each claim moves through clear states: self-reported, awaiting review, verified, or not approved.",
-          "Everyone you will see in this video is fictional sample data, and ProofMe runs on NEAR testnet only.",
+          "Everyone you will see in this video is fictional sample data, and Atesta runs on NEAR testnet only.",
         ],
       },
       {
@@ -160,7 +160,7 @@ export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: 
           "Here is a public profile for Daniel Okafor.",
           "Verified contributions come first, each naming the organisation that confirmed it.",
           "Self-reported work is shown separately, and clearly labelled as not confirmed by anyone.",
-          "Links on the profile are marked as added by Daniel and not checked by ProofMe.",
+          "Links on the profile are marked as added by Daniel and not checked by Atesta.",
         ],
       },
       {
@@ -195,7 +195,7 @@ export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: 
           "Projects group the work a claim can be about.",
           "The team has four roles: owners, admins, reviewers and viewers.",
           "Only owners and admins invite people, and an invitation link works once, for the invited email, for seven days.",
-          "Northstar has asked ProofMe to review who runs it. That platform review is separate from being a NEAR issuer, and the public page shows both.",
+          "Northstar has asked Atesta to review who runs it. That platform review is separate from being a NEAR issuer, and the public page shows both.",
         ],
       },
       {
@@ -226,9 +226,9 @@ export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: 
         shows: "Northstar's Attestations page, with the NEAR issuer panel.",
         narration: [
           "On the Attestations page, an owner connects the NEAR account that will issue for the organisation.",
-          "That account is registered as an issuer on the ProofMe contract on NEAR testnet.",
+          "That account is registered as an issuer on the Atesta contract on NEAR testnet.",
           "Issuing an attestation mints a non-transferable NFT to the contributor, carrying only the attestation ID, the digest and the issuer. No names, emails or links go on-chain.",
-          "ProofMe never sees a key or a seed phrase. Each transaction is shown and signed in the organisation's own wallet, and the server then confirms it from the contract before recording anything.",
+          "Atesta never sees a key or a seed phrase. Each transaction is shown and signed in the organisation's own wallet, and the server then confirms it from the contract before recording anything.",
         ],
       },
       {
@@ -275,7 +275,7 @@ export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: 
         chapter: "9. Security, privacy and limitations",
         shows: "The platform admin area: organisation review, reports and the audit log.",
         narration: [
-          "ProofMe administrators review organisations, handle reports and read the audit log.",
+          "Atesta administrators review organisations, handle reports and read the audit log.",
           "By design they cannot issue, edit or revoke an organisation's attestations.",
           "Every permission is checked on the server, never only in the interface.",
           "Sensitive actions are rate-limited and written to the audit log, and the site sends a strict content security policy.",
@@ -287,7 +287,7 @@ export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: 
         shows: "Explore, then the privacy page.",
         narration: [
           "Private profiles, drafts and pending claims never appear in public search or on public pages.",
-          "Current limitations: ProofMe runs on NEAR testnet only, email verification is not switched on yet, and there is no upload of files: evidence is links.",
+          "Current limitations: Atesta runs on NEAR testnet only, email verification is not switched on yet, and there is no upload of files: evidence is links.",
         ],
       },
       {
@@ -298,7 +298,7 @@ export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: 
           "What comes next is future work, not part of this build.",
           "Richer credentials, such as skills endorsed across several organisations.",
           "And attestations about work done by AI agents, confirmed by the people responsible for them.",
-          "ProofMe: your work, confirmed by the people who saw it.",
+          "Atesta: your work, confirmed by the people who saw it.",
         ],
       },
     ],

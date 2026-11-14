@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Reading the ProofMe attestations contract on NEAR.
+ * Reading the Atesta attestations contract on NEAR.
  *
  * The server holds no NEAR key and never signs anything: minting and revoking
  * are signed in the organisation's own wallet. Everything here is a read, used

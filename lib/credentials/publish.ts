@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 
 /**
  * Publishing a credential's public document so it can be checked without
- * ProofMe.
+ * Atesta.
  *
  * The document is the attestation's canonical text, byte for byte. Its
  * SHA-256 is therefore the digest already stored on NEAR, and the NEP-177
@@ -98,7 +98,7 @@ export async function publishCredentialDocument(input: {
     }
     if (second.status === 401 || second.status === 403) {
       throw new PublishError(
-        "IPFS pinning rejected ProofMe's Pinata key. Nothing was published. PINATA_JWT must be the JWT (the long value starting with eyJ), from a key allowed to upload files.",
+        "IPFS pinning rejected Atesta's Pinata key. Nothing was published. PINATA_JWT must be the JWT (the long value starting with eyJ), from a key allowed to upload files.",
       );
     }
     throw new PublishError(`IPFS pinning refused the upload (status ${second.status}).`);

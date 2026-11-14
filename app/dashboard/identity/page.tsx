@@ -36,7 +36,7 @@ async function IdentityContent({
       <div className="grid gap-4">
         <Panel
           title="Links"
-          intro="These are links you add yourself. ProofMe shows them as you entered them and does not check that they are yours."
+          intro="These are links you add yourself. Atesta shows them as you entered them and does not check that they are yours."
         >
           <IdentityForm
             initial={{
@@ -49,7 +49,7 @@ async function IdentityContent({
         </Panel>
         <Panel
           title="GitHub"
-          intro="Link the GitHub account your work is under. ProofMe signs you in with GitHub and keeps only GitHub's numeric account ID and username; it requests no access to your repositories. One GitHub account can belong to only one ProofMe account, and it stays reserved for you even if you disconnect it."
+          intro="Link the GitHub account your work is under. Atesta signs you in with GitHub and keeps only GitHub's numeric account ID and username; it requests no access to your repositories. One GitHub account can belong to only one Atesta account, and it stays reserved for you even if you disconnect it."
         >
           <GitHubIdentityPanel
             identities={identities}
@@ -59,7 +59,7 @@ async function IdentityContent({
         </Panel>
         <Panel
           title="Your NEAR account"
-          intro="Approved work is issued to this account as an NFT credential that cannot be transferred. ProofMe records it only after your wallet signs a one-time message, so nobody can name an account that is not theirs. Signing is not a transaction and moves no funds. ProofMe never asks for a seed phrase or private key."
+          intro="Approved work is issued to this account as an NFT credential that cannot be transferred. Atesta records it only after your wallet signs a one-time message, so nobody can name an account that is not theirs. Signing is not a transaction and moves no funds. Atesta never asks for a seed phrase or private key."
         >
           <NearAccountProof
             accountId={profile.nearAccountId}

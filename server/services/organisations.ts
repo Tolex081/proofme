@@ -178,7 +178,7 @@ export async function listMyOrganisations(db: Database, userId: string) {
 /**
  * Creates an organisation with the creator as its owner. Uses the person's
  * existing account. It starts unverified: the platform-verified badge can only
- * be set by a ProofMe administrator.
+ * be set by a Atesta administrator.
  */
 export async function createOrganisation(
   db: Database,
@@ -248,7 +248,7 @@ export async function updateOrganisation(
   }
 }
 
-/** Asks ProofMe's administrators to review the organisation. */
+/** Asks Atesta's administrators to review the organisation. */
 export async function requestPlatformReview(
   db: Database,
   userId: string,

@@ -1,21 +1,34 @@
-# ProofMe
+# Atesta
 
 **Contribution credentials as NFTs that do something.** A contributor documents a piece of work;
 the organisation they did it for reviews it, helped by an evidence agent that checks the GitHub
 evidence against GitHub itself; the organisation issues a non-transferable credential NFT on NEAR
-that anyone can verify without ProofMe, that the issuer can revoke or correct on-chain, and that
+that anyone can verify without Atesta, that the issuer can revoke or correct on-chain, and that
 opens doors in other applications.
 
 Built for the **NEAR HACKATHON, track 10 "NFTs That Do Something"** (track id `nfts`).
 
+Atesta is the team's NEAR HACKATHON project. The team is also submitting [**Crewpass**](https://github.com/Tolex081/crewpass), a separate project with its own [live demo](https://crewpass-steel.vercel.app/); the two projects are independent and are disclosed here because one team member is submitting both.
+
 | What                     | Where                                                                                                                                                                 |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Live app                 | https://proofme-nine.vercel.app (NEAR testnet, fictional demo data)                                                                                                   |
+| Live app                 | https://atesta-near.vercel.app (NEAR testnet, fictional demo data)                                                                                                    |
 | Contract (testnet)       | [`proofme-attest-1113.testnet`](https://testnet.nearblocks.io/address/proofme-attest-1113.testnet)                                                                    |
-| A real minted credential | https://proofme-nine.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca                                                                                           |
+| A real minted credential | https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca                                                                                            |
 | Its mint transaction     | [`9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW`](https://testnet.nearblocks.io/txns/9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW)                                     |
 | Its public document      | [`ipfs://bafkreihena7xm2hr2fm2gi2e7jzau762hi66d6l23sasnu76h3ypyyoxym`](https://gateway.pinata.cloud/ipfs/bafkreihena7xm2hr2fm2gi2e7jzau762hi66d6l23sasnu76h3ypyyoxym) |
 | Licence                  | MIT ([LICENSE](LICENSE))                                                                                                                                              |
+
+### Rebrand and NEAR contract
+
+ProofMe is the project's former name. The product and this submission are now **Atesta**. The
+Vercel project is named `atesta`; its public address is `atesta-near.vercel.app` because
+`atesta.vercel.app` was unavailable. The earlier `proofme-nine.vercel.app` address used the
+former name. The NEAR testnet contract (`proofme-attest-1113.testnet`) also retains the former
+name because NEAR account addresses cannot be renamed in place. The contract is already deployed
+and holds the credential linked above; Atesta is continuing that deployment, not claiming it was
+originally deployed under the new name. The old contract address is shown here so judges can
+independently verify the mint.
 
 ## The problem
 
@@ -28,9 +41,9 @@ about who did the work. Organisations that could vouch have no portable, checkab
 | Behaviour                      | How                                                                                                                                                                                      |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Carries a credential**       | Each NFT is one organisation's endorsement of one precise claim. Only a registered issuer can mint; it cannot be transferred, sold or lent.                                              |
-| **Is independently checkable** | NEP-177 `reference` points at the credential document on IPFS; `reference_hash` is its SHA-256, which equals the digest stored on-chain. No ProofMe account or database needed.          |
+| **Is independently checkable** | NEP-177 `reference` points at the credential document on IPFS; `reference_hash` is its SHA-256, which equals the digest stored on-chain. No Atesta account or database needed.           |
 | **Changes on-chain**           | The issuer can revoke it, or supersede it with a corrected credential. The token's status, title, description and image follow, and `nft_metadata_update` (NEP-171 1.2.0) tells wallets. |
-| **Grants access**              | `/holders` opens only for a wallet that signs a challenge and holds an active credential from an active, ProofMe-verified issuer. Revoked or replaced ones do not count.                 |
+| **Grants access**              | `/holders` opens only for a wallet that signs a challenge and holds an active credential from an active, Atesta-verified issuer. Revoked or replaced ones do not count.                  |
 | **Shows up in wallets**        | A status badge image (`media` + `media_hash`): blue "Verified work", red "Revoked", grey "Replaced". Seen in Meteor wallet under NFTs.                                                   |
 
 ## Try it (do X, see Y)
@@ -47,10 +60,10 @@ Demo accounts (fictional people and organisation, testnet only). All use the pas
 You can also create your own account with any real email: you get a 6-digit code to confirm it.
 
 1. **Check a real credential, no account needed.** Open
-   https://proofme-nine.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca → see "The record
+   https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca → see "The record
    hashes to its digest: yes", "The contract on NEAR holds the same digest: yes", held by
    `crewpass-carol.testnet`, the IPFS document, and the history.
-2. **Check it without ProofMe at all.**
+2. **Check it without Atesta at all.**
    ```bash
    near contract call-function as-read-only proofme-attest-1113.testnet nft_token json-args '{"token_id":"11cd86ff-7936-4ee1-9927-2e1cf4e027ca"}' network-config testnet now
    ```
@@ -62,7 +75,7 @@ You can also create your own account with any real email: you get a 6-digit code
    contract holds (`verify` with that token ID and digest returns `valid: true`).
 3. **Investigate evidence.** Sign in (your own account is best, so you can link your GitHub under
    Identity) → Contributions → New → add a public GitHub pull request, commit or issue link → save
-   → **Investigate with ProofMe** → see source checks (who opened, authored, committed, reviewed)
+   → **Investigate with Atesta** → see source checks (who opened, authored, committed, reviewed)
    against your linked GitHub account, duplicate and conflict flags, and, separately, the AI
    analysis claim by claim. Without a linked GitHub account the report says attribution could not
    be checked.
@@ -77,7 +90,7 @@ You can also create your own account with any real email: you get a 6-digit code
 7. **Correct a credential.** As Sam, on an issued record → **Correct this record** → see a new
    record linked to the old one; once issued, the contract's `supersede` marks the old token
    "Replaced" and the verify page shows both links and the history.
-8. **Credential-gated access.** Open https://proofme-nine.vercel.app/holders → **Connect wallet and
+8. **Credential-gated access.** Open https://atesta-near.vercel.app/holders → **Connect wallet and
    sign** with a testnet wallet → access is refused unless the wallet holds an active credential
    from a verified issuer (`crewpass-carol.testnet` does).
 
@@ -94,13 +107,13 @@ You can also create your own account with any real email: you get a 6-digit code
 - **The server holds no key.** Wallets (NEAR Connect: Meteor, MyNearWallet, HOT…) sign every
   transaction. The server reads the chain to confirm the exact transaction arguments and the token
   as it now stands before recording anything.
-- **Issuer trust policy.** Minting is allowed only for an organisation ProofMe has verified, whose
+- **Issuer trust policy.** Minting is allowed only for an organisation Atesta has verified, whose
   owner proved control of the issuer account, and that the contract lists as an active issuer.
 
 ## The Evidence Agent
 
 Contributors link GitHub by OAuth (no scopes; identity = GitHub's numeric user ID, unique across
-ProofMe and never released). The agent parses GitHub links (it never fetches a user-supplied URL),
+Atesta and never released). The agent parses GitHub links (it never fetches a user-supplied URL),
 reads pull requests, commits, issues and repositories from `api.github.com`, and keeps opening,
 authoring, committing, reviewing, merging and assignment apart. It flags reuse of the same
 evidence and conflicting authorship without penalising genuine collaboration, and treats GitHub
@@ -150,5 +163,5 @@ commit is 9 November 2026.
 [SECURITY.md](SECURITY.md) · [DECISIONS.md](DECISIONS.md) · [TEST_PLAN.md](TEST_PLAN.md) ·
 [BUILD_STATUS.md](BUILD_STATUS.md) · [contract README](contracts/proofme-attestations/README.md)
 
-ProofMe is independent. It has no partnership with NEAR or with any organisation in its sample
+Atesta is independent. It has no partnership with NEAR or with any organisation in its sample
 records, all of which are fictional.

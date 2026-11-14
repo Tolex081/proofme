@@ -126,7 +126,7 @@ async function Results({ searchParams }: Pick<PageProps<"/explore">, "searchPara
                 defaultChecked={verifiedOnly}
                 className="size-4"
               />
-              {kind === "people" ? "Only people with verified work" : "Only reviewed by ProofMe"}
+              {kind === "people" ? "Only people with verified work" : "Only reviewed by Atesta"}
             </label>
           )}
           <button type="submit" className="action action-primary">

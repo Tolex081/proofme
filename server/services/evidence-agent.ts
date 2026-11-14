@@ -101,7 +101,7 @@ export interface EvidenceReport {
 }
 
 const NOTICE =
-  "This report is advice for the organisation's reviewer. Source checks come from GitHub's API at the time shown; AI findings are interpretations and may be wrong. ProofMe's agent never approves a claim or issues a credential: the organisation's reviewer decides.";
+  "This report is advice for the organisation's reviewer. Source checks come from GitHub's API at the time shown; AI findings are interpretations and may be wrong. Atesta's agent never approves a claim or issues a credential: the organisation's reviewer decides.";
 
 // ── Layer A: source checks ───────────────────────────────────────────────────
 
@@ -526,7 +526,7 @@ export async function investigateContribution(
             claim: `${link.label} supports the claim`,
             status: "manual_review",
             explanation:
-              "This is not a GitHub repository, pull request, commit or issue link, so ProofMe cannot check it automatically. Open it and judge it yourself.",
+              "This is not a GitHub repository, pull request, commit or issue link, so Atesta cannot check it automatically. Open it and judge it yourself.",
             sources: [key],
           },
         ],
@@ -614,7 +614,7 @@ export async function investigateContribution(
         claim: "Nobody else holds the authorship of this resource",
         status: "manual_review",
         explanation:
-          "Another ProofMe contributor's linked GitHub account is the source-attributed author of this resource and has used it as evidence. Check carefully who did the work.",
+          "Another Atesta contributor's linked GitHub account is the source-attributed author of this resource and has used it as evidence. Check carefully who did the work.",
         sources: [source.key],
       });
     }

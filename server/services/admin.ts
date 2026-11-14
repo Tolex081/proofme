@@ -203,11 +203,11 @@ const ORG_DECISIONS = {
 export type OrganisationDecision = keyof typeof ORG_DECISIONS;
 
 const ORG_DECISION_TEXT: Record<OrganisationDecision, string> = {
-  approve: "was reviewed and approved by ProofMe",
-  reject: "was not approved in ProofMe's review",
-  request_information: "needs more information before ProofMe can review it",
-  suspend: "was suspended by ProofMe",
-  reinstate: "was reinstated by ProofMe",
+  approve: "was reviewed and approved by Atesta",
+  reject: "was not approved in Atesta's review",
+  request_information: "needs more information before Atesta can review it",
+  suspend: "was suspended by Atesta",
+  reinstate: "was reinstated by Atesta",
 };
 
 /**
@@ -502,7 +502,7 @@ export async function resolveReport(
 
 // ── Issuers and audit ────────────────────────────────────────────────────────
 
-/** Organisations' NEAR issuer standing as recorded by ProofMe. Read-only. */
+/** Organisations' NEAR issuer standing as recorded by Atesta. Read-only. */
 export async function listIssuers(db: Database, adminId: string) {
   if (!(await isPlatformAdmin(db, adminId))) return null;
   return db

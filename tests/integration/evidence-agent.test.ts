@@ -304,7 +304,7 @@ describe("GitHub identity", () => {
     expect((await linkGitHubIdentity(db, a, account)).ok).toBe(true);
   });
 
-  it("6b. deleting the ProofMe account reserves the identity instead of releasing it", async () => {
+  it("6b. deleting the Atesta account reserves the identity instead of releasing it", async () => {
     const a = await person("Ada");
     const b = await person("Ben");
     const account = githubAccount("deleted-owner");
@@ -442,7 +442,7 @@ describe("evidence attribution", () => {
     await investigate(a.userId, await contribution(a.userId, [url]), github);
     const report = await investigate(b.userId, await contribution(b.userId, [url]), github);
     expect(
-      deterministic(report).some((f) => /Another ProofMe contributor/.test(f.explanation)),
+      deterministic(report).some((f) => /Another Atesta contributor/.test(f.explanation)),
     ).toBe(true);
   });
 

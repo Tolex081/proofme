@@ -42,8 +42,8 @@ test.describe("platform administration, reports and explore", () => {
     await page.getByRole("textbox", { name: /Website/ }).fill("https://example.org");
     await page.getByRole("button", { name: "Create organisation" }).click();
     await expect(page).toHaveURL(new RegExp(`/org/${slug}/dashboard\\?created=1$`));
-    await page.getByRole("button", { name: "Ask ProofMe to review us" }).click();
-    await expect(page.getByText("ProofMe review pending").first()).toBeVisible();
+    await page.getByRole("button", { name: "Ask Atesta to review us" }).click();
+    await expect(page.getByText("Atesta review pending").first()).toBeVisible();
 
     // The admin area does not exist for ordinary accounts.
     await page.goto("/admin");
@@ -74,7 +74,7 @@ test.describe("platform administration, reports and explore", () => {
     await page.getByRole("combobox", { name: "What is wrong?" }).selectOption("impersonation");
     await page.getByRole("textbox", { name: /Details/ }).fill("Test report, not a real concern.");
     await page.getByRole("button", { name: "Send report" }).click();
-    await expect(page.getByText(/A ProofMe administrator will look at this/)).toBeVisible();
+    await expect(page.getByText(/A Atesta administrator will look at this/)).toBeVisible();
     await page.goto("/dashboard");
     await signOut(page);
 
@@ -112,7 +112,7 @@ test.describe("platform administration, reports and explore", () => {
     await page.getByRole("radio", { name: /Approve/ }).check();
     await page.getByRole("button", { name: "Record decision" }).click();
     await expect(page.getByText("Approved. The owners have been told.")).toBeVisible();
-    await expect(page.getByText("Reviewed by ProofMe").first()).toBeVisible();
+    await expect(page.getByText("Reviewed by Atesta").first()).toBeVisible();
 
     await page.goto("/admin/audit?action=admin.");
     await expect(page.getByRole("cell", { name: "admin.organisation.approve" })).toBeVisible();
@@ -124,9 +124,9 @@ test.describe("platform administration, reports and explore", () => {
     await expect(page).toHaveURL(/\/dashboard/);
     await page.goto("/dashboard/notifications");
     await expect(
-      page.getByText("Review Me Collective was reviewed and approved by ProofMe"),
+      page.getByText("Review Me Collective was reviewed and approved by Atesta"),
     ).toBeVisible();
     await page.goto(`/org/${slug}`);
-    await expect(page.getByText("Reviewed by ProofMe").first()).toBeVisible();
+    await expect(page.getByText("Reviewed by Atesta").first()).toBeVisible();
   });
 });

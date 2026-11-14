@@ -79,7 +79,7 @@ test("capture public and workspace screens in both themes", async ({ browser }) 
       await page.getByRole("textbox", { name: "Address" }).fill(orgSlug);
       await page
         .getByRole("textbox", { name: /About the organisation/ })
-        .fill("A fictional protocol used to demonstrate ProofMe.");
+        .fill("A fictional protocol used to demonstrate Atesta.");
       await page.getByRole("textbox", { name: /Website/ }).fill("https://northstar.example.org");
       await page.getByRole("button", { name: "Create organisation" }).click();
       await expect(page).toHaveURL(/created=1$/);

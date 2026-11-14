@@ -18,7 +18,7 @@ export default function ForOrganisations() {
   return (
     <>
       <TitleCard title="Give credit you are willing to sign.">
-        People already say they contributed to your project. ProofMe lets you say which of those
+        People already say they contributed to your project. Atesta lets you say which of those
         claims you stand behind, in your own name, from your own NEAR account, and withdraw one if
         it turns out to be wrong.
       </TitleCard>
@@ -65,8 +65,8 @@ export default function ForOrganisations() {
         <CreditList
           lines={[
             {
-              role: "Reviewed by ProofMe",
-              name: "A ProofMe administrator has looked at who you are.",
+              role: "Reviewed by Atesta",
+              name: "A Atesta administrator has looked at who you are.",
               detail:
                 "New organisations start unverified and are labelled that way. The badge appears only after an administrator approves the application, and the decision is recorded.",
             },
@@ -74,7 +74,7 @@ export default function ForOrganisations() {
               role: "Registered on NEAR",
               name: "Your NEAR account is an authorised issuer in the registry contract.",
               detail:
-                "This is what lets you anchor and revoke attestations. It says nothing about whether ProofMe has reviewed you, and the reverse is true as well.",
+                "This is what lets you anchor and revoke attestations. It says nothing about whether Atesta has reviewed you, and the reverse is true as well.",
             },
           ]}
         />
@@ -89,11 +89,11 @@ export default function ForOrganisations() {
           </p>
           <p>
             Anchoring and revoking need a NEAR testnet account and a wallet. You approve every
-            transaction yourself; ProofMe never asks for a seed phrase or a private key, never
-            stores one, and cannot sign on your behalf.
+            transaction yourself; Atesta never asks for a seed phrase or a private key, never stores
+            one, and cannot sign on your behalf.
           </p>
           <p>
-            ProofMe&rsquo;s administrators can suspend an organisation that abuses the system. They
+            Atesta&rsquo;s administrators can suspend an organisation that abuses the system. They
             cannot issue, edit or revoke attestations in your name.
           </p>
           <p>

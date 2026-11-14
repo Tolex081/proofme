@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * ProofMe design tokens: "People first". Documented in DESIGN.md.
+ * Atesta design tokens: "People first". Documented in DESIGN.md.
  *
  * Two themes share every token name. Light is the default; dark follows the
  * system setting unless the visitor picks one with the theme switch, which

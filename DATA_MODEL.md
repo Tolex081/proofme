@@ -1,4 +1,4 @@
-# ProofMe — Data model
+# Atesta — Data model
 
 Status: Milestone 0 design. The schema and migrations are implemented in Milestone 2 onward;
 this document is updated to match what ships.
@@ -159,7 +159,7 @@ whitespace, UTF-8. Digest: SHA-256 over those bytes, lowercase hex. The nonce ke
 from being guessable from public fields alone. No email, legal name or reviewer note is included.
 Only the digest and the attestation ID go on-chain.
 
-This is a ProofMe attestation with a NEAR anchor. It is shaped so it can later map onto W3C VC
+This is a Atesta attestation with a NEAR anchor. It is shaped so it can later map onto W3C VC
 Data Model 2.0, but it is not a conforming verifiable credential and is not described as one.
 
 ## Future: AI-agent attestations
@@ -179,7 +179,7 @@ not a rewrite. Nothing in the first release claims this exists.
 | `attestations.near_owner_account_id`                                | The NFT's owner as read back from the contract                                             |
 | `verification_requests.replaces_attestation_id`                     | A correction: approving it supersedes that attestation                                     |
 | `near_challenges`                                                   | Single-use NEP-413 challenges (purpose, account, user, nonce, expiry, used)                |
-| `github_identities`                                                 | GitHub numeric ID (unique) → ProofMe user. Never deleted; reserved on account deletion     |
+| `github_identities`                                                 | GitHub numeric ID (unique) → Atesta user. Never deleted; reserved on account deletion      |
 | `github_oauth_states`                                               | SHA-256 of the OAuth state, its user and PKCE verifier; single use, 10 minutes             |
 | `evidence_resources`                                                | A GitHub resource by provider, type, repository ID and number or SHA (unique)              |
 | `evidence_investigations`                                           | One versioned Evidence Agent run: report JSON, digest, source and AI status. Never updated |

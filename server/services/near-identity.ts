@@ -11,7 +11,7 @@ import { getMembership } from "./organisations";
 /**
  * Proving control of a NEAR account with a NEP-413 signed message.
  *
- * ProofMe never trusts an account ID typed into a form or reported by the
+ * Atesta never trusts an account ID typed into a form or reported by the
  * browser. The server issues a one-time challenge for one account and one
  * purpose; the wallet signs it; the server checks the signature and then asks
  * the network whether the signing key is a full-access key of that account.
@@ -56,9 +56,9 @@ export interface SignedProof {
 }
 
 const PURPOSE_TEXT: Record<ChallengePurpose, string> = {
-  contributor_account: "receive ProofMe credentials",
-  issuer_account: "issue ProofMe credentials for an organisation",
-  holder_access: "open a page for ProofMe credential holders",
+  contributor_account: "receive Atesta credentials",
+  issuer_account: "issue Atesta credentials for an organisation",
+  holder_access: "open a page for Atesta credential holders",
 };
 
 /** A fresh, single-use challenge for `accountId`. */
@@ -76,7 +76,7 @@ export async function createChallenge(
   if (!isValidAccountId(accountId)) return fail("That is not a valid NEAR account.");
   const nonce = randomBytes(32).toString("base64");
   const message =
-    `ProofMe: I control ${accountId} and want to ${PURPOSE_TEXT[input.purpose]}. ` +
+    `Atesta: I control ${accountId} and want to ${PURPOSE_TEXT[input.purpose]}. ` +
     `This signature is not a transaction and moves no funds.`;
   const [row] = await db
     .insert(nearChallenges)
@@ -220,7 +220,7 @@ export async function removeContributorAccount(db: Database, userId: string): Pr
 /**
  * Records the organisation's issuer account, proven by a signed challenge.
  * Only an owner may do this. Choosing a different account resets the issuer
- * status: ProofMe must register the new account on the contract again.
+ * status: Atesta must register the new account on the contract again.
  */
 export async function proveIssuerAccount(
   db: Database,
@@ -266,7 +266,7 @@ export type IssuerEligibility =
 /**
  * The issuer trust policy in one place. An organisation may issue recognised
  * credentials only when all three hold:
- *   1. ProofMe has verified the organisation (platform status "verified");
+ *   1. Atesta has verified the organisation (platform status "verified");
  *   2. an owner proved control of the issuer account with a signed message;
  *   3. the contract lists that account as this organisation's active issuer.
  * A linked NEAR account on its own is never enough.
@@ -283,8 +283,8 @@ export function issuerEligibility(organisation: {
       step: "verify_organisation",
       reason:
         organisation.platformVerificationStatus === "suspended"
-          ? "ProofMe has suspended this organisation, so it cannot issue credentials."
-          : "ProofMe has not verified this organisation yet, so it cannot issue credentials.",
+          ? "Atesta has suspended this organisation, so it cannot issue credentials."
+          : "Atesta has not verified this organisation yet, so it cannot issue credentials.",
     };
   }
   if (!organisation.nearIssuerAccountId || !organisation.nearIssuerVerifiedAt) {

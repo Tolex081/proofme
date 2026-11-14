@@ -1,6 +1,6 @@
 # proofme-attestations
 
-The NEAR contract behind ProofMe. Each work record an organisation approves is issued as an NFT
+The NEAR contract behind Atesta. Each work record an organisation approves is issued as an NFT
 that behaves like a credential, not a collectible.
 
 | Behaviour                         | How the contract enforces it                                                                                                                              |
@@ -38,7 +38,7 @@ Change methods:
 
 `reference` is optional: `{"reference": "ipfs://<cid>", "reference_hash": "<Base64 SHA-256>"}`.
 It must be an `ipfs://` or `https://` address of at most 256 characters, with a 44-character
-Base64 SHA-256. ProofMe always sets it: the referenced document is the canonical attestation
+Base64 SHA-256. Atesta always sets it: the referenced document is the canonical attestation
 record, so its SHA-256 equals `digest` and `reference_hash` is that same hash in Base64.
 
 "Storage" means attach a little NEAR (0.01 is ample); the contract keeps what the new bytes cost
@@ -47,8 +47,8 @@ and refunds the rest. A call that attaches too little fails and changes nothing.
 View methods: `get_owner`, `get_issuer`, `get_attestation`, `verify`, `nft_token`, `nft_metadata`,
 `nft_total_supply`, `nft_tokens`, `nft_supply_for_owner`, `nft_tokens_for_owner`.
 
-`token_id` is the ProofMe attestation ID (a UUID). `digest` is the SHA-256 of the canonical
-attestation record as 64 lowercase hex characters. `organisation_id` is ProofMe's ID for the
+`token_id` is the Atesta attestation ID (a UUID). `digest` is the SHA-256 of the canonical
+attestation record as 64 lowercase hex characters. `organisation_id` is Atesta's ID for the
 organisation.
 
 Events: `nft_mint` and `nft_metadata_update` under `nep171` version 1.2.0; `issuer_registered`,
@@ -56,7 +56,7 @@ Events: `nft_mint` and `nft_metadata_update` under `nep171` version 1.2.0; `issu
 the `proofme` standard. Revoking logs `attestation_revoked` then `nft_metadata_update`; superseding
 logs `nft_mint` (the new token), `attestation_superseded`, then `nft_metadata_update` (the old one).
 
-## Checking a credential without ProofMe
+## Checking a credential without Atesta
 
 1. `get_attestation(token_id)` or `nft_token(token_id)`: owner, issuer, status, digest, reference.
 2. Fetch the document at `reference` (any IPFS gateway for `ipfs://`), hash its exact bytes with

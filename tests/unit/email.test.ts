@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { EmailError, passwordResetEmail, sendEmail, verificationEmail } from "@/lib/email/send";
 
-const config = { apiKey: "test-key-not-real", from: "noreply@example.test", fromName: "ProofMe" };
+const config = { apiKey: "test-key-not-real", from: "noreply@example.test", fromName: "Atesta" };
 
 describe("account emails", () => {
   it("sends through Brevo with the key in the api-key header and both bodies", async () => {
@@ -18,7 +18,7 @@ describe("account emails", () => {
     expect(request!.url).toBe("https://api.brevo.com/v3/smtp/email");
     expect((request!.init!.headers as Record<string, string>)["api-key"]).toBe("test-key-not-real");
     const body = JSON.parse(String(request!.init!.body));
-    expect(body.sender).toEqual({ email: "noreply@example.test", name: "ProofMe" });
+    expect(body.sender).toEqual({ email: "noreply@example.test", name: "Atesta" });
     expect(body.to).toEqual([{ email: "ada@example.test" }]);
     expect(body.textContent).toContain("https://proofme.test/r?t=1");
     expect(body.htmlContent).toContain("https://proofme.test/r?t=1");

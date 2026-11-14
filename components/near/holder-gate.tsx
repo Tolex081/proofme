@@ -9,7 +9,7 @@ import { proveAccountWithWallet, walletErrorMessage } from "./wallet";
 import { Spinner } from "@/components/ui/busy";
 
 /**
- * Opens the gated page with a ProofMe credential held in the visitor's wallet.
+ * Opens the gated page with a Atesta credential held in the visitor's wallet.
  * The browser only relays the signature; the server decides.
  */
 export function HolderGate() {
@@ -44,7 +44,7 @@ export function HolderGate() {
             <Lock aria-hidden="true" size={22} />
           </span>
           <p className="max-w-[60ch]">
-            Connect the NEAR wallet that holds your ProofMe credential and sign a one-time message.
+            Connect the NEAR wallet that holds your Atesta credential and sign a one-time message.
             Signing proves you control the account; it is not a transaction and moves no funds.
           </p>
           <div>

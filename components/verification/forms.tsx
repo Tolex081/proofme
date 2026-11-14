@@ -45,7 +45,7 @@ export function SubmitForReviewForm({
   const hydrated = useHydrated();
   const id = useId();
   if (targets.length === 0) {
-    return <p className="text-muted">No organisations are on ProofMe yet to send this to.</p>;
+    return <p className="text-muted">No organisations are on Atesta yet to send this to.</p>;
   }
   return (
     <form onSubmit={onSubmit} method="post" className="grid gap-4">
@@ -58,7 +58,7 @@ export function SubmitForReviewForm({
           {targets.map((target) => (
             <optgroup
               key={target.id}
-              label={`${target.name}${target.reviewed ? "" : " (not reviewed by ProofMe)"}`}
+              label={`${target.name}${target.reviewed ? "" : " (not reviewed by Atesta)"}`}
             >
               <option value={target.id}>{target.name}, no specific project</option>
               {target.projects.map((project) => (

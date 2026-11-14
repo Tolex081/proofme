@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: { default: "ProofMe", template: "%s · ProofMe" },
+  title: { default: "Atesta", template: "%s · Atesta" },
   description:
     "Build a portable record of your contributions. Get your work verified by the organisations you contributed to. Share proof that others can check.",
 };

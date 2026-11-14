@@ -5,7 +5,7 @@ import { AuthShell } from "@/components/auth/auth-shell";
 
 export const metadata: Metadata = {
   title: "Start your record",
-  description: "Create a ProofMe account. No wallet needed.",
+  description: "Create a Atesta account. No wallet needed.",
 };
 
 export default function Register() {

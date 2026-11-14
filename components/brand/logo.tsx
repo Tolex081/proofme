@@ -1,4 +1,4 @@
-/** The ProofMe mark: a white check on a blue rounded square. */
+/** The Atesta mark: a white check on a blue rounded square. */
 export function LogoMark({ size = 30 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
@@ -21,7 +21,7 @@ export function Logo({ size = 30 }: { size?: number }) {
     <span className="inline-flex items-center gap-2.5">
       <LogoMark size={size} />
       <span className="font-display text-subhead font-extrabold tracking-[-0.03em] text-ink">
-        ProofMe
+        Atesta
       </span>
     </span>
   );
