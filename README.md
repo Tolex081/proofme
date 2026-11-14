@@ -14,7 +14,7 @@ Atesta is the team's NEAR HACKATHON project. The team is also submitting [**Crew
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Live app                 | https://atesta-near.vercel.app (NEAR testnet, fictional demo data)                                                                                                    |
 | Contract (testnet)       | [`proofme-attest-1113.testnet`](https://testnet.nearblocks.io/address/proofme-attest-1113.testnet)                                                                    |
-| A real minted credential | https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca                                                                                            |
+| Minted testnet demo credential | https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca (sample identity and issuer; token and mint transaction are real) |
 | Its mint transaction     | [`9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW`](https://testnet.nearblocks.io/txns/9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW)                                     |
 | Its public document      | [`ipfs://bafkreihena7xm2hr2fm2gi2e7jzau762hi66d6l23sasnu76h3ypyyoxym`](https://gateway.pinata.cloud/ipfs/bafkreihena7xm2hr2fm2gi2e7jzau762hi66d6l23sasnu76h3ypyyoxym) |
 | Licence                  | MIT ([LICENSE](LICENSE))                                                                                                                                              |
@@ -86,9 +86,9 @@ reputation score or guarantee a person's overall skill or suitability.
 
 ## Judge walkthrough (do X, see Y)
 
-Start with the first route; it takes no account or wallet and proves the deployed NEAR credential is real. The longer route shows how a claim is reviewed before it can become a credential.
+Start with the first route; it takes no account or wallet and proves the demo token is live on NEAR testnet. The longer route shows how a claim is reviewed before it can become a credential.
 
-Demo accounts (fictional people and organisation, testnet only). All use the password **`Proofme123456`**:
+Demo accounts and the organisation are fictional (testnet only). The linked credential is a sample record: its claimant and issuer are not a real third-party endorsement, although the NFT and mint transaction are real testnet events. All accounts use the password **`Proofme123456`**:
 
 | Account | Role | NEAR account (proven by wallet signature) |
 | --- | --- | --- |
@@ -100,7 +100,7 @@ You can also create your own account with any real email: you get a 6-digit code
 
 ### Quick route: independently check a minted credential (no login)
 
-1. Open [this real Atesta credential](https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca).
+1. Open [this minted Atesta sample credential](https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca).
 2. See the named claim and issuer, the owner `crewpass-carol.testnet`, and the history.
 3. See **“The record hashes to its digest: yes”** and **“The contract on NEAR holds the same digest: yes”**. The page reads the credential document and the NEAR testnet contract so you can compare them without trusting an Atesta login.
 4. Open the linked [mint transaction](https://testnet.nearblocks.io/txns/9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW) to inspect the on-chain mint. Open the linked IPFS document to inspect the public credential.

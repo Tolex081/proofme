@@ -7,7 +7,8 @@
  * NEAR testnet and a real minted token; it is left out until both exist, so
  * the videos never show or claim an on-chain step that did not happen.
  *
- * Everyone and everything shown is fictional demo data from `npm run db:seed`.
+ * The claimant and organisation in the demo credential are fictional. Its NFT and NEAR testnet
+ * mint transaction are real.
  */
 
 export interface Sentence {
@@ -32,93 +33,43 @@ export type VideoName = "demo" | "walkthrough";
 export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: Scene[] }> = {
   demo: {
     title: "Atesta — product demo",
-    target: "90–150 seconds",
+    target: "60–90 seconds",
     scenes: [
       {
-        id: "problem",
-        chapter: "The problem",
-        shows: "The Atesta home page.",
+        id: "open",
+        chapter: "Who Atesta is for",
+        shows: "The live Atesta public credential page for a contribution approved by Northstar Protocol.",
         narration: [
-          "Work on open projects is scattered across repositories, chats and forums.",
-          "Anyone can claim anything, and checking a claim means chasing people down.",
-          "Atesta turns a contribution into a record, confirmed by the organisation that saw the work.",
+          "Open-source contributors and grant-funded developers need to show which team accepted their code.",
+          "Atesta gives project maintainers and grant programmes a way to issue a credential for a specific GitHub contribution.",
+          "This demo uses fictional people and an organisation, but its public NEAR testnet token is real.",
         ],
       },
       {
-        id: "profile",
-        chapter: "A contributor's record",
-        shows: "Daniel Okafor's public profile, scrolling from verified to self-reported work.",
+        id: "checks",
+        chapter: "Check the record",
+        shows: "The live integrity checks on the credential's public verification page.",
         narration: [
-          "This is Daniel Okafor, a sample contributor.",
-          "His public profile keeps verified work apart from what he reports himself.",
-          "Each verified item names the organisation that confirmed it, and links to a record anyone can check.",
+          "The first check confirms the public record matches its digest.",
+          "The second reads the live NEAR testnet contract. It holds the same digest.",
         ],
       },
       {
-        id: "claim",
-        chapter: "Adding a contribution",
-        shows: "Daniel signs in and fills in a new contribution with an evidence link.",
+        id: "chain",
+        chapter: "Inspect the NEAR record",
+        shows: "The active, non-transferable token details and the link to its real NEAR testnet mint transaction.",
         narration: [
-          "Daniel adds new work: what he did, his role, and a link to the evidence.",
-          "It starts as a private draft. Nobody else can see it until he sends it.",
-        ],
-      },
-      {
-        id: "send",
-        chapter: "Sending it for review",
-        shows: "Daniel sends the claim to Northstar Protocol's Open Grants Portal project.",
-        narration: [
-          "He sends it to Northstar Protocol, a fictional organisation, to confirm.",
-          "Only Northstar's reviewers will see it.",
-        ],
-      },
-      {
-        id: "queue",
-        chapter: "The reviewer",
-        shows: "Priya Raman, a reviewer, opens Northstar's review queue and the claim.",
-        narration: [
-          "Priya reviews for Northstar. The claim is waiting in her queue, with the evidence Daniel attached.",
-          "Nobody can approve their own claim, and the server checks her role on every decision.",
-        ],
-      },
-      {
-        id: "approve",
-        chapter: "Approval",
-        shows: "Priya approves the claim with a short message.",
-        narration: [
-          "She approves it. The claim is frozen into an attestation: a canonical record and its SHA-256 digest.",
-        ],
-      },
-      {
-        id: "mint",
-        chapter: "Issuing on NEAR",
-        shows: "Northstar issues the attestation on NEAR testnet from its own wallet.",
-        near: true,
-        narration: [
-          "Northstar then issues it on NEAR testnet as a non-transferable NFT.",
-          "Atesta never holds a key. The organisation signs in its own wallet.",
-        ],
-      },
-      {
-        id: "verify",
-        chapter: "Public verification",
-        shows: "The public verification page for the new attestation.",
-        narration: [
-          "Anyone can open the public record.",
-          "The page hashes the record again, to show it has not changed since approval.",
-          {
-            text: "It also reads the token live from the NEAR contract, with a link to the transaction.",
-            near: true,
-          },
+          "The credential is active and non-transferable. The page names the issuer and holder and links to the real mint transaction.",
+          "NEAR anchors this record publicly, so anyone can check it later.",
         ],
       },
       {
         id: "close",
         chapter: "Close",
-        shows: "Daniel's profile with the new verified contribution.",
+        shows: "The matching digest checks and public transaction link on the live credential page.",
         narration: [
-          "Portable, accountable proof of contribution.",
-          "Confirmed by the people who saw the work, and checkable by anyone.",
+          "This can help open-source maintainers, grant reviewers and developer portfolio builders check a specific endorsement.",
+          "In real use, the authorised organisation makes the decision. This sample shows how anyone can check the record. Try the live demo and inspect the repository.",
         ],
       },
     ],

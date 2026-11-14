@@ -22,8 +22,8 @@ const WITH_NEAR = process.env.WITH_NEAR === "1";
 const LEAD = 0.5;
 const GAP = 0.35;
 const OUTPUT_NAMES: Record<VideoName, string> = {
-  demo: "proofme-demo",
-  walkthrough: "proofme-walkthrough",
+  demo: "atesta-demo",
+  walkthrough: "atesta-walkthrough",
 };
 
 function tool(name: "ffmpeg" | "ffprobe"): string {
@@ -75,8 +75,8 @@ function writeScripts() {
       `Target length: ${video.target}. Generated from \`tests/recording/narration.ts\`, which also`,
       "drives the recording, the voice track and the captions, so all four always match.",
       "",
-      "Everyone and everything shown is fictional demo data from `npm run db:seed`. The voice is the",
-      "offline Windows text-to-speech voice, not a person.",
+      "The sample claimant and organisation are fictional; the public credential and NEAR testnet",
+      "transaction shown are real. The voice is synthetic, generated locally with Windows speech.",
       "",
       "Lines marked **[NEAR]** are recorded only once the contract is on NEAR testnet and a real",
       "token has been minted; until then they are left out of the video and its captions.",
@@ -144,6 +144,10 @@ function narrate(name: VideoName) {
     "scripts/video/speak.ps1",
     "-Manifest",
     manifest,
+    "-Voice",
+    process.env.ATTESTA_TTS_VOICE ?? "Microsoft David Desktop",
+    "-Rate",
+    process.env.ATTESTA_TTS_RATE ?? "-1",
   ]);
   console.log(out.toString().trim());
   const durations = Object.fromEntries(

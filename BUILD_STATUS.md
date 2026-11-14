@@ -23,9 +23,10 @@ status.
 - **Milestone 8** (hardening) is complete for this session's parts; open items are listed in its
   section. Nothing found in the review is critical or high severity and unresolved.
 - **Milestone 9** is in progress: the repository is public as Atesta, the renamed Vercel project
-  has the production domain https://atesta-near.vercel.app, and two recordings exist locally.
-  Those recordings predate the mint and still show ProofMe; re-record them before using one in the
-  public hackathon post. See the current README for the live app and contract links.
+  has the production domain https://atesta-near.vercel.app, and a 74.7-second Atesta-branded demo
+  was recorded locally from the live verification page. It shows a real NEAR testnet token and
+  transaction, with fictional sample identities disclosed. The older walkthrough remains
+  obsolete. Review `submission/atesta-demo.mp4` before attaching it to the public hackathon post.
 - **Deadline:** NEAR Hackathon submissions close 14 November 2026, 23:59 UTC (track 10, NFTs).
 
 ## Milestone 6 — NFT contract and NEAR wiring (in progress)

@@ -3,8 +3,8 @@
 # Used by `npm run video:narrate`. Nothing leaves the machine.
 param(
   [Parameter(Mandatory = $true)][string]$Manifest,
-  [string]$Voice = "Microsoft Zira Desktop",
-  [int]$Rate = 0
+  [string]$Voice = "Microsoft David Desktop",
+  [int]$Rate = -1
 )
 $ErrorActionPreference = "Stop"
 Add-Type -AssemblyName System.Speech

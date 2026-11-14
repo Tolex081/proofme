@@ -79,11 +79,12 @@ export class Recorder {
     this.durations = JSON.parse(readFileSync(file, "utf8")).durations;
   }
 
-  async start() {
+  async start(warmLocalServer = true) {
     // A failed run must never leave an old timeline for the assembler to use.
     rmSync(`${BUILD}/${this.video}/timeline.json`, { force: true });
-    // Warm the server so the first recorded page load is not a cold start.
-    await this.page.request.get("/", { timeout: 120_000 });
+    // Local app recordings warm the server; public-page recordings navigate
+    // straight to the verified live page instead.
+    if (warmLocalServer) await this.page.request.get("/", { timeout: 120_000 });
     this.t0 = Date.now();
     await this.page.addInitScript(CURSOR);
   }
@@ -122,12 +123,18 @@ export class Recorder {
   }
 
   /** Moves the visible pointer smoothly to the middle of `target`. */
-  async point(target: Locator) {
+  async point(target: Locator, offset: { x?: number; y?: number } = {}) {
     await target.scrollIntoViewIfNeeded();
     const box = await target.boundingBox();
     if (!box) return;
-    const x = box.x + box.width / 2;
-    const y = box.y + Math.min(box.height / 2, 22);
+    const x = Math.min(
+      Math.max(box.x + box.width / 2 + (offset.x ?? 0), box.x + 4),
+      box.x + box.width - 4,
+    );
+    const y = Math.min(
+      Math.max(box.y + Math.min(box.height / 2, 22) + (offset.y ?? 0), box.y + 4),
+      box.y + box.height - 4,
+    );
     const steps = Math.max(8, Math.round(Math.hypot(x - this.x, y - this.y) / 25));
     await this.page.mouse.move(x, y, { steps });
     this.x = x;

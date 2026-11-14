@@ -1,57 +1,58 @@
 # Recording notes
 
-How the two submission videos were made, and what they do and do not show.
+How the current Atesta submission demo was made, and what it does and does not show.
 
-**Current status (14 November 2026):** both MP4s below are pre-mint recordings with ProofMe
-branding. The contract has since been deployed and a credential minted. Re-record with the current
-Atesta branding and `WITH_NEAR=1` before attaching either video to the hackathon post.
+**Current status (14 November 2026):** `atesta-demo.mp4` is the current 74.7-second recording
+candidate. It uses the live Atesta verification page and shows the real NEAR testnet token and mint
+link. The sample claimant and issuer are fictional, so the video calls this a demo record rather
+than a genuine third-party endorsement. Review the file before attaching it to the hackathon post.
+The older ProofMe recordings listed below are obsolete and must not be submitted.
 
 ## Files
 
-| File                            | What it is                                             |
-| ------------------------------- | ------------------------------------------------------ |
-| `proofme-demo.mp4`              | Video A, the product demo (local only, not in git)     |
-| `proofme-demo.vtt`              | Its captions                                           |
-| `proofme-demo-script.md`        | Its narration and scene plan                           |
-| `proofme-walkthrough.mp4`       | Video B, the full walkthrough (local only, not in git) |
-| `proofme-walkthrough.vtt`       | Its captions                                           |
-| `proofme-walkthrough-script.md` | Its narration and scene plan                           |
+| File                               | What it is                                                     |
+| ---------------------------------- | -------------------------------------------------------------- |
+| `atesta-demo.mp4`                  | Current product demo (local only, not in git)                  |
+| `atesta-demo.vtt`                  | Its WebVTT captions                                            |
+| `atesta-demo-script.md`            | Its narration and scene plan                                   |
+| `proofme-demo.mp4`                 | Obsolete ProofMe-branded, pre-mint recording (local only)      |
+| `proofme-demo.vtt`                 | Captions for the obsolete recording                           |
+| `proofme-demo-script.md`           | Script for the obsolete recording                             |
+| `proofme-walkthrough.mp4`          | Obsolete ProofMe-branded walkthrough (local only, not in git)  |
+| `proofme-walkthrough.vtt`          | Captions for the obsolete walkthrough                         |
+| `proofme-walkthrough-script.md`    | Script for the obsolete walkthrough                           |
 
-The MP4 files are kept out of git because of their size; their exact paths are in BUILD_STATUS.md.
+MP4 files are kept out of git because of their size. The current demo lives at
+`submission/atesta-demo.mp4` on the creator's machine.
 
 ## How they were made
 
-- **Source:** the real application, a production build (`next build`, `next start`) on this
-  computer, recorded by Playwright driving Chromium. Nothing is mocked or composited: every screen
-  is the running app reacting to real clicks and typing.
-- **Data:** a fresh local database with only the fictional demo data from `npm run db:seed`
-  (Daniel Okafor, Sam Adeyemi, Priya Raman, Northstar Protocol, the Open Grants Portal). Evidence
-  links point at example.org, a domain reserved for examples. No real person, organisation or
-  partner appears.
+- **Source:** the live public Atesta verification page, recorded by Playwright driving Chromium.
+  The verification page and its on-chain checks are genuine. Nothing is mocked or composited.
+- **Data:** the sample claimant and issuer are fictional. The credential and testnet mint exist on
+  chain, but the sample record is not a genuine third-party endorsement. Do not describe it as one.
 - **Resolution:** the browser window is 1536 × 864 (so text is larger than in a 1920-pixel
   layout) and is scaled to 1920 × 1080 when encoding, 30 frames per second, light theme. The
   pointer is drawn by the recorder, because a headless browser has none.
-- **Voice:** synthetic. The offline Windows text-to-speech voice "Microsoft Zira Desktop" reads
-  the scripts. No person narrated, and nothing was sent to an online voice service.
+- **Voice:** synthetic male delivery. The offline Windows text-to-speech voice "Microsoft David
+  Desktop" reads the script at a slightly slower rate for a measured, precise sound. Nothing was
+  sent to an online voice service.
 - **Editing:** the recorder marks where each scene starts and ends. Time between scenes (signing
   in as another account, page loads) is cut out; nothing within a scene is sped up or edited.
 - **Encoding:** H.264 video and AAC audio in MP4 (FFmpeg 9.0.2), captions in WebVTT, with one
   cue per spoken sentence timed from the measured length of each sentence.
-- **Repeatable:** `npm run video:narrate -- demo`, `npm run video:record -- -g demo` and
-  `npm run video:assemble -- demo` rebuild Video A from scratch (and the same for
-  `walkthrough`). The narration, captions, scripts and recorder all read
+- **Repeatable:** `npm run video:narrate -- demo`,
+  `npx playwright test --config playwright.public-recording.config.ts --grep "record the public credential verification demo"`,
+  and `npm run video:assemble -- demo` rebuild the current demo. The narration, captions, script
+  and recorder all read
   `tests/recording/narration.ts`, so they cannot drift apart.
 
 ## Limitations
 
-- **No NEAR testnet transaction is shown yet.** The attestation contract has not been deployed
-  to testnet at the time of recording, so no token could be minted. The videos show the
-  organisation's approval, the frozen record and its digest, and the public verification page,
-  which says plainly that the record is "not on NEAR yet". The scenes and sentences that need a
-  real mint are written (marked **[NEAR]** in the scripts) and are added by re-recording with
-  `WITH_NEAR=1` once a real testnet mint exists. No transaction hash was invented.
-- The wallet is never shown signing, for the same reason.
-- The voice is synthetic and sounds like it.
+- This short demo focuses on public credential verification. It does not show the full contribution
+  review lifecycle, a wallet signing, or a new mint. The visible mint link points to the real
+  testnet transaction for the sample token.
+- The voice is synthetic and may sound synthetic.
 
 ## Review checklist
 
