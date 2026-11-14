@@ -151,7 +151,7 @@ export function OrganisationForm({
             Address
           </label>
           <div className="field-prefixed">
-            <span aria-hidden="true">proofme/org/</span>
+            <span aria-hidden="true">atesta/org/</span>
             <input
               id="org-slug"
               name="slug"

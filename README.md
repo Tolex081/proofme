@@ -1,23 +1,23 @@
 # Atesta
 
-**Contribution credentials as NFTs that do something.** A contributor documents a piece of work;
-the organisation they did it for reviews it, helped by an evidence agent that checks the GitHub
-evidence against GitHub itself; the organisation issues a non-transferable credential NFT on NEAR
-that anyone can verify without Atesta, that the issuer can revoke or correct on-chain, and that
-opens doors in other applications.
+Atesta lets organisations review evidence for a specific contribution and issue a non-transferable
+credential NFT on NEAR. Anyone can inspect its public document and compare the SHA-256 digest with
+the value held by the NEAR contract. An authorised issuer can revoke or supersede a credential;
+an active credential from a verified issuer can grant access to Atesta's `/holders` page.
 
 Built for the **NEAR HACKATHON, track 10 "NFTs That Do Something"** (track id `nfts`).
 
 Atesta is the team's NEAR HACKATHON project. The team is also submitting [**Crewpass**](https://github.com/Tolex081/crewpass), a separate project with its own [live demo](https://crewpass-steel.vercel.app/); the two projects are independent and are disclosed here because one team member is submitting both.
 
-| What                     | Where                                                                                                                                                                 |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Live app                 | https://atesta-near.vercel.app (NEAR testnet, fictional demo data)                                                                                                    |
-| Contract (testnet)       | [`proofme-attest-1113.testnet`](https://testnet.nearblocks.io/address/proofme-attest-1113.testnet)                                                                    |
-| Minted testnet demo credential | https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca (sample identity and issuer; token and mint transaction are real) |
-| Its mint transaction     | [`9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW`](https://testnet.nearblocks.io/txns/9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW)                                     |
-| Its public document      | [`ipfs://bafkreihena7xm2hr2fm2gi2e7jzau762hi66d6l23sasnu76h3ypyyoxym`](https://gateway.pinata.cloud/ipfs/bafkreihena7xm2hr2fm2gi2e7jzau762hi66d6l23sasnu76h3ypyyoxym) |
-| Licence                  | MIT ([LICENSE](LICENSE))                                                                                                                                              |
+| What                           | Where                                                                                                                                                                 |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Live app                       | https://atesta-near.vercel.app (NEAR testnet, fictional demo data)                                                                                                    |
+| Judge demo video               | [Six-beat demo, 73 seconds](demo/final_demo.mp4) (fictional sample identity and issuer; real NEAR testnet token)                                                      |
+| Contract (testnet)             | [`proofme-attest-1113.testnet`](https://testnet.nearblocks.io/address/proofme-attest-1113.testnet)                                                                    |
+| Minted testnet demo credential | https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca (sample identity and issuer; token and mint transaction are real)                          |
+| Its mint transaction           | [`9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW`](https://testnet.nearblocks.io/txns/9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW)                                     |
+| Its public document            | [`ipfs://bafkreihena7xm2hr2fm2gi2e7jzau762hi66d6l23sasnu76h3ypyyoxym`](https://gateway.pinata.cloud/ipfs/bafkreihena7xm2hr2fm2gi2e7jzau762hi66d6l23sasnu76h3ypyyoxym) |
+| Licence                        | MIT ([LICENSE](LICENSE))                                                                                                                                              |
 
 ### Rebrand and NEAR contract
 
@@ -29,6 +29,11 @@ name because NEAR account addresses cannot be renamed in place. The contract is 
 and holds the credential linked above; Atesta is continuing that deployment, not claiming it was
 originally deployed under the new name. The old contract address is shown here so judges can
 independently verify the mint.
+
+The sample credential also retains its existing demo identifiers, including the
+`@demo.proofme.test` login domain and the testnet accounts `crewpass-carol.testnet` and
+`crewpass-creator.testnet`. These are sample account names, not Atesta product names, customers, or
+an integration with Crewpass.
 
 ## The problem
 
@@ -88,13 +93,13 @@ reputation score or guarantee a person's overall skill or suitability.
 
 Start with the first route; it takes no account or wallet and proves the demo token is live on NEAR testnet. The longer route shows how a claim is reviewed before it can become a credential.
 
-Demo accounts and the organisation are fictional (testnet only). The linked credential is a sample record: its claimant and issuer are not a real third-party endorsement, although the NFT and mint transaction are real testnet events. All accounts use the password **`Proofme123456`**:
+Demo accounts and the organisation are fictional (testnet only). The linked credential is a sample record: its claimant and issuer are not a real third-party endorsement, although the NFT and mint transaction are real testnet events. All accounts use the shared public demo password **`Proofme123456`**; it is for these fictional demo users only and should not be reused for personal accounts:
 
-| Account | Role | NEAR account (proven by wallet signature) |
-| --- | --- | --- |
-| `daniel.okafor@demo.proofme.test` | Contributor | `crewpass-carol.testnet` |
-| `sam.adeyemi@demo.proofme.test` | Owner of Northstar Protocol (issuer) | issuer `crewpass-creator.testnet` |
-| `priya.raman@demo.proofme.test` | Reviewer at Northstar Protocol | – |
+| Account                           | Role                                 | NEAR account (proven by wallet signature) |
+| --------------------------------- | ------------------------------------ | ----------------------------------------- |
+| `daniel.okafor@demo.proofme.test` | Contributor                          | `crewpass-carol.testnet`                  |
+| `sam.adeyemi@demo.proofme.test`   | Owner of Northstar Protocol (issuer) | issuer `crewpass-creator.testnet`         |
+| `priya.raman@demo.proofme.test`   | Reviewer at Northstar Protocol       | –                                         |
 
 You can also create your own account with any real email: you get a 6-digit code to confirm it.
 

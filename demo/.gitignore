@@ -1,0 +1,6 @@
+/build/
+/raw/
+/playwright-results/
+/demo/playwright-results/
+/voiceover/segments/
+/assets/*.png

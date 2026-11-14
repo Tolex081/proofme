@@ -171,7 +171,7 @@ export function OnboardingForm({
           required
           defaultValue={suggestedUsername}
           maxLength={30}
-          prefix="proofme/u/"
+          prefix="atesta/u/"
           spellCheck={false}
           autoComplete="username"
           hint="Lowercase letters, numbers and hyphens."
@@ -232,7 +232,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           required
           defaultValue={initial.username}
           maxLength={30}
-          prefix="proofme/u/"
+          prefix="atesta/u/"
           spellCheck={false}
           error={errors.username}
           hint="Changing it changes your profile link."

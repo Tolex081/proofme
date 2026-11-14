@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Atesta demo — the problem</title>
+    <style>
+      @font-face {
+        font-family: Bricolage;
+        src: url("../assets/bricolage.woff2") format("woff2");
+        font-weight: 200 800;
+      }
+      @font-face {
+        font-family: Figtree;
+        src: url("../assets/figtree.woff2") format("woff2");
+        font-weight: 300 900;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
+      body {
+        color: #fffdf8;
+        background: #12121f;
+        font-family: Figtree, "Segoe UI", sans-serif;
+      }
+      .photo { position: absolute; inset: 0 0 0 48%; background: url("../assets/workbench.webp") center 16% / auto 140% no-repeat; }
+      .veil {
+        position: absolute; inset: 0;
+        background: linear-gradient(90deg, #12121f 0%, #12121f 41%, rgba(18, 18, 31, .78) 51%, rgba(18, 18, 31, .08) 78%),
+          linear-gradient(0deg, rgba(13, 14, 24, .42), transparent 44%);
+      }
+      main { position: absolute; left: 150px; top: 210px; width: 760px; }
+      .eyebrow { color: #d6deff; font-size: 23px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+      h1 { font: 700 78px/1.02 Bricolage, "Segoe UI", sans-serif; letter-spacing: -.045em; margin: 40px 0 28px; max-width: 760px; }
+      h1 span { color: #9db4ff; }
+      p { font-size: 34px; line-height: 1.35; color: rgba(255,253,248,.84); max-width: 780px; margin: 0; }
+      .rule { width: 102px; height: 7px; margin-top: 54px; border-radius: 7px; background: #5578ff; }
+    </style>
+  </head>
+  <body>
+    <div class="photo"></div>
+    <div class="veil"></div>
+    <main>
+      <div class="eyebrow">Work should leave a trace</div>
+      <h1>A claim can travel.<br /><span>Can the proof?</span></h1>
+      <p>Open-source contributors and hackathon teams need a public record reviewers can check.</p>
+      <div class="rule"></div>
+    </main>
+  </body>
+</html>

@@ -17,6 +17,18 @@ user action to a visible result, explaining concretely what NEAR enables and why
 giving viewers a next step. Keep the demo focused: skip a long intro, architecture slides and
 setup.
 
+## Current recommended export
+
+Attach [`demo/final_demo.mp4`](../demo/final_demo.mp4), the current 73-second, 1080p six-beat demo.
+It opens with the problem and intended audience, then shows the fictional sample credential, the
+live verification page, the digest-check steps, the passing result, and the app URL with the
+testnet/sample disclosure. It includes a deep male voiceover, quiet ducked music, and burned-in
+captions. The complete repeatable build is documented in [`demo/README.md`](../demo/README.md).
+
+Older local exports also exist under `submission/` (including a separate teaser and a teaser-plus-
+walkthrough cut). They are earlier alternatives; use the current `demo/final_demo.mp4` for this
+submission so the narration, selected soundtrack, and current six-beat script stay aligned.
+
 ## Audience and point of the demo
 
 Atesta's clearest users are public-GitHub contributors (including volunteers, students, freelancers
@@ -48,26 +60,29 @@ endorsement.
 5. Rehearse the exact clicks once. If the live check is unavailable, stop and resolve it before
    recording; do not replace the result with a mock screen or imply an unconfirmed mint.
 
-## Suggested 60–90 second recording
+## Verified final demo timeline (73 seconds)
 
-Record one continuous product moment, then trim only dead time at the beginning and end. Keep the
-cursor, page movement and visible result aligned with the narration.
+The final export is a single concise cut, with the problem and audience first, followed by the live
+verification walkthrough and result. Keep any repost or replacement recording aligned with these
+verified beats and the live page.
 
-| Time | On screen — do this | Say this — or use your own natural wording |
-| --- | --- | --- |
-| 0–15 sec | Start directly on Atesta's public credential page. Show the claim and issuer. | “Open-source contributors and grant-funded developers need to show which team accepted their code. Atesta gives project maintainers and grant programmes a way to issue a credential for a specific GitHub contribution. This demo uses fictional people and an organisation, but its public NEAR testnet token is real.” |
-| 15–30 sec | Scroll to **How this was checked** and point to the record digest result. | “The first check confirms the public record matches its digest.” |
-| 30–45 sec | Point to the NEAR contract check and pause so the passing result is readable. | “The second reads the live NEAR testnet contract. It holds the same digest.” |
-| 45–60 sec | Show the active, non-transferable status, issuer, holder and transaction link. | “The credential is active and non-transferable. The page names the issuer and holder and links to the real mint transaction. NEAR anchors this record publicly, so anyone can check it later.” |
-| 60–80 sec | Return to the passing checks and hold the view for a moment. | “This can help open-source maintainers, grant reviewers and developer portfolio builders check a specific endorsement. In real use, the authorised organisation makes the decision. This sample shows how anyone can check the record. Try the live demo and inspect the repository.” |
+| Time      | On screen — do this                                                                                 | Say this — or use your own natural wording                                                      |
+| --------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| 0–8 sec   | Documentary-style opening card states the problem for open-source contributors and hackathon teams. | “Open-source contributors and hackathon teams need proof reviewers can check.”                  |
+| 8–18 sec  | Atesta name and specific VitaRecall sample details; sample disclosure remains visible.              | “Atesta records VitaRecall's hackathon achievement, Daniel Okafor's solo role, and its issuer.” |
+| 18–43 sec | Live public credential page: project, role, dates, reviewer evidence, and issuer.                   | “Open the public record. Inspect its project, role, dates, reviewer evidence, and issuer.”      |
+| 43–56 sec | Numbered explainer for fetching the record, recomputing SHA-256, and comparing NEAR's digest.       | “Step one: fetch the record. Step two: recompute SHA-256. Step three: compare NEAR's digest.”   |
+| 56–65 sec | Both real checks pass; show active/non-transferable status and the linked testnet mint.             | “Both checks pass. The token is active, non-transferable, and linked to a real testnet mint.”   |
+| 65–73 sec | Atesta closing card with app URL and fictional-sample / real-testnet disclosure.                    | “VitaRecall, Daniel, and Northstar are fictional. The NEAR testnet token is real.”              |
 
 The timings are a guide. Keep only statements that the current screen supports. Do not claim that
 the browser recording itself is a new mint: the linked token was already minted on testnet.
 
 ## Finish and publish
 
-1. Watch the entire export once. Confirm the claim, issuer, matching hash results, active token and
-   transaction are legible and agree with the narration.
+1. Watch [`demo/final_demo.mp4`](../demo/final_demo.mp4) once. Confirm the claim, issuer, matching
+   hash results, active token, transaction link, captions, and disclosure are legible and agree
+   with the narration.
 2. Attach the exported video to a **public** X post. Screenshots are also permitted by the
    instructions, but a short video is preferred because it shows the check happening.
 3. Include the required event wording, tags, links and a genuine question or specific invitation.

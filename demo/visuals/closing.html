@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Atesta demo — close</title>
+    <style>
+      @font-face { font-family: Bricolage; src: url("../assets/bricolage.woff2") format("woff2"); font-weight: 200 800; }
+      @font-face { font-family: Figtree; src: url("../assets/figtree.woff2") format("woff2"); font-weight: 300 900; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
+      body { color: #fffdf8; background: #151622 url("../assets/makers-mark.webp") center / cover no-repeat; font-family: Figtree,"Segoe UI",sans-serif; }
+      .veil { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(14,15,24,.9), rgba(14,15,24,.62) 62%, rgba(14,15,24,.3)), linear-gradient(0deg, rgba(14,15,24,.76), transparent 68%); }
+      main { position: absolute; inset: 0; padding: 110px 150px; }
+      .brand { display: flex; gap: 16px; align-items: center; font: 700 35px Bricolage,sans-serif; }
+      .mark { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 15px; background: #4268ec; color: white; font: 700 30px Figtree,sans-serif; }
+      h1 { margin: 145px 0 25px; max-width: 1200px; font: 700 90px/.98 Bricolage,sans-serif; letter-spacing: -.045em; }
+      p { margin: 0; font-size: 28px; color: rgba(255,253,248,.79); }
+      .url { margin-top: 46px; display: inline-block; border-radius: 12px; padding: 19px 26px; background: #4268ec; color: white; font: 700 25px Figtree,sans-serif; }
+      .badge { margin-top: 38px; color: #c3cdf6; font-size: 18px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+      .note { position: absolute; left: 150px; bottom: 74px; color: rgba(255,253,248,.66); font-size: 19px; }
+    </style>
+  </head>
+  <body>
+    <div class="veil"></div>
+    <main>
+      <div class="brand"><span class="mark">✓</span>Atesta</div>
+      <h1>Work, confirmed<br />by the people who saw it.</h1>
+      <p>A public credential anyone can check.</p>
+      <div class="url">atesta-near.vercel.app</div>
+      <div class="badge">NEAR testnet · public verification</div>
+      <div class="note">Fictional sample people, project, and issuer. Real NEAR testnet token and mint transaction.</div>
+    </main>
+  </body>
+</html>

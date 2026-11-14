@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Atesta demo — three checks</title>
+    <style>
+      @font-face { font-family: Bricolage; src: url("../assets/bricolage.woff2") format("woff2"); font-weight: 200 800; }
+      @font-face { font-family: Figtree; src: url("../assets/figtree.woff2") format("woff2"); font-weight: 300 900; }
+      @font-face { font-family: Geist Mono; src: url("../assets/geist-mono.woff2") format("woff2"); font-weight: 100 900; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
+      body { background: #141521; color: #fffdf8; font-family: Figtree,"Segoe UI",sans-serif; }
+      .photo { position: absolute; inset: 0 58% 0 0; background: url("../assets/makers-mark.webp") center / cover no-repeat; filter: grayscale(.78) brightness(.52); }
+      .veil { position: absolute; inset: 0; background: linear-gradient(90deg, transparent 20%, rgba(20,21,33,.62) 48%, #141521 60%); }
+      main { position: absolute; left: 49%; top: 112px; width: 46%; }
+      .eyebrow { color: #aebfff; font-size: 18px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+      h1 { font: 700 62px/1.02 Bricolage,sans-serif; letter-spacing: -.04em; margin: 14px 0 38px; }
+      .step { display: grid; grid-template-columns: 74px 1fr; gap: 18px; align-items: start; margin: 0 0 30px; }
+      .num { color: #8ca6ff; font: 700 29px Geist Mono,monospace; }
+      .label { font: 700 30px Bricolage,sans-serif; }
+      .detail { margin-top: 6px; color: rgba(255,253,248,.68); font-size: 19px; line-height: 1.35; }
+      .digest { border: 1px solid rgba(255,255,255,.17); border-radius: 14px; margin-top: 30px; padding: 21px 24px; background: rgba(255,255,255,.05); }
+      .digest .key { color: rgba(255,255,255,.58); font-size: 15px; letter-spacing: .11em; text-transform: uppercase; }
+      .digest code { display: block; margin-top: 10px; color: #d9e0ff; font: 15px Geist Mono,monospace; }
+      .match { margin-top: 12px; color: #a4e5c7; font-size: 19px; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <div class="photo"></div><div class="veil"></div>
+    <main>
+      <div class="eyebrow">Anyone can check it</div>
+      <h1>Three steps.<br />One public record.</h1>
+      <div class="step"><div class="num">01</div><div><div class="label">Fetch the credential</div><div class="detail">Read the public IPFS document linked by the NFT.</div></div></div>
+      <div class="step"><div class="num">02</div><div><div class="label">Recompute SHA-256</div><div class="detail">Hash the canonical record bytes again.</div></div></div>
+      <div class="step"><div class="num">03</div><div><div class="label">Compare NEAR</div><div class="detail">Check that the live contract holds the same digest.</div></div></div>
+      <div class="digest"><div class="key">Public testnet record · SHA-256</div><code>e4683f7668f1d159a32344fa720a7fda3a3de1f97adc8126d3fe3ef0fc61d7c3</code><div class="match">Both integrity checks: YES</div></div>
+    </main>
+  </body>
+</html>

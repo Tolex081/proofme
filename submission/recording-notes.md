@@ -2,28 +2,38 @@
 
 How the current Atesta submission demo was made, and what it does and does not show.
 
-**Current status (14 November 2026):** `atesta-demo.mp4` is the current 74.7-second recording
-candidate. It uses the live Atesta verification page and shows the real NEAR testnet token and mint
-link. The sample claimant and issuer are fictional, so the video calls this a demo record rather
-than a genuine third-party endorsement. Review the file before attaching it to the hackathon post.
-The older ProofMe recordings listed below are obsolete and must not be submitted.
+**Current status (14 November 2026):** the recommended submission video is `demo/final_demo.mp4`,
+a 73-second six-beat cut with a male voiceover, quiet music, and captions. It identifies the target
+users, shows the actual public verification page, and discloses that the sample claimant, project,
+and issuer are fictional while the NEAR testnet token and mint transaction are real. Review this
+file before attaching it to the hackathon post. Earlier teaser/full-demo exports listed below are
+alternatives and are not the current recommended attachment. The older ProofMe-branded recordings
+are obsolete and must not be submitted.
 
 ## Files
 
-| File                               | What it is                                                     |
-| ---------------------------------- | -------------------------------------------------------------- |
-| `atesta-demo.mp4`                  | Current product demo (local only, not in git)                  |
-| `atesta-demo.vtt`                  | Its WebVTT captions                                            |
-| `atesta-demo-script.md`            | Its narration and scene plan                                   |
-| `proofme-demo.mp4`                 | Obsolete ProofMe-branded, pre-mint recording (local only)      |
-| `proofme-demo.vtt`                 | Captions for the obsolete recording                           |
-| `proofme-demo-script.md`           | Script for the obsolete recording                             |
-| `proofme-walkthrough.mp4`          | Obsolete ProofMe-branded walkthrough (local only, not in git)  |
-| `proofme-walkthrough.vtt`          | Captions for the obsolete walkthrough                         |
-| `proofme-walkthrough-script.md`    | Script for the obsolete walkthrough                           |
+| File                            | What it is                                                    |
+| ------------------------------- | ------------------------------------------------------------- |
+| `../demo/final_demo.mp4`        | Recommended 73-second six-beat export                         |
+| `../demo/captions.vtt`          | Captions for the recommended export                           |
+| `atesta-demo-with-intro.mp4`    | Earlier 89.7-second teaser plus full demo (local only)        |
+| `atesta-demo-with-intro.vtt`    | Captions for the earlier combined video                       |
+| `atesta-teaser.mp4`             | Earlier short 15-second opening (local only)                  |
+| `atesta-teaser.vtt`             | Captions for the earlier short opening                        |
+| `atesta-demo.mp4`               | Earlier 74.7-second full demo (local only, not in git)        |
+| `atesta-demo.vtt`               | Captions for the earlier full demo                            |
+| `atesta-demo-script.md`         | Its narration and scene plan                                  |
+| `proofme-demo.mp4`              | Obsolete ProofMe-branded, pre-mint recording (local only)     |
+| `proofme-demo.vtt`              | Captions for the obsolete recording                           |
+| `proofme-demo-script.md`        | Script for the obsolete recording                             |
+| `proofme-walkthrough.mp4`       | Obsolete ProofMe-branded walkthrough (local only, not in git) |
+| `proofme-walkthrough.vtt`       | Captions for the obsolete walkthrough                         |
+| `proofme-walkthrough-script.md` | Script for the obsolete walkthrough                           |
 
-MP4 files are kept out of git because of their size. The current demo lives at
-`submission/atesta-demo.mp4` on the creator's machine.
+The older `/submission/*.mp4` exports are ignored by Git. The current
+`demo/final_demo.mp4` is not ignored and is the video intended to be included with the demo source
+when publishing the repository. Check the final Git status before pushing so the current video and
+caption file are included.
 
 ## How they were made
 

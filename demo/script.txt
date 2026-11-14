@@ -1,0 +1,6 @@
+[00:00] Open-source contributors and hackathon teams need proof reviewers can check.
+[00:08] Atesta records VitaRecall's hackathon achievement, Daniel Okafor's solo role, and its issuer.
+[00:18] Open the public record. Inspect its project, role, dates, reviewer evidence, and issuer.
+[00:43] Step one: fetch the record. Step two: recompute SHA-256. Step three: compare NEAR's digest.
+[00:56] Both checks pass. The token is active, non-transferable, and linked to a real testnet mint.
+[01:05] VitaRecall, Daniel, and Northstar are fictional. The NEAR testnet token is real.

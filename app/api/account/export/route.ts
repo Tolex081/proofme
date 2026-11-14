@@ -15,7 +15,7 @@ export async function GET() {
   return new Response(JSON.stringify(data, null, 2), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
-      "Content-Disposition": `attachment; filename="proofme-export-${day}.json"`,
+      "Content-Disposition": `attachment; filename="atesta-export-${day}.json"`,
       "Cache-Control": "no-store",
     },
   });

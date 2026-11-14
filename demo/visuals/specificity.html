@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Atesta demo — sample credential</title>
+    <style>
+      @font-face { font-family: Bricolage; src: url("../assets/bricolage.woff2") format("woff2"); font-weight: 200 800; }
+      @font-face { font-family: Figtree; src: url("../assets/figtree.woff2") format("woff2"); font-weight: 300 900; }
+      @font-face { font-family: Geist Mono; src: url("../assets/geist-mono.woff2") format("woff2"); font-weight: 100 900; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
+      body { background: #f7f5ef; color: #17172d; font-family: Figtree, "Segoe UI", sans-serif; }
+      .frame { position: absolute; inset: 72px; border: 1px solid #d9d7d1; padding: 66px 80px; background: rgba(255,255,255,.48); }
+      .top { display: flex; align-items: center; justify-content: space-between; }
+      .brand { display: flex; align-items: center; gap: 18px; font: 700 35px Bricolage, sans-serif; }
+      .mark { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 15px; color: white; background: #2858e8; font: 700 30px Figtree,sans-serif; }
+      .label { border: 1px solid #c6c5c1; border-radius: 100px; padding: 12px 18px; font: 700 17px Figtree,sans-serif; letter-spacing: .1em; color: #53525f; }
+      .eyebrow { margin-top: 85px; color: #5a5a68; font-size: 20px; letter-spacing: .15em; text-transform: uppercase; font-weight: 700; }
+      h1 { margin: 12px 0 48px; font: 700 88px/.98 Bricolage,sans-serif; letter-spacing: -.045em; }
+      .rows { display: grid; grid-template-columns: 1fr 1fr; column-gap: 90px; border-top: 1px solid #d9d7d1; }
+      .row { min-height: 120px; padding: 25px 0 18px; border-bottom: 1px solid #d9d7d1; }
+      .key { color: #666572; font-size: 17px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+      .value { margin-top: 8px; font: 650 34px Bricolage,sans-serif; }
+      .value.mono { font: 600 27px Geist Mono,monospace; }
+      .note { margin-top: 36px; color: #63626f; font-size: 20px; }
+    </style>
+  </head>
+  <body>
+    <main class="frame">
+      <div class="top">
+        <div class="brand"><span class="mark">✓</span>Atesta</div>
+        <div class="label">PUBLIC SAMPLE · NEAR TESTNET</div>
+      </div>
+      <div class="eyebrow">A real record to inspect</div>
+      <h1>VitaRecall</h1>
+      <section class="rows">
+        <div class="row"><div class="key">Recognised as</div><div class="value">Hackathon achievement</div></div>
+        <div class="row"><div class="key">Role</div><div class="value">Sole Developer</div></div>
+        <div class="row"><div class="key">Claimant</div><div class="value">Daniel Okafor</div></div>
+        <div class="row"><div class="key">Named issuer</div><div class="value">Northstar Protocol</div></div>
+      </section>
+      <div class="note">Sample details are fictional. The NEAR testnet token and mint transaction are real.</div>
+    </main>
+  </body>
+</html>
