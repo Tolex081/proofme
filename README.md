@@ -38,20 +38,41 @@ about who did the work. Organisations that could vouch have no portable, checkab
 
 ## Who Atesta is for
 
-Atesta is for people and teams that need a specific contribution claim to be reviewable and
-checkable later:
+Atesta fits work where the evidence is a public GitHub contribution and an organisation can review
+the work before endorsing it. Its likely first users are:
 
-- **Contributors and open-source builders** who want the organisations that saw their work to
-  confirm it, especially when the evidence is in public GitHub activity.
-- **Open-source projects, developer communities, grant programmes and other organisations** that
-  need to review contributions and issue accountable credentials for work they can stand behind.
-- **Reviewers** who need to inspect the evidence and make the decision themselves, with an evidence
-  report to help them.
-- **Anyone checking a credential**, such as another project, an ecosystem funder or a hiring team,
-  who needs to see what was claimed, who issued it, and whether its record still matches the chain.
+- **Open-source contributors:** volunteer maintainers, first-time contributors, freelance
+  developers, students, and people completing funded issues who want a portable record of a
+  specific pull request or project contribution.
+- **Open-source project teams and foundations:** maintainers or programme staff who review
+  contributions and want to issue a verifiable endorsement. Examples of the kind of ecosystem
+  include the [Eclipse Foundation](https://www.eclipse.org/), [Drupal Association](https://www.drupal.org/association),
+  and [FOSSASIA](https://fossasia.org/), which appear in the [Open Source Initiative's affiliate
+  network](https://opensource.org/affiliates). A project would use Atesta only for contributions
+  its authorised reviewers can assess.
+- **Open-source grant and bounty programmes:** programme operators that assess GitHub-based
+  deliverables and want to give a participant a durable proof of accepted work. [Gitcoin Grants](https://support.gitcoin.co/gitcoin-knowledge-base/gitcoin-grants)
+  and [IssueHunt](https://oss.issuehunt.io/) illustrate this type of funding or bounty workflow;
+  Atesta is not integrated with either service and does not distribute grants or bounty payments.
+- **Builders of developer products:** teams making developer portfolios, open-source contribution
+  directories, grant portals or talent tools could link to Atesta's public verification page so
+  users can inspect an organisation's endorsement. Such an integration would need to be built; it
+  is not a feature currently shipped by Atesta.
+- **People checking work claims:** open-source maintainers, grant reviewers, ecosystem funders or
+  hiring teams can inspect what a named issuer endorsed and whether the record still matches NEAR.
+  A credential supports review of that specific contribution; it does not make a hiring or funding
+  decision for them.
 
-Atesta does not turn activity into an automatic reputation score. A credential records one
-specific claim and its issuer; it is not a guarantee of someone's overall skill or suitability.
+**Accountants, gyms and most organisations are not Atesta's target users by default.** A gym could
+fit only if it runs a software or open-source programme and needs to verify public GitHub work.
+Accountants could use it for their own software contributions, but Atesta does not verify
+bookkeeping, audits, financial records or accounting qualifications. The current Evidence Agent
+checks GitHub evidence, so work that cannot be shown through public GitHub activity is outside the
+main use case.
+
+The named organisations and products above are examples of possible fit, not Atesta customers,
+partners or endorsements. Atesta records one claim and its issuer; it does not create an automatic
+reputation score or guarantee a person's overall skill or suitability.
 
 ## What the NFT does
 

@@ -19,10 +19,13 @@ setup.
 
 ## Audience and point of the demo
 
-Atesta is for contributors and open-source builders who want an organisation to confirm specific
-work; organisations and reviewers who assess that work; and anyone who needs to check an issued
-credential later. This short demo focuses on the last audience: a project, funder or hiring team
-independently checking a real contribution credential.
+Atesta's clearest users are public-GitHub contributors (including volunteers, students, freelancers
+and funded bounty contributors), and the maintainers, foundations or grant programmes that review
+their work. A developer portfolio or grant portal could also link to an Atesta credential so its
+reviewers can check the issuer's endorsement. This short demo focuses on a concrete verifier:
+someone at an open-source project, grant programme or hiring team checking a real contribution
+credential. The named examples in the README are possible fits only; they are not Atesta customers
+or partners.
 
 The viewer should understand this before the video ends: **open the public credential, see its
 record digest match the live NEAR testnet contract, and follow the transaction to the on-chain
@@ -51,7 +54,7 @@ cursor, page movement and visible result aligned with the narration.
 
 | Time | On screen — do this | Say this — or use your own natural wording |
 | --- | --- | --- |
-| 0–10 sec | Start directly on Atesta's public credential page. Show the claim title and issuer. | “Contributors need more than a CV line, and the teams reviewing their work need a way to check who confirmed it. Atesta gives organisations a portable credential for a specific contribution.” |
+| 0–10 sec | Start directly on Atesta's public credential page. Show the claim title and issuer. | “A developer who fixes a GitHub issue for an open-source project or completes a grant-funded software task needs a record that the maintainer accepted the work. Atesta lets that project or grant programme issue a checkable credential for the specific contribution.” |
 | 10–25 sec | Point out that this is a public credential; scroll to the record check. | “This sample credential is public, so a reviewer can open it without an Atesta account. The page recalculates the record's hash to show whether the document still matches its digest.” |
 | 25–45 sec | Pause on **record hashes to its digest: yes** and **contract on NEAR holds the same digest: yes**. Keep both results legible. | “Both checks pass: the document matches its digest, and the NEAR testnet contract holds that same digest. NEAR gives the credential a public, independently checkable anchor.” |
 | 45–60 sec | Show the owner, active status and history, then open the linked mint transaction. | “The page also shows who holds the active credential and links to its mint transaction. The organisation's credential cannot be transferred, and its status can be revoked or corrected on chain.” |
@@ -69,9 +72,10 @@ the browser recording itself is a new mint: the linked token was already minted 
 3. Include the required event wording, tags, links and a genuine question or specific invitation.
    Suggested post:
 
-   > Work on open projects can be hard to verify from a CV or GitHub link alone. I built Atesta at
-   > NEAR HACKATHON so organisations can confirm specific contributions with credentials anyone
-   > can check on NEAR. Watch the live credential check: https://atesta-near.vercel.app
+   > Open-source maintainers and grant programmes need a reliable way to confirm what contributors
+   > actually shipped. I built Atesta at NEAR HACKATHON so they can endorse a specific GitHub
+   > contribution with a credential anyone can check on NEAR. Watch the live check:
+   > https://atesta-near.vercel.app
    > Repo: https://github.com/Tolex081/atesta
    > What would you want to see in a verifiable work credential? @NEARProtocol #NEARHackathon
 
