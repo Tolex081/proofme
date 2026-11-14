@@ -13,6 +13,7 @@ Atesta is the team's NEAR HACKATHON project. The team is also submitting [**Crew
 | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Live app                       | https://atesta-near.vercel.app (NEAR testnet, fictional demo data)                                                                                                    |
 | Judge demo video               | [Six-beat demo, 73 seconds](demo/final_demo.mp4) (fictional sample identity and issuer; real NEAR testnet token)                                                      |
+| Public X demo post             | [Watch the posted demo](https://x.com/oyetoludan01/status/2121699377555120437)                                                                                        |
 | Contract (testnet)             | [`proofme-attest-1113.testnet`](https://testnet.nearblocks.io/address/proofme-attest-1113.testnet)                                                                    |
 | Minted testnet demo credential | https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca (sample identity and issuer; token and mint transaction are real)                          |
 | Its mint transaction           | [`9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW`](https://testnet.nearblocks.io/txns/9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW)                                     |

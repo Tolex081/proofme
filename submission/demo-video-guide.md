@@ -25,6 +25,10 @@ live verification page, the digest-check steps, the passing result, and the app 
 testnet/sample disclosure. It includes a deep male voiceover, quiet ducked music, and burned-in
 captions. The complete repeatable build is documented in [`demo/README.md`](../demo/README.md).
 
+The demo has been published on X at [this public post](https://x.com/oyetoludan01/status/2121699377555120437).
+Use that post URL as the hackathon application's `demoUrl`; do not use only the app or repository
+URL for that field.
+
 Older local exports also exist under `submission/` (including a separate teaser and a teaser-plus-
 walkthrough cut). They are earlier alternatives; use the current `demo/final_demo.mp4` for this
 submission so the narration, selected soundtrack, and current six-beat script stay aligned.
