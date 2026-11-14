@@ -36,6 +36,23 @@ Work on open projects is scattered across repositories, chats and forums, and an
 anything. Checking a claim means chasing people down; a CV line or a GitHub link proves nothing
 about who did the work. Organisations that could vouch have no portable, checkable way to do it.
 
+## Who Atesta is for
+
+Atesta is for people and teams that need a specific contribution claim to be reviewable and
+checkable later:
+
+- **Contributors and open-source builders** who want the organisations that saw their work to
+  confirm it, especially when the evidence is in public GitHub activity.
+- **Open-source projects, developer communities, grant programmes and other organisations** that
+  need to review contributions and issue accountable credentials for work they can stand behind.
+- **Reviewers** who need to inspect the evidence and make the decision themselves, with an evidence
+  report to help them.
+- **Anyone checking a credential**, such as another project, an ecosystem funder or a hiring team,
+  who needs to see what was claimed, who issued it, and whether its record still matches the chain.
+
+Atesta does not turn activity into an automatic reputation score. A credential records one
+specific claim and its issuer; it is not a guarantee of someone's overall skill or suitability.
+
 ## What the NFT does
 
 | Behaviour                      | How                                                                                                                                                                                      |
@@ -46,53 +63,55 @@ about who did the work. Organisations that could vouch have no portable, checkab
 | **Grants access**              | `/holders` opens only for a wallet that signs a challenge and holds an active credential from an active, Atesta-verified issuer. Revoked or replaced ones do not count.                  |
 | **Shows up in wallets**        | A status badge image (`media` + `media_hash`): blue "Verified work", red "Revoked", grey "Replaced". Seen in Meteor wallet under NFTs.                                                   |
 
-## Try it (do X, see Y)
+## Judge walkthrough (do X, see Y)
 
-Demo accounts (fictional people and organisation, testnet only). All use the password
-**`Proofme123456`**:
+Start with the first route; it takes no account or wallet and proves the deployed NEAR credential is real. The longer route shows how a claim is reviewed before it can become a credential.
 
-| Account                           | Role                                 | NEAR account (proven by wallet signature) |
-| --------------------------------- | ------------------------------------ | ----------------------------------------- |
-| `daniel.okafor@demo.proofme.test` | Contributor                          | `crewpass-carol.testnet`                  |
-| `sam.adeyemi@demo.proofme.test`   | Owner of Northstar Protocol (issuer) | issuer `crewpass-creator.testnet`         |
-| `priya.raman@demo.proofme.test`   | Reviewer at Northstar Protocol       | –                                         |
+Demo accounts (fictional people and organisation, testnet only). All use the password **`Proofme123456`**:
+
+| Account | Role | NEAR account (proven by wallet signature) |
+| --- | --- | --- |
+| `daniel.okafor@demo.proofme.test` | Contributor | `crewpass-carol.testnet` |
+| `sam.adeyemi@demo.proofme.test` | Owner of Northstar Protocol (issuer) | issuer `crewpass-creator.testnet` |
+| `priya.raman@demo.proofme.test` | Reviewer at Northstar Protocol | – |
 
 You can also create your own account with any real email: you get a 6-digit code to confirm it.
 
-1. **Check a real credential, no account needed.** Open
-   https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca → see "The record
-   hashes to its digest: yes", "The contract on NEAR holds the same digest: yes", held by
-   `crewpass-carol.testnet`, the IPFS document, and the history.
-2. **Check it without Atesta at all.**
-   ```bash
-   near contract call-function as-read-only proofme-attest-1113.testnet nft_token json-args '{"token_id":"11cd86ff-7936-4ee1-9927-2e1cf4e027ca"}' network-config testnet now
-   ```
-   → see owner, status `active`, `reference` (ipfs://…) and `reference_hash`. Then
-   ```bash
-   curl -s https://gateway.pinata.cloud/ipfs/bafkreihena7xm2hr2fm2gi2e7jzau762hi66d6l23sasnu76h3ypyyoxym | sha256sum
-   ```
-   → see `e4683f7668f1d159a32344fa720a7fda3a3de1f97adc8126d3fe3ef0fc61d7c3`, the same digest the
-   contract holds (`verify` with that token ID and digest returns `valid: true`).
-3. **Investigate evidence.** Sign in (your own account is best, so you can link your GitHub under
-   Identity) → Contributions → New → add a public GitHub pull request, commit or issue link → save
-   → **Investigate with Atesta** → see source checks (who opened, authored, committed, reviewed)
-   against your linked GitHub account, duplicate and conflict flags, and, separately, the AI
-   analysis claim by claim. Without a linked GitHub account the report says attribution could not
-   be checked.
-4. **Review as the organisation.** Sign in as Daniel → Contributions → New → add a public claim
-   with a link → **Send for review** to Northstar. Sign in as Priya → Northstar Protocol → Review
-   queue → open it → see the Evidence Agent report beside the claim → **Approve**.
-5. **Consent and publish.** Sign in as Daniel → open the approved contribution → **I agree:
-   publish as a credential** → see the `ipfs://` address of the public document.
-6. **Issue on NEAR.** Sign in as Sam → Northstar Protocol → Attestations → see the issuer policy
-   checks and **Issue on NEAR**. Minting needs the issuer's wallet (`crewpass-creator.testnet`), so
-   a judge sees the button and the checks, and the result in step 1, but cannot sign as Sam.
-7. **Correct a credential.** As Sam, on an issued record → **Correct this record** → see a new
-   record linked to the old one; once issued, the contract's `supersede` marks the old token
-   "Replaced" and the verify page shows both links and the history.
-8. **Credential-gated access.** Open https://atesta-near.vercel.app/holders → **Connect wallet and
-   sign** with a testnet wallet → access is refused unless the wallet holds an active credential
-   from a verified issuer (`crewpass-carol.testnet` does).
+### Quick route: independently check a minted credential (no login)
+
+1. Open [this real Atesta credential](https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca).
+2. See the named claim and issuer, the owner `crewpass-carol.testnet`, and the history.
+3. See **“The record hashes to its digest: yes”** and **“The contract on NEAR holds the same digest: yes”**. The page reads the credential document and the NEAR testnet contract so you can compare them without trusting an Atesta login.
+4. Open the linked [mint transaction](https://testnet.nearblocks.io/txns/9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW) to inspect the on-chain mint. Open the linked IPFS document to inspect the public credential.
+
+### Longer route: follow a claim through review
+
+The sample accounts represent a contributor, an organisation owner and a separate reviewer. Use the same fictional sample names shown in the interface.
+
+1. **Investigate a contributor's GitHub evidence.** Sign in as Daniel → **Identity** → link a GitHub account → **Contributions** → **New** → enter a specific claim and a public pull request, commit or issue URL → save → **Investigate with Atesta**. See GitHub source checks for who opened, authored, committed or reviewed the evidence, any duplicate or conflict flags, and the AI's claim-by-claim analysis separately. If GitHub is not linked or reachable, the report says attribution could not be checked rather than treating that as proof of fraud.
+2. **Send the claim for an organisation's review.** As Daniel → open the contribution → choose Northstar Protocol / Open Grants Portal → **Send for review**. See the submitted status; the claim is now in the organisation's review queue.
+3. **Review it as a different person.** Sign out, then sign in as Priya → **Northstar Protocol** → **Review queue** → open the claim. See Daniel's evidence and the Evidence Agent report beside the claim → **Approve** (or request information / reject). The reviewer, not the contributor or the AI, makes this decision.
+4. **Give publication consent.** Sign back in as Daniel → open the approved contribution → **I agree: publish as a credential**. See the public `ipfs://` document address. Approval alone does not publish the contributor's record.
+5. **Inspect the issuer step and a real issued result.** Sign in as Sam → **Northstar Protocol** → **Attestations**. See the issuer-policy checks and **Issue on NEAR** action. The action needs the issuer's own wallet, `crewpass-creator.testnet`, so a judge cannot sign as Sam. To inspect the already-minted result instead, follow the Quick route above; its live testnet token and mint transaction are public.
+6. **Check credential-gated access.** Open [the holders page](https://atesta-near.vercel.app/holders) → **Connect wallet and sign** with a testnet wallet. A wallet holding an active credential from an active, Atesta-verified issuer (`crewpass-carol.testnet` does) is granted access; an ineligible wallet is refused.
+
+### Verify the credential without Atesta
+
+Run the read-only NEAR contract call and fetch the IPFS document:
+
+```bash
+near contract call-function as-read-only proofme-attest-1113.testnet nft_token json-args '{"token_id":"11cd86ff-7936-4ee1-9927-2e1cf4e027ca"}' network-config testnet now
+```
+
+→ See owner, status `active`, `reference` (`ipfs://…`) and `reference_hash`. Then:
+
+```bash
+curl -s https://gateway.pinata.cloud/ipfs/bafkreihena7xm2hr2fm2gi2e7jzau762hi66d6l23sasnu76h3ypyyoxym | sha256sum
+```
+
+→ See `e4683f7668f1d159a32344fa720a7fda3a3de1f97adc8126d3fe3ef0fc61d7c3`, the same digest the contract holds (`verify` with that token ID and digest returns `valid: true`).
+
+For a focused recording plan and the exact post requirements, see [the demo video guide](submission/demo-video-guide.md).
 
 ## How NEAR is used
 
@@ -161,7 +180,8 @@ commit is 9 November 2026.
 [PRODUCT.md](PRODUCT.md) (what and why, issuer policy) ·
 [ARCHITECTURE.md](ARCHITECTURE.md) · [DATA_MODEL.md](DATA_MODEL.md) ·
 [SECURITY.md](SECURITY.md) · [DECISIONS.md](DECISIONS.md) · [TEST_PLAN.md](TEST_PLAN.md) ·
-[BUILD_STATUS.md](BUILD_STATUS.md) · [contract README](contracts/proofme-attestations/README.md)
+[BUILD_STATUS.md](BUILD_STATUS.md) · [demo video guide](submission/demo-video-guide.md) ·
+[recording notes](submission/recording-notes.md) · [contract README](contracts/proofme-attestations/README.md)
 
 Atesta is independent. It has no partnership with NEAR or with any organisation in its sample
 records, all of which are fictional.
