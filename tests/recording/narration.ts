@@ -38,7 +38,8 @@ export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: 
       {
         id: "open",
         chapter: "Who Atesta is for",
-        shows: "The live Atesta public credential page for a contribution approved by Northstar Protocol.",
+        shows:
+          "The live Atesta public credential page for a contribution approved by Northstar Protocol.",
         narration: [
           "Open-source contributors and grant-funded developers need to show which team accepted their code.",
           "Atesta gives project maintainers and grant programmes a way to issue a credential for a specific GitHub contribution.",
@@ -57,7 +58,8 @@ export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: 
       {
         id: "chain",
         chapter: "Inspect the NEAR record",
-        shows: "The active, non-transferable token details and the link to its real NEAR testnet mint transaction.",
+        shows:
+          "The active, non-transferable token details and the link to its real NEAR testnet mint transaction.",
         narration: [
           "The credential is active and non-transferable. The page names the issuer and holder and links to the real mint transaction.",
           "NEAR anchors this record publicly, so anyone can check it later.",
@@ -66,7 +68,8 @@ export const VIDEOS: Record<VideoName, { title: string; target: string; scenes: 
       {
         id: "close",
         chapter: "Close",
-        shows: "The matching digest checks and public transaction link on the live credential page.",
+        shows:
+          "The matching digest checks and public transaction link on the live credential page.",
         narration: [
           "This can help open-source maintainers, grant reviewers and developer portfolio builders check a specific endorsement.",
           "In real use, the authorised organisation makes the decision. This sample shows how anyone can check the record. Try the live demo and inspect the repository.",

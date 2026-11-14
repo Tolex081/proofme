@@ -4,8 +4,7 @@ import { Recorder } from "./recorder";
 
 /** Record a short judge demo from the live, already-minted Atesta credential. */
 
-const CREDENTIAL_URL =
-  "https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca";
+const CREDENTIAL_URL = "https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca";
 test("record the public credential verification demo", async ({ page }) => {
   const r = new Recorder(page, "demo");
   await r.start(false);

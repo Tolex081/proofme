@@ -16,10 +16,8 @@ export const demoSeed = {
   transferable: false,
   network: "NEAR testnet",
   contract: "proofme-attest-1113.testnet",
-  transaction:
-    "https://testnet.nearblocks.io/txns/9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW",
-  verificationUrl:
-    "https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca",
+  transaction: "https://testnet.nearblocks.io/txns/9bC4wzTq3DDFMCUATxMUfaRn26yvWeej6Qia8GW2DvBW",
+  verificationUrl: "https://atesta-near.vercel.app/verify/11cd86ff-7936-4ee1-9927-2e1cf4e027ca",
   sampleDisclosure:
     "The sample people, project, and issuer are fictional. The NEAR testnet token and mint transaction are real.",
 } as const;

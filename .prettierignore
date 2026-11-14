@@ -10,3 +10,4 @@ skills-lock.json
 tsconfig.tsbuildinfo
 .impeccable
 .pglite
+demo/**/playwright-results/**
